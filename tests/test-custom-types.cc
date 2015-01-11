@@ -1,6 +1,5 @@
 #include <sstream>
 #include <cppunit/extensions/HelperMacros.h>
-#include <jsoncc.h>
 
 namespace {
 
@@ -40,6 +39,11 @@ std::ostream & operator<<(std::ostream & os, ::Baz baz)
 
 	return os;
 }
+
+// we have to place it here to keep clang++ happy.
+// It will warn about unused std::ostream & operator<<(...)
+// for the above otherwise...
+#include <jsoncc.h>
 
 namespace Json {
 
