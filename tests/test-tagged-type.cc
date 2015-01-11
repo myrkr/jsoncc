@@ -354,5 +354,4 @@ void test::test_array_type()
 	CPPUNIT_ASSERT_EQUAL(std::string("[]"), ss.str());
 }
 
-
 }}
