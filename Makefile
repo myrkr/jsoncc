@@ -52,7 +52,7 @@ install: all
 	install -d $(PREFIX)/lib
 	install -m 755 $(TARGET) $(PREFIX)/lib/
 	install -d $(PREFIX)/include/
-	install -m 644 include/ $(PREFIX)/include/
+	install -m 644 include/*.h $(PREFIX)/include/
 
 clean:
 	rm -rf $(OBJ) $(TARGET) $(TEST_OBJ) $(TESTS) $(TEST_LIB)
