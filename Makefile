@@ -28,6 +28,10 @@ TEST_SRC = $(wildcard tests/*.cc)
 TEST_OBJ = $(TEST_SRC:%.cc=%.o)
 TEST_LIB = libjsoncc.a
 
+ALL_OBJ = $(OBJ) $(TEST_OBJ)
+GCNO = $(ALL_OBJ:%.o=%.gcno)
+GCDA = $(ALL_OBJ:%.o=%.gcda)
+
 all: $(TARGET) $(TESTS)
 
 $(TARGET): $(OBJ)
@@ -55,6 +59,6 @@ install: all
 	install -m 644 include/*.h $(PREFIX)/include/
 
 clean:
-	rm -rf $(OBJ) $(TARGET) $(TEST_OBJ) $(TESTS) $(TEST_LIB)
+	rm -rf $(OBJ) $(TARGET) $(TEST_OBJ) $(TESTS) $(TEST_LIB) $(GCNO) $(GCDA)
 
 .PHONY: all clean
