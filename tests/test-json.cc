@@ -1,4 +1,3 @@
-#include <sstream>
 #include <cppunit/extensions/HelperMacros.h>
 #include <jsoncc.h>
 
