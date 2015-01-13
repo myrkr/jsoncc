@@ -129,6 +129,13 @@ public:
 	TaggedType(TaggedType const&);
 	TaggedType & operator=(TaggedType const&);
 
+	template <typename T>
+	TaggedType & operator=(T const& t)
+	{
+		set(t);
+		return *this;
+	}
+
 	~TaggedType();
 
 	void clone(TaggedType const&);
