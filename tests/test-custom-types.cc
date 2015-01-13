@@ -47,13 +47,13 @@ std::ostream & operator<<(std::ostream & os, ::Baz baz)
 namespace Json {
 
 template<> struct ValueFactory< ::foo> {
-	static TaggedType build(foo const& f)
+	static void build(foo const& f, TaggedType & res)
 	{
 		Json::Object o;
 		o << Json::Member("a", f.a);
 		o << Json::Member("b", f.b);
 		o << Json::Member("c", f.c);
-		return ValueFactory<Object>::build(o);
+		res.set(o);
 	}
 };
 

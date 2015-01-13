@@ -181,8 +181,7 @@ public:
 	:
 		value_()
 	{
-		TaggedType type(ValueFactory<T>::build(value));
-		value_.move(type);
+		ValueFactory<T>::build(value, value_);
 	}
 
 	Value(Value const&);
@@ -240,45 +239,45 @@ private:
 	container element_;
 };
 
-template<> struct ValueFactory<Array>       { static TaggedType build(Array       const&); };
-template<> struct ValueFactory<Object>      { static TaggedType build(Object      const&); };
-template<> struct ValueFactory<String>      { static TaggedType build(String      const&); };
-template<> struct ValueFactory<bool>        { static TaggedType build(bool        const&); };
-template<> struct ValueFactory<uint8_t>     { static TaggedType build(uint8_t     const&); };
-template<> struct ValueFactory<int8_t>      { static TaggedType build(int8_t      const&); };
-template<> struct ValueFactory<uint16_t>    { static TaggedType build(uint16_t    const&); };
-template<> struct ValueFactory<int16_t>     { static TaggedType build(int16_t     const&); };
-template<> struct ValueFactory<uint32_t>    { static TaggedType build(uint32_t    const&); };
-template<> struct ValueFactory<int32_t>     { static TaggedType build(int32_t     const&); };
-template<> struct ValueFactory<uint64_t>    { static TaggedType build(uint64_t    const&); };
-template<> struct ValueFactory<int64_t>     { static TaggedType build(int64_t     const&); };
-template<> struct ValueFactory<float>       { static TaggedType build(float       const&); };
-template<> struct ValueFactory<double>      { static TaggedType build(double      const&); };
-template<> struct ValueFactory<long double> { static TaggedType build(long double const&); };
-template<> struct ValueFactory<Null>        { static TaggedType build(Null        const&); };
-template<> struct ValueFactory<True>        { static TaggedType build(True        const&); };
-template<> struct ValueFactory<False>       { static TaggedType build(False       const&); };
+template<> struct ValueFactory<Array>       { static void build(Array       const&, TaggedType &); };
+template<> struct ValueFactory<Object>      { static void build(Object      const&, TaggedType &); };
+template<> struct ValueFactory<String>      { static void build(String      const&, TaggedType &); };
+template<> struct ValueFactory<bool>        { static void build(bool        const&, TaggedType &); };
+template<> struct ValueFactory<uint8_t>     { static void build(uint8_t     const&, TaggedType &); };
+template<> struct ValueFactory<int8_t>      { static void build(int8_t      const&, TaggedType &); };
+template<> struct ValueFactory<uint16_t>    { static void build(uint16_t    const&, TaggedType &); };
+template<> struct ValueFactory<int16_t>     { static void build(int16_t     const&, TaggedType &); };
+template<> struct ValueFactory<uint32_t>    { static void build(uint32_t    const&, TaggedType &); };
+template<> struct ValueFactory<int32_t>     { static void build(int32_t     const&, TaggedType &); };
+template<> struct ValueFactory<uint64_t>    { static void build(uint64_t    const&, TaggedType &); };
+template<> struct ValueFactory<int64_t>     { static void build(int64_t     const&, TaggedType &); };
+template<> struct ValueFactory<float>       { static void build(float       const&, TaggedType &); };
+template<> struct ValueFactory<double>      { static void build(double      const&, TaggedType &); };
+template<> struct ValueFactory<long double> { static void build(long double const&, TaggedType &); };
+template<> struct ValueFactory<Null>        { static void build(Null        const&, TaggedType &); };
+template<> struct ValueFactory<True>        { static void build(True        const&, TaggedType &); };
+template<> struct ValueFactory<False>       { static void build(False       const&, TaggedType &); };
 
 template<typename E> struct ValueFactory<std::vector<E> > {
 	typedef std::vector<E> container;
 
-	static TaggedType build(container const& v)
+	static void build(container const& v, TaggedType & res)
 	{
 		Json::Array a;
 		typename container::const_iterator it(v.begin());
 		for (; it != v.end(); ++it) {
 			a << *it;
 		}
-		return TaggedType(a);
+		res.set(a);
 	}
 };
 
 template<typename T> struct ValueFactory {
-	static TaggedType build(T const& v)
+	static void build(T const& v, TaggedType & res)
 	{
 		std::stringstream ss;
 		ss << v;
-		return ValueFactory<String>::build(ss.str());
+		res.set(ss.str());
 	}
 };
 
