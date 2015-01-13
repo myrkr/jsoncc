@@ -40,55 +40,6 @@ TaggedType::TaggedType()
 	memset(&type_, 0, sizeof(Type));
 }
 
-TaggedType::TaggedType(True const&)
-:
-	tag_(TAG_TRUE)
-{
-	type_.true_ = &TrueValue;
-}
-
-TaggedType::TaggedType(False const&)
-:
-	tag_(TAG_FALSE)
-{
-	type_.false_ = &FalseValue;
-}
-
-TaggedType::TaggedType(Null const&)
-:
-	tag_(TAG_NULL)
-{
-	type_.null_ = &NullValue;
-}
-
-TaggedType::TaggedType(Number const& number)
-:
-	tag_(TAG_NUMBER)
-{
-	type_.number_ = new Number(number);
-}
-
-TaggedType::TaggedType(String const& string)
-:
-	tag_(TAG_STRING)
-{
-	type_.string_ = new String(string);
-}
-
-TaggedType::TaggedType(Object const& object)
-:
-	tag_(TAG_OBJECT)
-{
-	type_.object_ = new Object(object);
-}
-
-TaggedType::TaggedType(Array const& array)
-:
-	tag_(TAG_ARRAY)
-{
-	type_.array_ = new Array(array);
-}
-
 TaggedType::TaggedType(TaggedType const& o)
 :
 	tag_(TAG_INVALID)

@@ -119,13 +119,6 @@ public:
 	};
 
 	TaggedType();
-	TaggedType(Null const&);
-	TaggedType(True const&);
-	TaggedType(False const&);
-	TaggedType(Number const&);
-	TaggedType(String const&);
-	TaggedType(Object const&);
-	TaggedType(Array const&);
 	TaggedType(TaggedType const&);
 	TaggedType & operator=(TaggedType const&);
 
