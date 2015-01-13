@@ -225,6 +225,55 @@ void TaggedType::clear()
 	memset(&type_, 0, sizeof(Type));
 }
 
+void TaggedType::set(Null const&)
+{
+	clear();
+	tag_ = TAG_NULL;
+	type_.null_ = &NullValue;
+}
+
+void TaggedType::set(True const&)
+{
+	clear();
+	tag_ = TAG_TRUE;
+	type_.true_ = &TrueValue;
+}
+
+void TaggedType::set(False const&)
+{
+	clear();
+	tag_ = TAG_FALSE;
+	type_.false_ = &FalseValue;
+}
+
+void TaggedType::set(Number const& number)
+{
+	clear();
+	tag_ = TAG_NUMBER;
+	type_.number_ = new Number(number);
+}
+
+void TaggedType::set(String const& string)
+{
+	clear();
+	tag_ = TAG_STRING;
+	type_.string_ = new String(string);
+}
+
+void TaggedType::set(Object const& object)
+{
+	clear();
+	tag_ = TAG_OBJECT;
+	type_.object_ = new Object(object);
+}
+
+void TaggedType::set(Array const& array)
+{
+	clear();
+	tag_ = TAG_ARRAY;
+	type_.array_ = new Array(array);
+}
+
 TaggedType::Tag TaggedType::tag() const
 {
 	return tag_;

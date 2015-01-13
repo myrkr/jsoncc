@@ -135,6 +135,14 @@ public:
 	void move(TaggedType &);
 	void clear();
 
+	void set(Null const&);
+	void set(True const&);
+	void set(False const&);
+	void set(Number const&);
+	void set(String const&);
+	void set(Object const&);
+	void set(Array const&);
+
 	Tag tag() const;
 
 	True const& true_value() const;
