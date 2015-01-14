@@ -101,50 +101,6 @@ void TaggedType::clone(TaggedType const& o)
 	}
 }
 
-void TaggedType::move(TaggedType & o)
-{
-	assert(&o != this);
-	clear();
-
-	tag_ = o.tag_;
-
-	switch (tag_) {
-	case TAG_INVALID:
-		break;
-	case TAG_TRUE:
-		assert(o.type_.true_);
-		type_.true_ = o.type_.true_;
-		break;
-	case TAG_FALSE:
-		assert(o.type_.false_);
-		type_.false_ = o.type_.false_;
-		break;
-	case TAG_NULL:
-		assert(o.type_.null_);
-		type_.null_ = o.type_.null_;
-		break;
-	case TAG_NUMBER:
-		assert(o.type_.number_);
-		type_.number_ = o.type_.number_;
-		break;
-	case TAG_STRING:
-		assert(o.type_.string_);
-		type_.string_ = o.type_.string_;
-		break;
-	case TAG_OBJECT:
-		assert(o.type_.object_);
-		type_.object_ = o.type_.object_;
-		break;
-	case TAG_ARRAY:
-		assert(o.type_.array_);
-		type_.array_ = o.type_.array_;
-		break;
-	}
-
-	o.tag_ = TAG_INVALID;
-	memset(&o.type_, 0, sizeof(Type));
-}
-
 void TaggedType::clear()
 {
 	switch (tag_) {

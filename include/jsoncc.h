@@ -132,7 +132,6 @@ public:
 	~TaggedType();
 
 	void clone(TaggedType const&);
-	void move(TaggedType &);
 	void clear();
 
 	void set(Null const&);
