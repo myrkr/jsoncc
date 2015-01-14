@@ -50,6 +50,7 @@ TaggedType::TaggedType(TaggedType const& o)
 TaggedType & TaggedType::operator=(TaggedType const& o)
 {
 	if (&o != this) {
+		clear();
 		clone(o);
 	}
 	return *this;
@@ -63,7 +64,6 @@ TaggedType::~TaggedType()
 void TaggedType::clone(TaggedType const& o)
 {
 	assert(&o != this);
-	clear();
 
 	tag_ = o.tag_;
 
