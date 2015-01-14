@@ -78,13 +78,13 @@ void test::test_invalid_type()
 void test::test_null_type()
 {
 	Json::TaggedType t1;
-	t1 = Json::Null();
+	t1.set(Json::Null());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_NULL, t1.tag());
 
 	t1 = Json::TaggedType();
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_INVALID, t1.tag());
 
-	t1 = Json::Null();
+	t1.set(Json::Null());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_NULL, t1.tag());
 
 	Json::TaggedType t2(t1);
@@ -98,13 +98,13 @@ void test::test_null_type()
 void test::test_true_type()
 {
 	Json::TaggedType t1;
-	t1 = Json::True();
+	t1.set(Json::True());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_TRUE, t1.tag());
 
 	t1 = Json::TaggedType();
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_INVALID, t1.tag());
 
-	t1 = Json::True();
+	t1.set(Json::True());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_TRUE, t1.tag());
 
 	Json::TaggedType t2(t1);
@@ -118,13 +118,13 @@ void test::test_true_type()
 void test::test_false_type()
 {
 	Json::TaggedType t1;
-	t1 = Json::False();
+	t1.set(Json::False());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_FALSE, t1.tag());
 
 	t1 = Json::TaggedType();
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_INVALID, t1.tag());
 
-	t1 = Json::False();
+	t1.set(Json::False());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_FALSE, t1.tag());
 
 	Json::TaggedType t2(t1);
@@ -138,13 +138,13 @@ void test::test_false_type()
 void test::test_number_type()
 {
 	Json::TaggedType t1;
-	t1 = Json::Number(5);
+	t1.set(Json::Number(5));
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_NUMBER, t1.tag());
 
 	t1 = Json::TaggedType();
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_INVALID, t1.tag());
 
-	t1 = Json::Number(5);
+	t1.set(Json::Number(5));
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_NUMBER, t1.tag());
 
 	Json::TaggedType t2(t1);
@@ -158,13 +158,13 @@ void test::test_number_type()
 void test::test_string_type()
 {
 	Json::TaggedType t1;
-	t1 = Json::String("foo");
+	t1.set(Json::String("foo"));
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_STRING, t1.tag());
 
 	t1 = Json::TaggedType();
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_INVALID, t1.tag());
 
-	t1 = Json::String("foo");
+	t1.set(Json::String("foo"));
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_STRING, t1.tag());
 
 	Json::TaggedType t2(t1);
@@ -178,13 +178,13 @@ void test::test_string_type()
 void test::test_object_type()
 {
 	Json::TaggedType t1;
-	t1 = Json::Object();
+	t1.set(Json::Object());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_OBJECT, t1.tag());
 
 	t1 = Json::TaggedType();
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_INVALID, t1.tag());
 
-	t1 = Json::Object();
+	t1.set(Json::Object());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_OBJECT, t1.tag());
 
 	Json::TaggedType t2(t1);
@@ -198,13 +198,13 @@ void test::test_object_type()
 void test::test_array_type()
 {
 	Json::TaggedType t1;
-	t1 = Json::Array();
+	t1.set(Json::Array());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_ARRAY, t1.tag());
 
 	t1 = Json::TaggedType();
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_INVALID, t1.tag());
 
-	t1 = Json::Array();
+	t1.set(Json::Array());
 	CPPUNIT_ASSERT_EQUAL(Json::TaggedType::TAG_ARRAY, t1.tag());
 
 	Json::TaggedType t2(t1);
