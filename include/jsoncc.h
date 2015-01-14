@@ -131,9 +131,6 @@ public:
 
 	~TaggedType();
 
-	void clone(TaggedType const&);
-	void clear();
-
 	void set(Null const&);
 	void set(True const&);
 	void set(False const&);
@@ -153,6 +150,9 @@ public:
 	Array const& array() const;
 
 private:
+	void clone(TaggedType const&);
+	void clear();
+
 	Tag tag_;
 	static True true_value_;
 	static False False_value_;
