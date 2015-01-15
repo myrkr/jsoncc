@@ -45,6 +45,41 @@ Value & Value::operator=(Value const& o)
 	return *this;
 }
 
+Value::Value(Null const& null)
+{
+	set(null);
+}
+
+Value::Value(True const& true_value)
+{
+	set(true_value);
+}
+
+Value::Value(False const& false_value)
+{
+	set(false_value);
+}
+
+Value::Value(Number const& number)
+{
+	set(number);
+}
+
+Value::Value(String const& string)
+{
+	set(string);
+}
+
+Value::Value(Object const& object)
+{
+	set(object);
+}
+
+Value::Value(Array const& array)
+{
+	set(array);
+}
+
 void Value::set(Null const& null)
 {
 	value_.set(null);
@@ -78,36 +113,6 @@ void Value::set(Object const& object)
 void Value::set(Array const& array)
 {
 	value_.set(array);
-}
-
-void ValueFactory<Null>::build(Null const& null, Value & res)
-{
-	res.set(null);
-}
-
-void ValueFactory<True>::build(True const& true_value, Value & res)
-{
-	res.set(true_value);
-}
-
-void ValueFactory<False>::build(False const& false_value, Value & res)
-{
-	res.set(false_value);
-}
-
-void ValueFactory<String>::build(String const& string, Value & res)
-{
-	res.set(string);
-}
-
-void ValueFactory<Array>::build(Array const& array, Value & res)
-{
-	res.set(array);
-}
-
-void ValueFactory<Object>::build(Object const& object, Value & res)
-{
-	res.set(object);
 }
 
 void ValueFactory<bool>::build(bool const& value, Value & res)

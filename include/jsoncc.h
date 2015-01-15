@@ -173,6 +173,14 @@ public:
 		ValueFactory<T>::build(value, *this);
 	}
 
+	Value(Null const&);
+	Value(True const&);
+	Value(False const&);
+	Value(Number const&);
+	Value(String const&);
+	Value(Object const&);
+	Value(Array const&);
+
 	void set(Null const&);
 	void set(True const&);
 	void set(False const&);
@@ -236,9 +244,6 @@ private:
 	container element_;
 };
 
-template<> struct ValueFactory<Array>       { static void build(Array       const&, Value &); };
-template<> struct ValueFactory<Object>      { static void build(Object      const&, Value &); };
-template<> struct ValueFactory<String>      { static void build(String      const&, Value &); };
 template<> struct ValueFactory<bool>        { static void build(bool        const&, Value &); };
 template<> struct ValueFactory<uint8_t>     { static void build(uint8_t     const&, Value &); };
 template<> struct ValueFactory<int8_t>      { static void build(int8_t      const&, Value &); };
@@ -251,9 +256,6 @@ template<> struct ValueFactory<int64_t>     { static void build(int64_t     cons
 template<> struct ValueFactory<float>       { static void build(float       const&, Value &); };
 template<> struct ValueFactory<double>      { static void build(double      const&, Value &); };
 template<> struct ValueFactory<long double> { static void build(long double const&, Value &); };
-template<> struct ValueFactory<Null>        { static void build(Null        const&, Value &); };
-template<> struct ValueFactory<True>        { static void build(True        const&, Value &); };
-template<> struct ValueFactory<False>       { static void build(False       const&, Value &); };
 
 template<typename E> struct ValueFactory<std::vector<E> > {
 	typedef std::vector<E> container;
