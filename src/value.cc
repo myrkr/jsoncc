@@ -80,37 +80,37 @@ void Value::set(Array const& array)
 	value_.set(array);
 }
 
-void ValueFactory<Null>::build(Null const& null, TaggedType & res)
+void ValueFactory<Null>::build(Null const& null, Value & res)
 {
 	res.set(null);
 }
 
-void ValueFactory<True>::build(True const& true_value, TaggedType & res)
+void ValueFactory<True>::build(True const& true_value, Value & res)
 {
 	res.set(true_value);
 }
 
-void ValueFactory<False>::build(False const& false_value, TaggedType & res)
+void ValueFactory<False>::build(False const& false_value, Value & res)
 {
 	res.set(false_value);
 }
 
-void ValueFactory<String>::build(String const& string, TaggedType & res)
+void ValueFactory<String>::build(String const& string, Value & res)
 {
 	res.set(string);
 }
 
-void ValueFactory<Array>::build(Array const& array, TaggedType & res)
+void ValueFactory<Array>::build(Array const& array, Value & res)
 {
 	res.set(array);
 }
 
-void ValueFactory<Object>::build(Object const& object, TaggedType & res)
+void ValueFactory<Object>::build(Object const& object, Value & res)
 {
 	res.set(object);
 }
 
-void ValueFactory<bool>::build(bool const& value, TaggedType & res)
+void ValueFactory<bool>::build(bool const& value, Value & res)
 {
 	if (value) {
 		res.set(True());
@@ -119,57 +119,57 @@ void ValueFactory<bool>::build(bool const& value, TaggedType & res)
 	}
 }
 
-void ValueFactory<uint8_t>::build(uint8_t const& value, TaggedType & res)
+void ValueFactory<uint8_t>::build(uint8_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<int8_t>::build(int8_t const& value, TaggedType & res)
+void ValueFactory<int8_t>::build(int8_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<uint16_t>::build(uint16_t const& value, TaggedType & res)
+void ValueFactory<uint16_t>::build(uint16_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<int16_t>::build(int16_t const& value, TaggedType & res)
+void ValueFactory<int16_t>::build(int16_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<uint32_t>::build(uint32_t const& value, TaggedType & res)
+void ValueFactory<uint32_t>::build(uint32_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<int32_t>::build(int32_t const& value, TaggedType & res)
+void ValueFactory<int32_t>::build(int32_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<uint64_t>::build(uint64_t const& value, TaggedType & res)
+void ValueFactory<uint64_t>::build(uint64_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<int64_t>::build(int64_t const& value, TaggedType & res)
+void ValueFactory<int64_t>::build(int64_t const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<float>::build(float const& value, TaggedType & res)
+void ValueFactory<float>::build(float const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<double>::build(double const& value, TaggedType & res)
+void ValueFactory<double>::build(double const& value, Value & res)
 {
 	res.set(Number(value));
 }
 
-void ValueFactory<long double>::build(long double const& value, TaggedType & res)
+void ValueFactory<long double>::build(long double const& value, Value & res)
 {
 	res.set(Number(value));
 }
