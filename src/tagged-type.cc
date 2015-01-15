@@ -181,7 +181,7 @@ void TaggedType::set(Array const& array)
 	type_.array_ = new Array(array);
 }
 
-TaggedType::Tag TaggedType::tag() const
+Tag TaggedType::tag() const
 {
 	return tag_;
 }

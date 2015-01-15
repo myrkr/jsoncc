@@ -105,19 +105,19 @@ private:
 	std::string value_;
 };
 
+enum Tag {
+	TAG_INVALID = 0,
+	TAG_NULL,
+	TAG_TRUE,
+	TAG_FALSE,
+	TAG_NUMBER,
+	TAG_STRING,
+	TAG_OBJECT,
+	TAG_ARRAY,
+};
+
 class TaggedType {
 public:
-	enum Tag {
-		TAG_INVALID = 0,
-		TAG_NULL,
-		TAG_TRUE,
-		TAG_FALSE,
-		TAG_NUMBER,
-		TAG_STRING,
-		TAG_OBJECT,
-		TAG_ARRAY,
-	};
-
 	TaggedType();
 	TaggedType(TaggedType const&);
 	TaggedType & operator=(TaggedType const&);
