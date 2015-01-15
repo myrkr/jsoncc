@@ -176,6 +176,14 @@ public:
 		ValueFactory<T>::build(value, value_);
 	}
 
+	void set(Null const&);
+	void set(True const&);
+	void set(False const&);
+	void set(Number const&);
+	void set(String const&);
+	void set(Object const&);
+	void set(Array const&);
+
 	Value(Value const&);
 	Value & operator=(Value const&);
 private:

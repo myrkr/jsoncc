@@ -45,6 +45,41 @@ Value & Value::operator=(Value const& o)
 	return *this;
 }
 
+void Value::set(Null const& null)
+{
+	value_.set(null);
+}
+
+void Value::set(True const& true_value)
+{
+	value_.set(true_value);
+}
+
+void Value::set(False const& false_value)
+{
+	value_.set(false_value);
+}
+
+void Value::set(Number const& number)
+{
+	value_.set(number);
+}
+
+void Value::set(String const& string)
+{
+	value_.set(string);
+}
+
+void Value::set(Object const& object)
+{
+	value_.set(object);
+}
+
+void Value::set(Array const& array)
+{
+	value_.set(array);
+}
+
 void ValueFactory<Null>::build(Null const& null, TaggedType & res)
 {
 	res.set(null);
