@@ -181,6 +181,9 @@ public:
 	Value(Object const&);
 	Value(Array const&);
 
+	Value(Value const&);
+	Value & operator=(Value const&);
+
 	void set(Null const&);
 	void set(True const&);
 	void set(False const&);
@@ -189,8 +192,6 @@ public:
 	void set(Object const&);
 	void set(Array const&);
 
-	Value(Value const&);
-	Value & operator=(Value const&);
 private:
 	friend std::ostream & ::operator<<(std::ostream &, Value const&);
 
