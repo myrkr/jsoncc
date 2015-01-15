@@ -47,7 +47,7 @@ std::ostream & operator<<(std::ostream & os, ::Baz baz)
 namespace Json {
 
 template<> struct ValueFactory< ::foo> {
-	static void build(foo const& f, TaggedType & res)
+	static void build(foo const& f, Value & res)
 	{
 		Json::Object o;
 		o << Json::Member("a", f.a);
