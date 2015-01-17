@@ -73,6 +73,8 @@ void test::test_invalid_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_INVALID, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 void test::test_null_type()
@@ -93,6 +95,8 @@ void test::test_null_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NULL, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 void test::test_true_type()
@@ -113,6 +117,8 @@ void test::test_true_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 void test::test_false_type()
@@ -133,6 +139,8 @@ void test::test_false_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_FALSE, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 void test::test_number_type()
@@ -153,6 +161,8 @@ void test::test_number_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 void test::test_string_type()
@@ -173,6 +183,8 @@ void test::test_string_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 void test::test_object_type()
@@ -193,6 +205,8 @@ void test::test_object_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_OBJECT, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 void test::test_array_type()
@@ -213,6 +227,8 @@ void test::test_array_type()
 	Json::Value t3;
 	t3 = t1;
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_ARRAY, t3.tag());
+
+	CPPUNIT_ASSERT_EQUAL(t1, t3);
 }
 
 }}

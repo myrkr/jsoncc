@@ -19,9 +19,11 @@ private:
 	void test_array_empty();
 	void test_array_numbers();
 	void test_array_nested();
+	void test_array_equality();
 	void test_object_empty();
 	void test_object_simple();
 	void test_object_nested();
+	void test_object_equality();
 	void test_vector();
 	void test_vector_nested();
 
@@ -34,9 +36,11 @@ private:
 	CPPUNIT_TEST(test_array_empty);
 	CPPUNIT_TEST(test_array_numbers);
 	CPPUNIT_TEST(test_array_nested);
+	CPPUNIT_TEST(test_array_equality);
 	CPPUNIT_TEST(test_object_empty);
 	CPPUNIT_TEST(test_object_simple);
 	CPPUNIT_TEST(test_object_nested);
+	CPPUNIT_TEST(test_object_equality);
 	CPPUNIT_TEST(test_vector);
 	CPPUNIT_TEST(test_vector_nested);
 	CPPUNIT_TEST_SUITE_END();
@@ -58,6 +62,9 @@ void test::test_null()
 	std::stringstream ss;
 	ss << Json::Null();
 	CPPUNIT_ASSERT_EQUAL(std::string("null"), ss.str());
+	Json::Null n;
+	CPPUNIT_ASSERT_EQUAL(n, n);
+	CPPUNIT_ASSERT_EQUAL(Json::Null(), Json::Null());
 }
 
 void test::test_true()
@@ -65,6 +72,9 @@ void test::test_true()
 	std::stringstream ss;
 	ss << Json::True();
 	CPPUNIT_ASSERT_EQUAL(std::string("true"), ss.str());
+	Json::True t;
+	CPPUNIT_ASSERT_EQUAL(t, t);
+	CPPUNIT_ASSERT_EQUAL(Json::True(), Json::True());
 }
 
 void test::test_false()
@@ -72,6 +82,9 @@ void test::test_false()
 	std::stringstream ss;
 	ss << Json::False();
 	CPPUNIT_ASSERT_EQUAL(std::string("false"), ss.str());
+	Json::False f;
+	CPPUNIT_ASSERT_EQUAL(f, f);
+	CPPUNIT_ASSERT_EQUAL(Json::False(), Json::False());
 }
 
 void test::test_number()
@@ -92,6 +105,19 @@ void test::test_number()
 	ss << Json::Number(0.00005);
 	CPPUNIT_ASSERT_EQUAL(std::string("0.000050"), ss.str());
 	ss.str("");
+
+	Json::Number n(5);
+	CPPUNIT_ASSERT_EQUAL(n, n);
+
+	CPPUNIT_ASSERT_EQUAL(Json::Number(), Json::Number());
+	CPPUNIT_ASSERT_EQUAL(Json::Number(uint32_t(5)), Json::Number(uint32_t(5)));
+	CPPUNIT_ASSERT_EQUAL(Json::Number(int32_t(5)), Json::Number(int32_t(5)));
+	CPPUNIT_ASSERT_EQUAL(Json::Number(double(5.0)), Json::Number(double(5.0)));
+
+	CPPUNIT_ASSERT(!(Json::Number(int32_t(5)) == Json::Number(uint32_t(5))));
+	CPPUNIT_ASSERT(!(Json::Number(double(5)) == Json::Number(uint32_t(5))));
+	CPPUNIT_ASSERT(!(Json::Number(int32_t(5)) == Json::Number(double(5))));
+	CPPUNIT_ASSERT(!(Json::Number(0) == Json::Number()));
 }
 
 void test::test_string()
@@ -121,6 +147,14 @@ void test::test_string()
 	);
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
 	ss.str("");
+
+	Json::String s("foo");
+	CPPUNIT_ASSERT_EQUAL(s, s);
+	CPPUNIT_ASSERT_EQUAL(Json::String("foo"), Json::String("foo"));
+	CPPUNIT_ASSERT_EQUAL(Json::String(""), Json::String(""));
+	CPPUNIT_ASSERT_EQUAL(Json::String(), Json::String());
+	CPPUNIT_ASSERT(!(Json::String("Foo") == Json::String("Bar")));
+	CPPUNIT_ASSERT(!(Json::String("Foo") == Json::String()));
 }
 
 void test::test_array_empty()
@@ -177,6 +211,23 @@ void test::test_array_nested()
 		"]"
 	);
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
+void test::test_array_equality()
+{
+	CPPUNIT_ASSERT_EQUAL(Json::Array(), Json::Array());
+	Json::Array a1;
+	CPPUNIT_ASSERT_EQUAL(a1, a1);
+	a1 << 1 << 2 << 3;
+	Json::Array a2(a1);
+	CPPUNIT_ASSERT_EQUAL(a1, a2);
+	Json::Array a3;
+	a3 << 1 << 2;
+	CPPUNIT_ASSERT(!(a3 == a1));
+	CPPUNIT_ASSERT(!(a3 == Json::Array()));
+	Json::Array a4;
+	a1 << 3 << 2 << 1;
+	CPPUNIT_ASSERT(!(a4 == a1));
 }
 
 void test::test_object_empty()
@@ -236,6 +287,39 @@ void test::test_object_nested()
 	);
 
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
+void test::test_object_equality()
+{
+	Json::Object o1;
+	CPPUNIT_ASSERT_EQUAL(o1, o1);
+	o1 << Json::Member("number", 5);
+	o1 << Json::Member("bool", true);
+	o1 << Json::Member("string", "Foo");
+	o1 << Json::Member("array", Json::Array());
+	o1 << Json::Member("whatever", Json::Null());
+
+	CPPUNIT_ASSERT_EQUAL(o1, o1);
+	Json::Object o2(o1);
+	CPPUNIT_ASSERT_EQUAL(o1, o2);
+
+	CPPUNIT_ASSERT(!(o1 == Json::Object()));
+
+	Json::Object o3;
+	o3 << Json::Member("number", 5);
+	o3 << Json::Member("bool", true);
+	o3 << Json::Member("string", "Foo");
+	o3 << Json::Member("array", Json::Array());
+	CPPUNIT_ASSERT(!(o1 == o3));
+
+	// CAVEAT!
+	Json::Object o4;
+	o3 << Json::Member("whatever", Json::Null());
+	o3 << Json::Member("array", Json::Array());
+	o3 << Json::Member("string", "Foo");
+	o3 << Json::Member("bool", true);
+	o3 << Json::Member("number", 5);
+	CPPUNIT_ASSERT(!(o1 == o4));
 }
 
 void test::test_vector()
