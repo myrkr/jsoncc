@@ -191,9 +191,10 @@ public:
 
 	Member & operator=(Member const&);
 
-private:
-	friend std::ostream & ::operator<<(std::ostream &, Member const&);
+	String key() const;
+	Value value() const;
 
+private:
 	String key_;
 	Value value_;
 };

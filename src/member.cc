@@ -57,4 +57,14 @@ Member & Member::operator=(Member const& o)
 	return *this;
 }
 
+String Member::key() const
+{
+	return key_;
+}
+
+Value Member::value() const
+{
+	return value_;
+}
+
 }

@@ -192,7 +192,7 @@ std::ostream & operator<<(std::ostream & os, Json::Array const& array)
 
 std::ostream & operator<<(std::ostream & os, Json::Member const& member)
 {
-	return os << member.key_ << ": " << member.value_;
+	return os << member.key() << ": " << member.value();
 }
 
 std::ostream & operator<<(std::ostream & os, Json::Object const& object)
