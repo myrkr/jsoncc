@@ -207,11 +207,9 @@ public:
 	Object & operator=(Object const&);
 	Object & operator<<(Member const&);
 
-	std::vector<Member> member() const;
+	std::vector<Member> members() const;
 private:
-	typedef std::vector<Member> container;
-	typedef container::const_iterator const_iterator;
-	container member_;
+	std::vector<Member> members_;
 };
 
 class Array {

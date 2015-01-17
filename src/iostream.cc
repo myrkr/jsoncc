@@ -197,7 +197,7 @@ std::ostream & operator<<(std::ostream & os, Json::Member const& member)
 
 std::ostream & operator<<(std::ostream & os, Json::Object const& object)
 {
-	return stream_container(os, "{}", object.member());
+	return stream_container(os, "{}", object.members());
 }
 
 std::ostream & operator<<(std::ostream & os, Json::Value const& value)

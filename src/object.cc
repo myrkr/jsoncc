@@ -29,31 +29,31 @@ namespace Json {
 
 Object::Object()
 :
-	member_()
+	members_()
 { }
 
 Object::Object(Object const& o)
 :
-	member_(o.member_)
+	members_(o.members_)
 { }
 
 Object & Object::operator=(Object const& o)
 {
 	if (&o != this) {
-		member_ = o.member_;
+		members_ = o.members_;
 	}
 	return *this;
 }
 
 Object & Object::operator<<(Member const& member)
 {
-	member_.push_back(member);
+	members_.push_back(member);
 	return *this;
 }
 
-std::vector<Member> Object::member() const
+std::vector<Member> Object::members() const
 {
-	return member_;
+	return members_;
 }
 
 }
