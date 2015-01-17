@@ -16,8 +16,6 @@ enum Baz {
 	BAZ_3,
 };
 
-}
-
 std::ostream & operator<<(std::ostream & os, ::bar const&)
 {
 	return os << "Bar Object";
@@ -37,6 +35,8 @@ std::ostream & operator<<(std::ostream & os, ::Baz baz)
 	}
 
 	return os;
+}
+
 }
 
 // we have to place it here to keep clang++ happy.
@@ -129,7 +129,7 @@ void test::test_custom_type_vector()
 	v.push_back(f);
 
 	std::stringstream ss;
-	ss << v;
+	ss << Json::Value(v);
 
 	std::string expected(
 		"[\n"

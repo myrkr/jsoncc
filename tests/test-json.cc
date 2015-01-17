@@ -330,7 +330,7 @@ void test::test_vector()
 	v.push_back(2);
 	v.push_back(3);
 	v.push_back(4);
-	ss << v;
+	ss << Json::Value(v);
 
 	std::string expected(
 		"[\n"
@@ -353,7 +353,7 @@ void test::test_vector_nested()
 	v.push_back(v1);
 	v.push_back(v1);
 	v.push_back(std::vector<int>());
-	ss << v;
+	ss << Json::Value(v);
 
 	std::string expected(
 		"[\n"

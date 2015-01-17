@@ -148,79 +148,83 @@ std::ostream & stream_container(std::ostream & os, const char delim[3], C const&
 
 }
 
-std::ostream & operator<<(std::ostream & os, Json::Null const&)
+namespace Json {
+
+std::ostream & operator<<(std::ostream & os, Null const&)
 {
 	return os << "null";
 }
 
-std::ostream & operator<<(std::ostream & os, Json::True const&)
+std::ostream & operator<<(std::ostream & os, True const&)
 {
 	return os << "true";
 }
 
-std::ostream & operator<<(std::ostream & os, Json::False const&)
+std::ostream & operator<<(std::ostream & os, False const&)
 {
 	return os << "false";
 }
 
-std::ostream & operator<<(std::ostream & os, Json::Number const& number)
+std::ostream & operator<<(std::ostream & os, Number const& number)
 {
 	switch (number.type()) {
-	case Json::Number::TYPE_INVALID:
+	case Number::TYPE_INVALID:
 		assert(false);
 		break;
-	case Json::Number::TYPE_INT:
+	case Number::TYPE_INT:
 		return os << number.int_value();
-	case Json::Number::TYPE_UINT:
+	case Number::TYPE_UINT:
 		return os << number.uint_value();
-	case Json::Number::TYPE_FP:
+	case Number::TYPE_FP:
 		return os << std::fixed << number.fp_value();
 	}
 
 	return os;
 }
 
-std::ostream & operator<<(std::ostream & os, Json::String const& string)
+std::ostream & operator<<(std::ostream & os, String const& string)
 {
 	return ::quote(os, string.value());
 }
 
-std::ostream & operator<<(std::ostream & os, Json::Array const& array)
+std::ostream & operator<<(std::ostream & os, Array const& array)
 {
 	return stream_container(os, "[]", array.elements());
 }
 
-std::ostream & operator<<(std::ostream & os, Json::Member const& member)
+std::ostream & operator<<(std::ostream & os, Member const& member)
 {
 	return os << member.key() << ": " << member.value();
 }
 
-std::ostream & operator<<(std::ostream & os, Json::Object const& object)
+std::ostream & operator<<(std::ostream & os, Object const& object)
 {
 	return stream_container(os, "{}", object.members());
 }
 
-std::ostream & operator<<(std::ostream & os, Json::Value const& value)
+std::ostream & operator<<(std::ostream & os, Value const& value)
 {
 	switch (value.tag()) {
-	case Json::Value::TAG_INVALID:
+	case Value::TAG_INVALID:
 		assert(false);
 		break;
-	case Json::Value::TAG_TRUE:
+	case Value::TAG_TRUE:
 		return os << value.true_value();
-	case Json::Value::TAG_FALSE:
+	case Value::TAG_FALSE:
 		return os << value.false_value();
-	case Json::Value::TAG_NULL:
+	case Value::TAG_NULL:
 		return os << value.null();
-	case Json::Value::TAG_NUMBER:
+	case Value::TAG_NUMBER:
 		return os << value.number();
-	case Json::Value::TAG_STRING:
+	case Value::TAG_STRING:
 		return os << value.string();
-	case Json::Value::TAG_OBJECT:
+	case Value::TAG_OBJECT:
 		return os << value.object();
-	case Json::Value::TAG_ARRAY:
+	case Value::TAG_ARRAY:
 		return os << value.array();
 	}
 
 	return os;
+}
+
 }

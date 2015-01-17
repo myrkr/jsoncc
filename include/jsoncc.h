@@ -257,16 +257,16 @@ bool operator==(Member const&, Member const&);
 bool operator==(Object const&, Object const&);
 bool operator==(Value const&, Value const&);
 
-}
+std::ostream & operator<<(std::ostream &, Null const&);
+std::ostream & operator<<(std::ostream &, True const&);
+std::ostream & operator<<(std::ostream &, False const&);
+std::ostream & operator<<(std::ostream &, Number const&);
+std::ostream & operator<<(std::ostream &, String const&);
+std::ostream & operator<<(std::ostream &, Array const&);
+std::ostream & operator<<(std::ostream &, Member const&);
+std::ostream & operator<<(std::ostream &, Object const&);
+std::ostream & operator<<(std::ostream &, Value const&);
 
-std::ostream & operator<<(std::ostream &, Json::Null const&);
-std::ostream & operator<<(std::ostream &, Json::True const&);
-std::ostream & operator<<(std::ostream &, Json::False const&);
-std::ostream & operator<<(std::ostream &, Json::Number const&);
-std::ostream & operator<<(std::ostream &, Json::String const&);
-std::ostream & operator<<(std::ostream &, Json::Array const&);
-std::ostream & operator<<(std::ostream &, Json::Member const&);
-std::ostream & operator<<(std::ostream &, Json::Object const&);
-std::ostream & operator<<(std::ostream &, Json::Value const&);
+}
 
 #endif
