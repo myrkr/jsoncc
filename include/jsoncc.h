@@ -221,9 +221,9 @@ public:
 	Array & operator=(Array const&);
 	Array & operator<<(Value const&);
 
-private:
-	friend std::ostream & ::operator<<(std::ostream &, Array const&);
+	std::vector<Value> elements() const;
 
+private:
 	typedef std::vector<Value> container;
 	typedef container::const_iterator const_iterator;
 	container element_;

@@ -51,4 +51,9 @@ Array & Array::operator<<(Value const& value)
 	return *this;
 }
 
+std::vector<Value> Array::elements() const
+{
+	return element_;
+}
+
 }
