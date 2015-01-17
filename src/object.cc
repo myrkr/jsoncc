@@ -51,4 +51,9 @@ Object & Object::operator<<(Member const& member)
 	return *this;
 }
 
+std::vector<Member> Object::member() const
+{
+	return member_;
+}
+
 }

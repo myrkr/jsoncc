@@ -206,9 +206,8 @@ public:
 	Object & operator=(Object const&);
 	Object & operator<<(Member const&);
 
+	std::vector<Member> member() const;
 private:
-	friend std::ostream & ::operator<<(std::ostream &, Object const&);
-
 	typedef std::vector<Member> container;
 	typedef container::const_iterator const_iterator;
 	container member_;
