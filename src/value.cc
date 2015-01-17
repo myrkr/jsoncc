@@ -115,6 +115,46 @@ void Value::set(Array const& array)
 	value_.set(array);
 }
 
+Tag Value::tag() const
+{
+	return value_.tag();
+}
+
+True const& Value::true_value() const
+{
+	return value_.true_value();
+}
+
+False const& Value::false_value() const
+{
+	return value_.false_value();
+}
+
+Null const& Value::null() const
+{
+	return value_.null();
+}
+
+Number const& Value::number() const
+{
+	return value_.number();
+}
+
+String const& Value::string() const
+{
+	return value_.string();
+}
+
+Object const& Value::object() const
+{
+	return value_.object();
+}
+
+Array const& Value::array() const
+{
+	return value_.array();
+}
+
 void ValueFactory<bool>::build(bool const& value, Value & res)
 {
 	if (value) {

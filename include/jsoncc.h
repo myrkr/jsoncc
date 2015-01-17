@@ -192,6 +192,16 @@ public:
 	void set(Object const&);
 	void set(Array const&);
 
+	Tag tag() const;
+
+	True const& true_value() const;
+	False const& false_value() const;
+	Null const& null() const;
+	Number const& number() const;
+	String const& string() const;
+	Object const& object() const;
+	Array const& array() const;
+
 private:
 	friend std::ostream & ::operator<<(std::ostream &, Value const&);
 
