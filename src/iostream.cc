@@ -203,21 +203,21 @@ std::ostream & operator<<(std::ostream & os, Json::Object const& object)
 std::ostream & operator<<(std::ostream & os, Json::Value const& value)
 {
 	switch (value.tag()) {
-	case Json::TAG_INVALID:
+	case Json::Value::TAG_INVALID:
 		break;
-	case Json::TAG_TRUE:
+	case Json::Value::TAG_TRUE:
 		return os << value.true_value();
-	case Json::TAG_FALSE:
+	case Json::Value::TAG_FALSE:
 		return os << value.false_value();
-	case Json::TAG_NULL:
+	case Json::Value::TAG_NULL:
 		return os << value.null();
-	case Json::TAG_NUMBER:
+	case Json::Value::TAG_NUMBER:
 		return os << value.number();
-	case Json::TAG_STRING:
+	case Json::Value::TAG_STRING:
 		return os << value.string();
-	case Json::TAG_OBJECT:
+	case Json::Value::TAG_OBJECT:
 		return os << value.object();
-	case Json::TAG_ARRAY:
+	case Json::Value::TAG_ARRAY:
 		return os << value.array();
 	}
 

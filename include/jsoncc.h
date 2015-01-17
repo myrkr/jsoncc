@@ -105,71 +105,29 @@ private:
 	std::string value_;
 };
 
-enum Tag {
-	TAG_INVALID = 0,
-	TAG_NULL,
-	TAG_TRUE,
-	TAG_FALSE,
-	TAG_NUMBER,
-	TAG_STRING,
-	TAG_OBJECT,
-	TAG_ARRAY,
-};
-
-class TaggedType {
-public:
-	TaggedType();
-	TaggedType(TaggedType const&);
-	TaggedType & operator=(TaggedType const&);
-
-	~TaggedType();
-
-	void set(Null const&);
-	void set(True const&);
-	void set(False const&);
-	void set(Number const&);
-	void set(String const&);
-	void set(Object const&);
-	void set(Array const&);
-
-	Tag tag() const;
-
-	True const& true_value() const;
-	False const& false_value() const;
-	Null const& null() const;
-	Number const& number() const;
-	String const& string() const;
-	Object const& object() const;
-	Array const& array() const;
-
-private:
-	void clone(TaggedType const&);
-	void clear();
-
-	Tag tag_;
-
-	union Type {
-		True *true_;
-		False *false_;
-		Null *null_;
-		Number *number_;
-		String *string_;
-		Object *object_;
-		Array *array_;
-	} type_;
-};
-
 template<typename T> struct ValueFactory;
 
 class Value {
 public:
+	enum Tag {
+		TAG_INVALID = 0,
+		TAG_NULL,
+		TAG_TRUE,
+		TAG_FALSE,
+		TAG_NUMBER,
+		TAG_STRING,
+		TAG_OBJECT,
+		TAG_ARRAY,
+	};
+
 	Value();
 
 	template <typename T>
 	Value(T const& value)
 	:
-		value_()
+		tag_(TAG_INVALID)
 	{
+		clear();
 		ValueFactory<T>::build(value, *this);
 	}
 
@@ -183,6 +141,7 @@ public:
 
 	Value(Value const&);
 	Value & operator=(Value const&);
+	~Value();
 
 	void set(Null const&);
 	void set(True const&);
@@ -203,8 +162,20 @@ public:
 	Array const& array() const;
 
 private:
+	void clone(Value const&);
+	void clear();
 
-	TaggedType value_;
+	Tag tag_;
+
+	union Type {
+		True *true_;
+		False *false_;
+		Null *null_;
+		Number *number_;
+		String *string_;
+		Object *object_;
+		Array *array_;
+	} type_;
 };
 
 class Member {
