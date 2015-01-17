@@ -132,53 +132,53 @@ void Value::clear()
 	memset(&type_, 0, sizeof(Type));
 }
 
-Value::Value(Null const& null)
+Value::Value(Null const&)
 :
-	tag_(TAG_INVALID)
+	tag_(TAG_NULL)
 {
-	set(null);
+	type_.null_ = &NullValue;
 }
 
-Value::Value(True const& true_value)
+Value::Value(True const&)
 :
-	tag_(TAG_INVALID)
+	tag_(TAG_TRUE)
 {
-	set(true_value);
+	type_.true_ = &TrueValue;
 }
 
-Value::Value(False const& false_value)
+Value::Value(False const&)
 :
-	tag_(TAG_INVALID)
+	tag_(TAG_FALSE)
 {
-	set(false_value);
+	type_.false_ = &FalseValue;
 }
 
 Value::Value(Number const& number)
 :
-	tag_(TAG_INVALID)
+	tag_(TAG_NUMBER)
 {
-	set(number);
+	type_.number_ = new Number(number);
 }
 
 Value::Value(String const& string)
 :
-	tag_(TAG_INVALID)
+	tag_(TAG_STRING)
 {
-	set(string);
+	type_.string_ = new String(string);
 }
 
 Value::Value(Object const& object)
 :
-	tag_(TAG_INVALID)
+	tag_(TAG_OBJECT)
 {
-	set(object);
+	type_.object_ = new Object(object);
 }
 
 Value::Value(Array const& array)
 :
-	tag_(TAG_INVALID)
+	tag_(TAG_ARRAY)
 {
-	set(array);
+	type_.array_ = new Array(array);
 }
 
 void Value::set(Null const&)
