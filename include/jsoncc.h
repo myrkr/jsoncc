@@ -203,7 +203,6 @@ public:
 	Array const& array() const;
 
 private:
-	friend std::ostream & ::operator<<(std::ostream &, Value const&);
 
 	TaggedType value_;
 };
