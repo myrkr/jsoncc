@@ -32,28 +32,10 @@
 #include <vector>
 
 namespace Json {
+
 struct Null {};
 struct True {};
 struct False {};
-class Number;
-class String;
-class Array;
-class Member;
-class Object;
-class Value;
-}
-
-std::ostream & operator<<(std::ostream &, Json::Null const&);
-std::ostream & operator<<(std::ostream &, Json::True const&);
-std::ostream & operator<<(std::ostream &, Json::False const&);
-std::ostream & operator<<(std::ostream &, Json::Number const&);
-std::ostream & operator<<(std::ostream &, Json::String const&);
-std::ostream & operator<<(std::ostream &, Json::Array const&);
-std::ostream & operator<<(std::ostream &, Json::Member const&);
-std::ostream & operator<<(std::ostream &, Json::Object const&);
-std::ostream & operator<<(std::ostream &, Json::Value const&);
-
-namespace Json {
 
 class Number {
 public:
@@ -111,6 +93,9 @@ private:
 };
 
 template<typename T> struct ValueFactory;
+
+class Object;
+class Array;
 
 class Value {
 public:
@@ -263,5 +248,15 @@ template<typename T> struct ValueFactory {
 };
 
 }
+
+std::ostream & operator<<(std::ostream &, Json::Null const&);
+std::ostream & operator<<(std::ostream &, Json::True const&);
+std::ostream & operator<<(std::ostream &, Json::False const&);
+std::ostream & operator<<(std::ostream &, Json::Number const&);
+std::ostream & operator<<(std::ostream &, Json::String const&);
+std::ostream & operator<<(std::ostream &, Json::Array const&);
+std::ostream & operator<<(std::ostream &, Json::Member const&);
+std::ostream & operator<<(std::ostream &, Json::Object const&);
+std::ostream & operator<<(std::ostream &, Json::Value const&);
 
 #endif
