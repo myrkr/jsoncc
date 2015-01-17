@@ -147,9 +147,6 @@ private:
 	void clear();
 
 	Tag tag_;
-	static True true_value_;
-	static False False_value_;
-	static Null Null_value_;
 
 	union Type {
 		True *true_;
