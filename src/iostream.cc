@@ -126,6 +126,26 @@ std::ostream & quote(std::ostream & os, std::string const& in)
 	return os << '"';
 }
 
+template <typename C>
+std::ostream & stream_container(std::ostream & os, const char delim[3], C const& c)
+{
+	if (c.empty()) {
+		return os << delim;
+	}
+
+	os << delim[0] << "\n";
+	{
+		indent in(os);
+		std::string sep;
+		typename C::const_iterator it(c.begin());
+		for (; it != c.end(); ++it) {
+			os << sep << *it;
+			sep = ",\n";
+		}
+	}
+	return os << "\n" << delim[1] ;
+}
+
 }
 
 std::ostream & operator<<(std::ostream & os, Json::Null const&)
@@ -167,21 +187,7 @@ std::ostream & operator<<(std::ostream & os, Json::String const& string)
 
 std::ostream & operator<<(std::ostream & os, Json::Array const& array)
 {
-	if (array.element_.empty()) {
-		return os << "[]";
-	}
-
-	os << "[\n";
-	{
-		indent in(os);
-		std::string sep;
-		Json::Array::const_iterator it(array.element_.begin());
-		for (; it != array.element_.end(); ++it) {
-			os << sep << *it;
-			sep = ",\n";
-		}
-	}
-	return os << "\n]";
+	return stream_container(os, "[]", array.element_);
 }
 
 std::ostream & operator<<(std::ostream & os, Json::Member const& member)
@@ -191,21 +197,7 @@ std::ostream & operator<<(std::ostream & os, Json::Member const& member)
 
 std::ostream & operator<<(std::ostream & os, Json::Object const& object)
 {
-	if (object.member_.empty()) {
-		return os << "{}";
-	}
-
-	os << "{\n";
-	{
-		indent in(os);
-		std::string sep;
-		Json::Object::const_iterator it(object.member_.begin());
-		for (; it != object.member_.end(); ++it) {
-			os << sep << *it;
-			sep = ",\n";
-		}
-	}
-	return os << "\n}";
+	return stream_container(os, "{}", object.member_);
 }
 
 std::ostream & operator<<(std::ostream & os, Json::Value const& value)
