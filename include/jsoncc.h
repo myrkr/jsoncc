@@ -99,9 +99,9 @@ public:
 
 	String & operator=(String const&);
 
-private:
-	friend std::ostream & ::operator<<(std::ostream &, String const&);
+	std::string value() const;
 
+private:
 	std::string value_;
 };
 

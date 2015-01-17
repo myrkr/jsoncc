@@ -55,4 +55,9 @@ String & String::operator=(String const& o)
 	return *this;
 }
 
+std::string String::value() const
+{
+	return value_;
+}
+
 }

@@ -182,7 +182,7 @@ std::ostream & operator<<(std::ostream & os, Json::Number const& number)
 
 std::ostream & operator<<(std::ostream & os, Json::String const& string)
 {
-	return ::quote(os, string.value_);
+	return ::quote(os, string.value());
 }
 
 std::ostream & operator<<(std::ostream & os, Json::Array const& array)
