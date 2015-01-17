@@ -165,16 +165,16 @@ std::ostream & operator<<(std::ostream & os, Json::False const&)
 
 std::ostream & operator<<(std::ostream & os, Json::Number const& number)
 {
-	switch (number.type_) {
+	switch (number.type()) {
 	case Json::Number::TYPE_INVALID:
 		assert(false);
 		break;
 	case Json::Number::TYPE_INT:
-		return os << number.value_.int_;
+		return os << number.int_value();
 	case Json::Number::TYPE_UINT:
-		return os << number.value_.uint_;
+		return os << number.uint_value();
 	case Json::Number::TYPE_FP:
-		return os << std::fixed << number.value_.float_;
+		return os << std::fixed << number.fp_value();
 	}
 
 	return os;

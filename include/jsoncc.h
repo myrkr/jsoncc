@@ -57,6 +57,13 @@ namespace Json {
 
 class Number {
 public:
+	enum Type {
+		TYPE_INVALID = 0,
+		TYPE_INT,
+		TYPE_UINT,
+		TYPE_FP,
+	};
+
 	Number();
 	Number(Number const&);
 	Number(uint8_t);
@@ -73,15 +80,13 @@ public:
 
 	Number & operator=(Number const&);
 
-private:
-	friend std::ostream & ::operator<<(std::ostream &, Number const&);
+	Type type() const;
+	uint64_t uint_value() const;
+	int64_t int_value() const;
+	long double fp_value() const;
 
-	enum Type {
-		TYPE_INVALID,
-		TYPE_INT,
-		TYPE_UINT,
-		TYPE_FP,
-	} type_;
+private:
+	Type type_;
 
 	union {
 		uint64_t uint_;

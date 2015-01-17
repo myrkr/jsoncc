@@ -24,6 +24,7 @@
    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <jsoncc.h>
+#include <cassert>
 
 namespace Json {
 
@@ -134,6 +135,29 @@ Number & Number::operator=(Number const& o)
 		value_ = o.value_;
 	}
 	return *this;
+}
+
+Number::Type Number::type() const
+{
+	return type_;
+}
+
+uint64_t Number::uint_value() const
+{
+	assert(type_ == TYPE_UINT);
+	return value_.uint_;
+}
+
+int64_t Number::int_value() const
+{
+	assert(type_ == TYPE_INT);
+	return value_.int_;
+}
+
+long double Number::fp_value() const
+{
+	assert(type_ == TYPE_FP);
+	return value_.float_;
 }
 
 }
