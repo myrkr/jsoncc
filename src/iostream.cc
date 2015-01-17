@@ -204,6 +204,7 @@ std::ostream & operator<<(std::ostream & os, Json::Value const& value)
 {
 	switch (value.tag()) {
 	case Json::Value::TAG_INVALID:
+		assert(false);
 		break;
 	case Json::Value::TAG_TRUE:
 		return os << value.true_value();
