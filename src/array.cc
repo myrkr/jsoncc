@@ -29,31 +29,31 @@ namespace Json {
 
 Array::Array()
 :
-	element_()
+	elements_()
 { }
 
 Array::Array(Array const& o)
 :
-	element_(o.element_)
+	elements_(o.elements_)
 { }
 
 Array & Array::operator=(Array const& o)
 {
 	if (&o != this) {
-		element_ = o.element_;
+		elements_ = o.elements_;
 	}
 	return *this;
 }
 
-Array & Array::operator<<(Value const& value)
+Array & Array::operator<<(Value const& element)
 {
-	element_.push_back(value);
+	elements_.push_back(element);
 	return *this;
 }
 
 std::vector<Value> Array::elements() const
 {
-	return element_;
+	return elements_;
 }
 
 }

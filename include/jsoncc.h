@@ -223,9 +223,7 @@ public:
 	std::vector<Value> elements() const;
 
 private:
-	typedef std::vector<Value> container;
-	typedef container::const_iterator const_iterator;
-	container element_;
+	std::vector<Value> elements_;
 };
 
 template<> struct ValueFactory<bool>        { static void build(bool        const&, Value &); };
