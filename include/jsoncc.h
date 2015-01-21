@@ -202,6 +202,12 @@ public:
 	Array();
 	Array(Array const&);
 
+	template <typename InputIterator>
+	Array(InputIterator first, InputIterator last)
+	:
+		elements_(first, last)
+	{ }
+
 	Array & operator=(Array const&);
 	Array & operator<<(Value const&);
 
@@ -225,15 +231,9 @@ template<> struct ValueFactory<double>      { static void build(double      cons
 template<> struct ValueFactory<long double> { static void build(long double const&, Value &); };
 
 template<typename E> struct ValueFactory<std::vector<E> > {
-	typedef std::vector<E> container;
-
-	static void build(container const& v, Value & res)
+	static void build(std::vector<E> const& v, Value & res)
 	{
-		Json::Array a;
-		typename container::const_iterator it(v.begin());
-		for (; it != v.end(); ++it) {
-			a << *it;
-		}
+		Json::Array a(v.begin(), v.end());
 		res.set(a);
 	}
 };
