@@ -28,6 +28,8 @@
 
 #include <stdint.h>
 
+#include <list>
+#include <set>
 #include <sstream>
 #include <vector>
 
@@ -232,6 +234,22 @@ template<> struct ValueFactory<long double> { static void build(long double cons
 
 template<typename E> struct ValueFactory<std::vector<E> > {
 	static void build(std::vector<E> const& v, Value & res)
+	{
+		Json::Array a(v.begin(), v.end());
+		res.set(a);
+	}
+};
+
+template<typename E> struct ValueFactory<std::list<E> > {
+	static void build(std::list<E> const& v, Value & res)
+	{
+		Json::Array a(v.begin(), v.end());
+		res.set(a);
+	}
+};
+
+template<typename E> struct ValueFactory<std::set<E> > {
+	static void build(std::set<E> const& v, Value & res)
 	{
 		Json::Array a(v.begin(), v.end());
 		res.set(a);

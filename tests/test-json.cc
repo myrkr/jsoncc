@@ -247,6 +247,34 @@ void test::test_array_from_container()
 	CPPUNIT_ASSERT_EQUAL(uint64_t(2), a1.elements()[1].number().uint_value());
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, a1.elements()[2].tag());
 	CPPUNIT_ASSERT_EQUAL(uint64_t(3), a1.elements()[2].number().uint_value());
+
+	std::set<std::string> s;
+	s.insert("foo");
+	s.insert("bar");
+	s.insert("baz");
+
+	Json::Array a2(s.begin(), s.end());
+	CPPUNIT_ASSERT_EQUAL(size_t(3), a2.elements().size());
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, a2.elements()[0].tag());
+	CPPUNIT_ASSERT_EQUAL(std::string("bar"), a2.elements()[0].string().value());
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, a2.elements()[1].tag());
+	CPPUNIT_ASSERT_EQUAL(std::string("baz"), a2.elements()[1].string().value());
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, a2.elements()[2].tag());
+	CPPUNIT_ASSERT_EQUAL(std::string("foo"), a2.elements()[2].string().value());
+
+	std::list<int32_t> l;
+	l.push_back(1);
+	l.push_back(2);
+	l.push_back(3);
+
+	Json::Array a3(l.begin(), l.end());
+	CPPUNIT_ASSERT_EQUAL(size_t(3), a3.elements().size());
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, a3.elements()[0].tag());
+	CPPUNIT_ASSERT_EQUAL(int64_t(1), a3.elements()[0].number().int_value());
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, a3.elements()[1].tag());
+	CPPUNIT_ASSERT_EQUAL(int64_t(2), a3.elements()[1].number().int_value());
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, a3.elements()[2].tag());
+	CPPUNIT_ASSERT_EQUAL(int64_t(3), a3.elements()[2].number().int_value());
 }
 
 void test::test_object_empty()
