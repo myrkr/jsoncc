@@ -68,4 +68,4 @@ install: all
 clean:
 	rm -rf $(TARGET) $(TESTS) $(TEST_LIB) $(ALL_OBJ) $(GCNO) $(GCDA)
 
-.PHONY: all clean
+.PHONY: all clean run_tests run_valgrind run_gdb
