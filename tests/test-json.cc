@@ -15,6 +15,7 @@ private:
 	void test_true();
 	void test_false();
 	void test_number();
+	void test_number_conversions();
 	void test_string();
 	void test_array_empty();
 	void test_array_numbers();
@@ -33,6 +34,7 @@ private:
 	CPPUNIT_TEST(test_true);
 	CPPUNIT_TEST(test_false);
 	CPPUNIT_TEST(test_number);
+	CPPUNIT_TEST(test_number_conversions);
 	CPPUNIT_TEST(test_string);
 	CPPUNIT_TEST(test_array_empty);
 	CPPUNIT_TEST(test_array_numbers);
@@ -116,10 +118,76 @@ void test::test_number()
 	CPPUNIT_ASSERT_EQUAL(Json::Number(int32_t(5)), Json::Number(int32_t(5)));
 	CPPUNIT_ASSERT_EQUAL(Json::Number(double(5.0)), Json::Number(double(5.0)));
 
-	CPPUNIT_ASSERT(!(Json::Number(int32_t(5)) == Json::Number(uint32_t(5))));
-	CPPUNIT_ASSERT(!(Json::Number(double(5)) == Json::Number(uint32_t(5))));
-	CPPUNIT_ASSERT(!(Json::Number(int32_t(5)) == Json::Number(double(5))));
 	CPPUNIT_ASSERT(!(Json::Number(0) == Json::Number()));
+
+	Json::Number n1;
+	n1 = n;
+	CPPUNIT_ASSERT_EQUAL(n, n1);
+	n1 = n1;
+	CPPUNIT_ASSERT_EQUAL(n, n1);
+}
+
+void test::test_number_conversions()
+{
+	Json::Number sn1(int8_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_INT, sn1.type());
+	CPPUNIT_ASSERT_EQUAL(int64_t(5), sn1.int_value());
+
+	Json::Number sn2(int16_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_INT, sn2.type());
+	CPPUNIT_ASSERT_EQUAL(int64_t(5), sn2.int_value());
+
+	Json::Number sn3(int32_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_INT, sn3.type());
+	CPPUNIT_ASSERT_EQUAL(int64_t(5), sn3.int_value());
+
+	Json::Number sn4(int64_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_INT, sn4.type());
+	CPPUNIT_ASSERT_EQUAL(int64_t(5), sn4.int_value());
+
+	CPPUNIT_ASSERT_EQUAL(sn1, sn2);
+	CPPUNIT_ASSERT_EQUAL(sn2, sn3);
+	CPPUNIT_ASSERT_EQUAL(sn3, sn4);
+
+	Json::Number un1(uint8_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_UINT, un1.type());
+	CPPUNIT_ASSERT_EQUAL(uint64_t(5), un1.uint_value());
+
+	Json::Number un2(uint16_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_UINT, un2.type());
+	CPPUNIT_ASSERT_EQUAL(uint64_t(5), un2.uint_value());
+
+	Json::Number un3(uint32_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_UINT, un3.type());
+	CPPUNIT_ASSERT_EQUAL(uint64_t(5), un3.uint_value());
+
+	Json::Number un4(uint64_t(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_UINT, un4.type());
+	CPPUNIT_ASSERT_EQUAL(uint64_t(5), un4.uint_value());
+
+	CPPUNIT_ASSERT_EQUAL(un1, un2);
+	CPPUNIT_ASSERT_EQUAL(un2, un3);
+	CPPUNIT_ASSERT_EQUAL(un3, un4);
+
+	Json::Number fp1(float(5.0));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_FP, fp1.type());
+	CPPUNIT_ASSERT_EQUAL((long double)(5), fp1.fp_value());
+
+	Json::Number fp2(double(5.0));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_FP, fp2.type());
+	CPPUNIT_ASSERT_EQUAL((long double)(5), fp2.fp_value());
+
+	Json::Number fp3((long double)(5.0));
+	CPPUNIT_ASSERT_EQUAL(Json::Number::TYPE_FP, fp3.type());
+	CPPUNIT_ASSERT_EQUAL((long double)(5), fp3.fp_value());
+
+	CPPUNIT_ASSERT_EQUAL(fp1, fp2);
+	CPPUNIT_ASSERT_EQUAL(fp2, fp3);
+
+	// CAVEAT!
+	CPPUNIT_ASSERT(!(sn1 == un1));
+	CPPUNIT_ASSERT(!(sn1 == fp1));
+	CPPUNIT_ASSERT(!(un1 == fp1));
 }
 
 void test::test_string()
