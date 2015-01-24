@@ -137,6 +137,8 @@ void test::test_string()
 	for (int i(0); i < 0x20; ++i) {
 		in.push_back(char(i));
 	}
+	in.push_back('\\');
+	in.push_back('"');
 	ss << Json::String(in);
 
 	std::string expected(
@@ -145,6 +147,8 @@ void test::test_string()
 		"\\b\\t\\n\\u000b\\f\\r\\u000e\\u000f"
 		"\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017"
 		"\\u0018\\u0019\\u001a\\u001b\\u001c\\u001d\\u001e\\u001f"
+		"\\\\"
+		"\\\""
 		"\""
 	);
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
