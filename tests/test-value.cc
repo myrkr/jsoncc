@@ -1,6 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <jsoncc.h>
 
+// LCOV_EXCL_START
 std::ostream & operator<<(std::ostream & os, Json::Value::Tag tag)
 {
 	switch (tag) {
@@ -16,6 +17,7 @@ std::ostream & operator<<(std::ostream & os, Json::Value::Tag tag)
 
 	return os;
 }
+// LCOV_EXCL_STOP
 
 namespace unittests {
 namespace value {
