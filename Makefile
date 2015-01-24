@@ -26,7 +26,7 @@ OBJ = $(SRC:%.cc=%.o)
 
 TEST_SRC = $(wildcard tests/*.cc)
 TEST_OBJ = $(TEST_SRC:%.cc=%.o)
-TEST_LIB = libjsoncc.a
+TEST_LIB = libjsoncc_test.a
 
 ALL_OBJ = $(OBJ) $(TEST_OBJ)
 GCNO = $(ALL_OBJ:%.o=%.gcno)
