@@ -6,3 +6,4 @@ test_*
 .clang_complete
 *.gcno
 *.gcda
+coverage/*

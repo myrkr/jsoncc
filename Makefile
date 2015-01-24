@@ -59,6 +59,11 @@ run_valgrind: $(TESTS)
 run_gdb: $(TESTS)
 	LD_LIBRARY_PATH=. gdb ./$(TESTS)
 
+coverage: run_tests
+	lcov -c -b . -d src -d tests --output-file coverage/lcov.raw; \
+	lcov -r coverage/lcov.raw "/usr/include/*" --output-file coverage/lcov.info; \
+	genhtml coverage/lcov.info --output-directory coverage
+
 install: all
 	install -d $(PREFIX)/lib
 	install -m 755 $(TARGET) $(PREFIX)/lib/
@@ -66,6 +71,6 @@ install: all
 	install -m 644 include/*.h $(PREFIX)/include/
 
 clean:
-	rm -rf $(TARGET) $(TESTS) $(TEST_LIB) $(ALL_OBJ) $(GCNO) $(GCDA)
+	rm -rf $(TARGET) $(TESTS) $(TEST_LIB) $(ALL_OBJ) $(GCNO) $(GCDA) coverage/*
 
-.PHONY: all clean run_tests run_valgrind run_gdb
+.PHONY: all clean run_tests run_valgrind run_gdb coverage
