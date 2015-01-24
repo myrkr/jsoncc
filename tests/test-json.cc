@@ -161,6 +161,12 @@ void test::test_string()
 	CPPUNIT_ASSERT_EQUAL(Json::String(), Json::String());
 	CPPUNIT_ASSERT(!(Json::String("Foo") == Json::String("Bar")));
 	CPPUNIT_ASSERT(!(Json::String("Foo") == Json::String()));
+
+	Json::String s1;
+	s1 = s;
+	CPPUNIT_ASSERT_EQUAL(s, s1);
+	s1 = s1;
+	CPPUNIT_ASSERT_EQUAL(s, s1);
 }
 
 void test::test_array_empty()
