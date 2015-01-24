@@ -230,6 +230,11 @@ void test::test_array_equality()
 	Json::Array a4;
 	a1 << 3 << 2 << 1;
 	CPPUNIT_ASSERT(!(a4 == a1));
+	Json::Array a5;
+	a5 = a4;
+	CPPUNIT_ASSERT_EQUAL(a4, a5);
+	a5 = a5;
+	CPPUNIT_ASSERT_EQUAL(a4, a5);
 }
 
 void test::test_array_from_container()
