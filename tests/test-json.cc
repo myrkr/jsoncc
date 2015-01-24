@@ -376,6 +376,12 @@ void test::test_object_equality()
 	o3 << Json::Member("bool", true);
 	o3 << Json::Member("number", 5);
 	CPPUNIT_ASSERT(!(o1 == o4));
+
+	Json::Object o5;
+	o5 = o4;
+	CPPUNIT_ASSERT_EQUAL(o5, o4);
+	o5 = o5;
+	CPPUNIT_ASSERT_EQUAL(o5, o4);
 }
 
 void test::test_vector()
