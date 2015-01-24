@@ -79,6 +79,9 @@ void test::test_invalid_type()
 
 void test::test_null_type()
 {
+	Json::Value t0((Json::Null()));
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NULL, t0.tag());
+
 	Json::Value t1;
 	t1.set(Json::Null());
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NULL, t1.tag());
@@ -101,6 +104,9 @@ void test::test_null_type()
 
 void test::test_true_type()
 {
+	Json::Value t0((Json::True()));
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, t0.tag());
+
 	Json::Value t1;
 	t1.set(Json::True());
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, t1.tag());
@@ -123,6 +129,9 @@ void test::test_true_type()
 
 void test::test_false_type()
 {
+	Json::Value t0((Json::False()));
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_FALSE, t0.tag());
+
 	Json::Value t1;
 	t1.set(Json::False());
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_FALSE, t1.tag());
@@ -145,6 +154,9 @@ void test::test_false_type()
 
 void test::test_number_type()
 {
+	Json::Value t0(Json::Number(5));
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, t0.tag());
+
 	Json::Value t1;
 	t1.set(Json::Number(5));
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, t1.tag());
@@ -167,6 +179,9 @@ void test::test_number_type()
 
 void test::test_string_type()
 {
+	Json::Value t0(Json::String("foo"));
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, t0.tag());
+
 	Json::Value t1;
 	t1.set(Json::String("foo"));
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, t1.tag());
@@ -189,6 +204,9 @@ void test::test_string_type()
 
 void test::test_object_type()
 {
+	Json::Value t0((Json::Object()));
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_OBJECT, t0.tag());
+
 	Json::Value t1;
 	t1.set(Json::Object());
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_OBJECT, t1.tag());
@@ -211,6 +229,9 @@ void test::test_object_type()
 
 void test::test_array_type()
 {
+	Json::Value t0((Json::Array()));
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_ARRAY, t0.tag());
+
 	Json::Value t1;
 	t1.set(Json::Array());
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_ARRAY, t1.tag());
