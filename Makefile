@@ -6,16 +6,16 @@ LDFLAGS = -L.
 CPPFLAGS = -Iinclude
 
 ifeq ($(JSON_DEBUG),1)
-CXXFLAGS += -g -O0
+DEBUG_CXXFLAGS += -g -O0
 else
-CXXFLAGS += -O2
+DEBUG_CXXFLAGS += -O2
 endif
 
 PREFIX ?= /usr/local
 
 DEPS = cppunit
 
-CXXFLAGS += $(shell pkg-config --cflags $(DEPS)) -fPIC
+CXXFLAGS += $(shell pkg-config --cflags $(DEPS))
 LIBS = -Wl,--as-needed $(shell pkg-config --libs $(DEPS))
 
 TARGET = libjsoncc.so
@@ -23,12 +23,13 @@ TESTS = test_jsoncc
 
 SRC = $(wildcard src/*.cc)
 OBJ = $(SRC:%.cc=%.o)
+COV_OBJ = $(SRC:%.cc=%.cov.o)
 
 TEST_SRC = $(wildcard tests/*.cc)
-TEST_OBJ = $(TEST_SRC:%.cc=%.o)
+TEST_OBJ = $(TEST_SRC:%.cc=%.cov.o)
 TEST_LIB = libjsoncc_test.a
 
-ALL_OBJ = $(OBJ) $(TEST_OBJ)
+ALL_OBJ = $(OBJ) $(TEST_OBJ) $(COV_OBJ)
 GCNO = $(ALL_OBJ:%.o=%.gcno)
 GCDA = $(ALL_OBJ:%.o=%.gcda)
 
@@ -37,11 +38,17 @@ all: $(TARGET) $(TESTS)
 $(TARGET): $(OBJ)
 	$(CXX) -o $@ $(OBJ) $(LDFLAGS) -shared $(LIBS)
 
-$(TEST_LIB): $(OBJ)
+$(TEST_LIB): $(COV_OBJ)
 	ar rcs $@ $^
 
+%.cov.o : %.cc
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -O0 -g --coverage -c $< -o $@
+
+%.o : %.cc
+	$(CXX) $(CXXFLAGS) $(DEBUG_CXXFLAGS) $(CPPFLAGS) -fPIC -c $< -o $@
+
 $(TESTS): $(TEST_LIB) $(TEST_OBJ)
-	$(CXX) -o $@ $(TEST_OBJ) $(TEST_LIB) $(LDFLAGS) $(LIBS)
+	$(CXX) -o $@ $(TEST_OBJ) $(TEST_LIB) $(LDFLAGS) --coverage $(LIBS)
 
 run_tests: $(TESTS)
 	./$(TESTS)
@@ -59,6 +66,6 @@ install: all
 	install -m 644 include/*.h $(PREFIX)/include/
 
 clean:
-	rm -rf $(OBJ) $(TARGET) $(TEST_OBJ) $(TESTS) $(TEST_LIB) $(GCNO) $(GCDA)
+	rm -rf $(TARGET) $(TESTS) $(TEST_LIB) $(ALL_OBJ) $(GCNO) $(GCDA)
 
 .PHONY: all clean
