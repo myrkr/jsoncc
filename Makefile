@@ -5,7 +5,7 @@ CXXFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -L.
 CPPFLAGS = -Iinclude
 
-ifeq ($(JSON_DEBUG),1)
+ifeq ($(JSONCC_DEBUG),1)
 DEBUG_CXXFLAGS += -g -O0
 else
 DEBUG_CXXFLAGS += -O2
