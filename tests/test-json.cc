@@ -1,6 +1,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <jsoncc.h>
 
+#include "equality.h"
+
 namespace unittests {
 namespace json {
 

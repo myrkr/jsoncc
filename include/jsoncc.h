@@ -265,16 +265,6 @@ template<typename T> struct ValueFactory {
 	}
 };
 
-bool operator==(Null const&, Null const&);
-bool operator==(True const&, True const&);
-bool operator==(False const&, False const&);
-bool operator==(Number const&, Number const&);
-bool operator==(String const&, String const&);
-bool operator==(Array const&, Array const&);
-bool operator==(Member const&, Member const&);
-bool operator==(Object const&, Object const&);
-bool operator==(Value const&, Value const&);
-
 std::ostream & operator<<(std::ostream &, Null const&);
 std::ostream & operator<<(std::ostream &, True const&);
 std::ostream & operator<<(std::ostream &, False const&);

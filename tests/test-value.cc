@@ -1,6 +1,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <jsoncc.h>
 
+#include "equality.h"
+
 // LCOV_EXCL_START
 std::ostream & operator<<(std::ostream & os, Json::Value::Tag tag)
 {
