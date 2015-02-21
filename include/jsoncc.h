@@ -33,6 +33,8 @@
 #include <sstream>
 #include <vector>
 
+#include <iostream>
+
 namespace Json {
 
 struct Null {};
@@ -119,6 +121,7 @@ public:
 	:
 		tag_(TAG_INVALID)
 	{
+		std::cerr << __PRETTY_FUNCTION__ << "\n";
 		clear();
 		ValueFactory<T>::build(value, *this);
 	}
@@ -259,6 +262,7 @@ template<typename E> struct ValueFactory<std::set<E> > {
 template<typename T> struct ValueFactory {
 	static void build(T const& v, Value & res)
 	{
+		std::cerr << __PRETTY_FUNCTION__ << "\n";
 		std::stringstream ss;
 		ss << v;
 		res.set(ss.str());
