@@ -16,11 +16,6 @@ enum Baz {
 	BAZ_3,
 };
 
-std::ostream & operator<<(std::ostream & os, ::bar const&)
-{
-	return os << "Bar Object";
-}
-
 std::ostream & operator<<(std::ostream & os, ::foo const&)
 {
 	return os << "Foo Object";
