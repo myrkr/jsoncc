@@ -27,6 +27,7 @@
 #define JSONCC_H
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <list>
 #include <set>
@@ -116,12 +117,18 @@ public:
 
 	Value();
 
+	static size_t ncall;
+
 	template <typename T>
 	Value(T const& value)
 	:
 		tag_(TAG_INVALID)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "\n";
+		std::cerr << ncall << ":" << __PRETTY_FUNCTION__ << "\n";
+		if (++ncall > 10) {
+			abort();
+		}
+
 		clear();
 		ValueFactory<T>::build(value, *this); // xxx
 	}

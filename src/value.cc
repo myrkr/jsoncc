@@ -33,6 +33,8 @@ static True TrueValue;
 static False FalseValue;
 static Null NullValue;
 
+size_t Value::ncall = 0;
+
 Value::Value()
 :
 	tag_(TAG_INVALID)
