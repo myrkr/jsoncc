@@ -45,7 +45,7 @@ template<> struct ValueFactory< ::foo> {
 	static void build(foo const& f, Value & res)
 	{
 		Json::Object o;
-		o << Json::Member("a", f.a);
+		o << Json::Member("a", Json::Number(f.a));
 		o << Json::Member("b", f.b);
 		o << Json::Member("c", f.c);
 		res.set(o);
@@ -146,7 +146,7 @@ void test::test_streamable_object()
 	::bar b;
 
 	std::stringstream ss;
-	ss << Json::Value(b);
+	ss << Json::Value(b); // xxx 0
 
 	std::string expected("\"Bar Object\"");
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());

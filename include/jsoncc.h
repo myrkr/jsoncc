@@ -130,7 +130,7 @@ public:
 		}
 
 		clear();
-		ValueFactory<T>::build(value, *this); // xxx
+		ValueFactory<T>::build(value, *this); // xxx 1
 	}
 
 	Value(Null const&);
@@ -271,7 +271,9 @@ template<typename T> struct ValueFactory {
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "\n";
 		std::stringstream ss;
-		ss << v;                      // xxxx
+		ss << v;                      // xxxx 2 this constructs a new Json::Value
+						// from v ... if it can't find a "better"
+						// std::stream & operator( ..., T const&)
 		res.set(ss.str());
 	}
 };
