@@ -1,5 +1,10 @@
 #include <cppunit/extensions/HelperMacros.h>
 
+// we have to place it here to keep clang++ happy.
+// It will warn about unused std::ostream & operator<<(...)
+// for the above otherwise...
+#include <jsoncc.h>
+
 namespace {
 
 struct foo {
@@ -15,6 +20,13 @@ enum Baz {
 	BAZ_2,
 	BAZ_3,
 };
+
+#if 1
+std::ostream & operator<<(std::ostream & os, ::bar const&)
+{
+	return os << "Bar Object";
+}
+#endif
 
 std::ostream & operator<<(std::ostream & os, ::foo const&)
 {
@@ -33,11 +45,6 @@ std::ostream & operator<<(std::ostream & os, ::Baz baz)
 }
 
 }
-
-// we have to place it here to keep clang++ happy.
-// It will warn about unused std::ostream & operator<<(...)
-// for the above otherwise...
-#include <jsoncc.h>
 
 namespace Json {
 

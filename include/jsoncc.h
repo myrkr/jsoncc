@@ -271,9 +271,30 @@ template<typename T> struct ValueFactory {
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "\n";
 		std::stringstream ss;
-		operator<<(ss, v);           // xxxx 2 this constructs a new Json::Value
-						// from v ... if it can't find a "better"
-						// std::stream & operator( ..., T const&)
+
+		// xxxx 2 this constructs a new Json::Value
+		// from v ... if it can't find a "better"
+		// std::stream & operator( ..., T const&)
+		operator<<(ss, v);
+
+		// 1. the type an the second argument is dependent on a template parameter
+		//    like described in https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Name-lookup.html#Name-lookup
+		//    so we may assume it's looked up at the time the class is instantiated.
+		// 2. As candidates we obviously have:
+		//    a) std::ostream & operator<<(std::ostream &, T const&)
+		//    b) std::ostream & operator<<(std::ostream &, Json::Value const&)
+		// 3. for a) ADL should kick in so Json::, std:: and the namespace of T sould be searched
+		//    for b) the template Json::Value<T> should be instantiated converting whatever T is
+		//           to a Json::Value leading to the recursion
+		//
+
+		// g++ will compile this using
+		// std::ostream & operator<<(std::ostream &, Value const&);
+		// clang++ will barf. If std::ostream & operator<<(std::ostream &, Json::Value const&)
+		// is defined at this point (before template instantiation) both compilers
+		// will happily use it.
+		// ss << v;
+
 		res.set(ss.str());
 	}
 };
