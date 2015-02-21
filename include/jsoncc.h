@@ -271,7 +271,7 @@ template<typename T> struct ValueFactory {
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "\n";
 		std::stringstream ss;
-		ss << v;                      // xxxx 2 this constructs a new Json::Value
+		operator<<(ss, v);           // xxxx 2 this constructs a new Json::Value
 						// from v ... if it can't find a "better"
 						// std::stream & operator( ..., T const&)
 		res.set(ss.str());
