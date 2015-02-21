@@ -260,7 +260,7 @@ template<typename T> struct ValueFactory {
 	static void build(T const& v, Value & res)
 	{
 		std::stringstream ss;
-		ss << v;
+		operator<<(ss, v);
 		res.set(ss.str());
 	}
 };
