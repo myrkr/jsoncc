@@ -70,10 +70,7 @@ private:
 	void test_streamable_enum();
 
 	CPPUNIT_TEST_SUITE(test);
-	CPPUNIT_TEST(test_custom_type);
-	CPPUNIT_TEST(test_custom_type_vector);
 	CPPUNIT_TEST(test_streamable_object);
-	CPPUNIT_TEST(test_streamable_enum);
 	CPPUNIT_TEST_SUITE_END();
 };
 

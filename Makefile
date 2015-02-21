@@ -25,7 +25,7 @@ SRC = $(wildcard src/*.cc)
 OBJ = $(SRC:%.cc=%.o)
 COV_OBJ = $(SRC:%.cc=%.cov.o)
 
-TEST_SRC = $(wildcard tests/*.cc)
+TEST_SRC = tests/main.cc tests/test-custom-types.cc
 TEST_OBJ = $(TEST_SRC:%.cc=%.cov.o)
 TEST_LIB = libjsoncc_test.a
 
