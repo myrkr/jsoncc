@@ -123,7 +123,7 @@ public:
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "\n";
 		clear();
-		ValueFactory<T>::build(value, *this);
+		ValueFactory<T>::build(value, *this); // xxx
 	}
 
 	Value(Null const&);
@@ -264,7 +264,7 @@ template<typename T> struct ValueFactory {
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "\n";
 		std::stringstream ss;
-		ss << v;
+		ss << v;                      // xxxx
 		res.set(ss.str());
 	}
 };

@@ -1,4 +1,4 @@
-JASON_DEBUG ?=
+JASON_DEBUG ?= 1
 
 CXX = g++
 CXXFLAGS = -Wall -Wextra -Werror
