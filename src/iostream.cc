@@ -91,7 +91,6 @@ private:
 
 std::ostream & uescape(std::ostream & os)
 {
-	auto_ios_flags restore(os);
 	return os << "\\u" << std::setw(4) << std::hex << std::setfill('0');
 }
 
@@ -108,7 +107,10 @@ std::ostream & quote(std::ostream & os, std::string const& in)
 		case 0x14: case 0x15: case 0x16: case 0x17: case 0x18:
 		case 0x19: case 0x1a: case 0x1b: case 0x1c: case 0x1d:
 		case 0x1e: case 0x1f:
-			os << uescape << static_cast<int>(*it);
+			{
+				auto_ios_flags restore(os);
+				os << uescape << static_cast<int>(*it);
+			}
 			break;
 		case 0x08:
 			os << "\\b";
