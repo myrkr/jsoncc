@@ -78,21 +78,6 @@ int indent::overflow(int ch)
 	return dest_->sputc(ch);
 }
 
-class auto_ios_flags {
-public:
-	auto_ios_flags(std::ostream & os)
-	: os_(os), flags_(os.flags()) { }
-
-	~auto_ios_flags() { os_.flags(flags_); }
-private:
-	std::ostream & os_;
-	std::ios::fmtflags flags_;
-};
-
-std::ostream & uescape(std::ostream & os)
-{
-	return os << "\\u" << std::setw(4) << std::hex << std::setfill('0');
-}
 
 std::ostream & quote(std::ostream & os, std::string const& in)
 {
@@ -100,39 +85,25 @@ std::ostream & quote(std::ostream & os, std::string const& in)
 	std::string::const_iterator it(in.begin());
 	for (; it != in.end(); ++it) {
 		switch (*it) {
-		case 0x00: case 0x01: case 0x02: case 0x03: case 0x04:
-		case 0x05: case 0x06: case 0x07: /* 0x08 */ /* 0x09 */
-		/* 0x0a */ case 0x0b: /* 0x0c */ /* 0x0d */ case 0x0e:
-		case 0x0f: case 0x10: case 0x11: case 0x12: case 0x13:
-		case 0x14: case 0x15: case 0x16: case 0x17: case 0x18:
-		case 0x19: case 0x1a: case 0x1b: case 0x1c: case 0x1d:
-		case 0x1e: case 0x1f:
-			{
-				auto_ios_flags restore(os);
-				os << uescape << static_cast<int>(*it);
-			}
-			break;
-		case 0x08:
-			os << "\\b";
-			break;
-		case 0x09:
-			os << "\\t";
-			break;
-		case 0x0a:
-			os << "\\n";
-			break;
-		case 0x0c:
-			os << "\\f";
-			break;
-		case 0x0d:
-			os << "\\r";
-			break;
-		case '"':
-			os << "\\\"";
-			break;
-		case '\\':
-			os << "\\\\";
-			break;
+#define ESCAPE(val, sym) case val: os << "\\" sym; break
+		ESCAPE(0x00, "u0000"); ESCAPE(0x01, "u0001");
+		ESCAPE(0x02, "u0002"); ESCAPE(0x03, "u0003");
+		ESCAPE(0x04, "u0004"); ESCAPE(0x05, "u0005");
+		ESCAPE(0x06, "u0006"); ESCAPE(0x07, "u0007");
+		ESCAPE(0x08, "b");     ESCAPE(0x09, "t");
+		ESCAPE(0x0a, "n");     ESCAPE(0x0b, "u000b");
+		ESCAPE(0x0c, "f");     ESCAPE(0x0d, "r");
+		ESCAPE(0x0e, "u000e"); ESCAPE(0x0f, "u000f");
+		ESCAPE(0x10, "u0010"); ESCAPE(0x11, "u0011");
+		ESCAPE(0x12, "u0012"); ESCAPE(0x13, "u0013");
+		ESCAPE(0x14, "u0014"); ESCAPE(0x15, "u0015");
+		ESCAPE(0x16, "u0016"); ESCAPE(0x17, "u0017");
+		ESCAPE(0x18, "u0018"); ESCAPE(0x19, "u0019");
+		ESCAPE(0x1a, "u001a"); ESCAPE(0x1b, "u001b");
+		ESCAPE(0x1c, "u001c"); ESCAPE(0x1d, "u001d");
+		ESCAPE(0x1e, "u001e"); ESCAPE(0x1f, "u001f");
+		ESCAPE(0x22, "\"");    ESCAPE(0x5c, "\\");
+#undef ESCAPE
 		default:
 			os << *it;
 		}
