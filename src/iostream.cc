@@ -78,8 +78,20 @@ int indent::overflow(int ch)
 	return dest_->sputc(ch);
 }
 
+class auto_ios_flags {
+public:
+	auto_ios_flags(std::ostream & os)
+	: os_(os), flags_(os.flags()) { }
+
+	~auto_ios_flags() { os_.flags(flags_); }
+private:
+	std::ostream & os_;
+	std::ios::fmtflags flags_;
+};
+
 std::ostream & uescape(std::ostream & os)
 {
+	auto_ios_flags restore(os);
 	return os << "\\u" << std::setw(4) << std::hex << std::setfill('0');
 }
 
