@@ -3,9 +3,9 @@
 
 namespace Json {
 
-class Null;
-class True;
-class False;
+struct Null;
+struct True;
+struct False;
 class Number;
 class String;
 class Array;
