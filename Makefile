@@ -1,6 +1,6 @@
 JASON_DEBUG ?=
 
-CXX = g++
+CXX ?= g++
 CXXFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -L.
 CPPFLAGS = -Iinclude
