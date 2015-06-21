@@ -35,17 +35,17 @@ Utf8Stream::State Utf8Stream::state() const
 
 int Utf8Stream::getc()
 {
-	if (bad_) {
-		return SBAD;
-	}
-
 	if (pos_ == len_) {
 		eof_ = true;
 		return SEOF;
 	}
 
 	uint8_t c(buf_[pos_]);
-	assert(c != '\0');
+	if (bad_ || c == '\0') {
+		bad_ = true;
+		return SBAD;
+	}
+
 	++pos_;
 	return c;
 }
