@@ -147,8 +147,7 @@ void TokenStream::scan_number()
 	uint64_t mantissa(0);
 	size_t digits(0);
 	size_t point(0);
-	bool done(false);
-	for (; !done; c = stream_.getc()) {
+	for (;;) {
 		switch (c) {
 		case '.':
 			if (!point) {
@@ -166,10 +165,13 @@ void TokenStream::scan_number()
 			}
 			break;
 		default:
-			done = true;
-			break;
+			stream_.ungetc();
+			goto mantissa_out;
 		}
+
+		c = stream_.getc();
 	}
+mantissa_out:
 
 /*
 	bool eminus(false);
