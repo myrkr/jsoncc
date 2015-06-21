@@ -57,7 +57,11 @@ void TokenStream::scan()
 		c = stream_.getc();
 	} while (is_ws(c));
 
-	if (stream_.state() != Utf8Stream::SGOOD) {
+	if (c == int(Utf8Stream::SEOF)) {
+		return;
+	}
+
+	if (stream_.state() == Utf8Stream::SBAD) {
 		return;
 	}
 
