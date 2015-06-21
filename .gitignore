@@ -1,0 +1,9 @@
+*.ghc
+*.o
+*.so
+*.a
+test_*
+.clang_complete
+*.gcno
+*.gcda
+coverage/*
