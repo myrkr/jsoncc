@@ -7,6 +7,7 @@
 #define JSONP_TOKEN_STREAM_H
 
 #include <iosfwd>
+#include <inttypes.h>
 
 namespace jsonp {
 
@@ -27,7 +28,33 @@ public:
 		NUMBER          = '0',
 	} type;
 
-	Token() : type(INVALID) { }
+	enum NumberType {
+		NONE,
+		INT,
+		FLOAT,
+	} number_type;
+
+	int64_t int_value;
+	long double float_value;
+	std::string str_value;
+
+	Token()
+	:
+		type(INVALID),
+		number_type(NONE),
+		int_value(0),
+		float_value(0.0L),
+		str_value()
+	{ }
+
+	void reset()
+	{
+		type = INVALID;
+		number_type = NONE;
+		int_value = 0;
+		float_value = 0.0L;
+		str_value.clear();
+	}
 };
 
 std::ostream & operator<<(std::ostream &, Token::Type);
