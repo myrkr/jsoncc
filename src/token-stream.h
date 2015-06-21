@@ -15,7 +15,7 @@ public:
 	enum Type {
 		INVALID         = '\0',
 		BEGIN_ARRAY     = '[',
-		BEGIN_OBJECT    = '}',
+		BEGIN_OBJECT    = '{',
 		END_ARRAY       = ']',
 		END_OBJECT      = '}',
 		NAME_SEPARATOR  = ':',
