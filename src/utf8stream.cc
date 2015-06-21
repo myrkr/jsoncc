@@ -5,6 +5,8 @@
 */
 #include <inttypes.h>
 
+#include <cassert>
+
 #include "utf8stream.h"
 
 namespace jsonp {
@@ -14,7 +16,8 @@ Utf8Stream::Utf8Stream(const char *buf, size_t len)
 	buf_(buf),
 	len_(len),
 	pos_(0),
-	bad_(false)
+	bad_(false),
+	eof_(false)
 { }
 
 Utf8Stream::State Utf8Stream::state() const
@@ -23,7 +26,7 @@ Utf8Stream::State Utf8Stream::state() const
 		return SBAD;
 	}
 
-	if (len_ == pos_) {
+	if (eof_) {
 		return SEOF;
 	}
 
@@ -32,17 +35,24 @@ Utf8Stream::State Utf8Stream::state() const
 
 int Utf8Stream::getc()
 {
-	State s(state());
-	if (s != SGOOD) {
-		return s;
+	if (bad_) {
+		return SBAD;
 	}
 
-	return (uint8_t)buf_[pos_++];
+	if (pos_ == len_) {
+		eof_ = true;
+		return SEOF;
+	}
+
+	uint8_t c(buf_[pos_]);
+	assert(c != '\0');
+	++pos_;
+	return c;
 }
 
 void Utf8Stream::ungetc()
 {
-	if (pos_ != 0 && state() != SBAD) {
+	if (pos_ != 0 && !bad_ && !eof_) {
 		--pos_;
 	}
 }

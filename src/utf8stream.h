@@ -28,6 +28,7 @@ private:
 	size_t len_;
 	size_t pos_;
 	bool bad_;
+	bool eof_;
 };
 
 }

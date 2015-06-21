@@ -15,11 +15,13 @@ private:
 	void test_empty();
 	void test_onebyte();
 	void test_simple();
+	void test_int_array();
 
 	CPPUNIT_TEST_SUITE(test);
 	CPPUNIT_TEST(test_empty);
 	CPPUNIT_TEST(test_onebyte);
 	CPPUNIT_TEST(test_simple);
+	CPPUNIT_TEST(test_int_array);
 	CPPUNIT_TEST_SUITE_END();
 };
 
@@ -39,7 +41,7 @@ using namespace jsonp;
 void test::test_empty()
 {
 	Utf8Stream us(NULL, 0);
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SGOOD, us.state());
 	CPPUNIT_ASSERT_EQUAL(int(Utf8Stream::SEOF), us.getc());
 	us.ungetc();
 	CPPUNIT_ASSERT_EQUAL(int(Utf8Stream::SEOF), us.getc());
@@ -55,9 +57,6 @@ void test::test_onebyte()
 	CPPUNIT_ASSERT_EQUAL(int('X'), us.getc());
 	CPPUNIT_ASSERT_EQUAL(int(Utf8Stream::SEOF), us.getc());
 	us.ungetc();
-	us.ungetc();
-	us.ungetc();
-	CPPUNIT_ASSERT_EQUAL(int('X'), us.getc());
 	CPPUNIT_ASSERT_EQUAL(int(Utf8Stream::SEOF), us.getc());
 }
 
@@ -85,9 +84,20 @@ void test::test_simple()
 	CPPUNIT_ASSERT_EQUAL(int('d'), us.getc());
 	CPPUNIT_ASSERT_EQUAL(int('!'), us.getc());
 	CPPUNIT_ASSERT_EQUAL(int(Utf8Stream::SEOF), us.getc());
+}
+
+void test::test_int_array()
+{
+	char data[] = "[0,-1,20]";
+	Utf8Stream us(data, sizeof(data) - 1);
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SGOOD, us.state());
+	CPPUNIT_ASSERT_EQUAL(int('['), us.getc());
+	CPPUNIT_ASSERT_EQUAL(int('0'), us.getc());
 	us.ungetc();
-	CPPUNIT_ASSERT_EQUAL(int('!'), us.getc());
-	CPPUNIT_ASSERT_EQUAL(int(Utf8Stream::SEOF), us.getc());
+	CPPUNIT_ASSERT_EQUAL(int('0'), us.getc());
+	CPPUNIT_ASSERT_EQUAL(int(','), us.getc());
+	us.ungetc();
+	CPPUNIT_ASSERT_EQUAL(int(','), us.getc());
 }
 
 }}
