@@ -6,6 +6,8 @@
 #ifndef JSONP_TOKEN_STREAM_H
 #define JSONP_TOKEN_STREAM_H
 
+#include <iosfwd>
+
 namespace jsonp {
 
 class Token {
@@ -27,6 +29,8 @@ public:
 
 	Token() : type(INVALID) { }
 };
+
+std::ostream & operator<<(std::ostream &, Token::Type);
 
 class Utf8Stream;
 
