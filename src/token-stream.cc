@@ -70,9 +70,6 @@ void TokenStream::scan()
 	} catch (std::runtime_error const& e) {
 		throw;
 	}
-
-	// error
-	assert(false && "implement error handling");
 }
 
 TokenStream::scanner TokenStream::select_scanner(int c)
