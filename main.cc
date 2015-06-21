@@ -1,58 +1,6 @@
 #include <string>
 #include <inttypes.h>
 
-class Utf8Stream {
-public:
-	enum State {
-		GOOD = 0,
-		EOF = -1,
-		BAD = -2,
-	};
-
-	Utf8Stream(const char *buf, size_t len)
-	:
-		buf_(buf),
-		len_(len),
-		pos_(0),
-		bad_(false)
-	{ }
-
-	State state() const
-	{
-		if (bad_) {
-			return BAD;
-		}
-
-		if (len_ == pos_) {
-			return EOF;
-		}
-
-		return GOOD;
-	}
-
-	int getc()
-	{
-		State state(state());
-		if (state != GOOD) {
-			return state;
-		}
-
-		return (uint8_t)buf_[pos_++];
-	}
-
-	void ungetc()
-	{
-		if (pos_ != 0 && state() != BAD) {
-			--pos_;
-		}
-	}
-
-	const char *buf_;
-	size_t len_;
-	size_t pos_;
-	bool bad_;
-};
-
 bool is_ws(int c)
 {
 	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
