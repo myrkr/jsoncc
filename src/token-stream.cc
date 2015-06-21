@@ -101,6 +101,7 @@ TokenStream::scanner TokenStream::select_scanner(int c)
 	case '0': case '1': case '2': case '3': case '4':
 	case '5': case '6': case '7': case '8': case '9':
 		c = '0';
+		stream_.ungetc();
 		res = &TokenStream::scan_number;
 		break;
 	default:
@@ -135,7 +136,6 @@ void TokenStream::scan_string()
 
 void TokenStream::scan_number()
 {
-	stream_.ungetc();
 
 	int c(stream_.getc());
 	bool minus(c == '-');
