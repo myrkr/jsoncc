@@ -23,9 +23,9 @@ public:
 		NULL_LITERAL    = 'n',
 		STRING          = '"',
 		NUMBER          = '0',
-	};
+	} type;
 
-	Type type;
+	Token() : type(INVALID) { }
 };
 
 class Utf8Stream;
