@@ -136,6 +136,7 @@ void TokenStream::scan_string()
 
 void TokenStream::scan_number()
 {
+	token.number_type = Token::INT;
 
 	int c(stream_.getc());
 	bool minus(c == '-');
@@ -152,6 +153,7 @@ void TokenStream::scan_number()
 		case '.':
 			if (!point) {
 				point = digits;
+				token.number_type = Token::FLOAT;
 			} else {
 				throw std::runtime_error("invalid decimal point");
 			}
@@ -169,6 +171,7 @@ void TokenStream::scan_number()
 		}
 	}
 
+/*
 	bool eminus(false);
 	uint64_t exponent(0);
 	if (c == 'e' || c == 'E') {
@@ -185,6 +188,19 @@ void TokenStream::scan_number()
 	}
 
 	if (eminus) {
+	}
+*/
+	switch (token.number_type) {
+	case Token::INT:
+		if (minus) {
+			mantissa *= -1;
+		}
+		token.int_value = mantissa;
+		break;
+	case Token::FLOAT:
+		break;
+	case Token::NONE:
+		assert(false && "must be a number");
 	}
 }
 
