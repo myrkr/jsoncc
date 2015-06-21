@@ -54,6 +54,8 @@ TokenStream::TokenStream(Utf8Stream & stream)
 
 void TokenStream::scan()
 {
+	token.reset();
+
 	int c;
 	do {
 		c = stream_.getc();
