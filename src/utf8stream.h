@@ -8,6 +8,8 @@
 
 #include <stddef.h>
 
+#include "utf8.h"
+
 namespace jsonp {
 
 class Utf8Stream {
@@ -29,6 +31,8 @@ private:
 	size_t pos_;
 	bool bad_;
 	bool eof_;
+	utf8validator utf8_;
+	size_t valid_;
 };
 
 }

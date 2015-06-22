@@ -17,7 +17,9 @@ Utf8Stream::Utf8Stream(const char *buf, size_t len)
 	len_(len),
 	pos_(0),
 	bad_(false),
-	eof_(false)
+	eof_(false),
+	utf8_(),
+	valid_(0)
 { }
 
 Utf8Stream::State Utf8Stream::state() const
@@ -35,15 +37,26 @@ Utf8Stream::State Utf8Stream::state() const
 
 int Utf8Stream::getc()
 {
+	if (bad_) {
+		return SBAD;
+	}
+
 	if (pos_ == len_) {
 		eof_ = true;
 		return SEOF;
 	}
 
 	uint8_t c(buf_[pos_]);
-	if (bad_ || c == '\0') {
+	if (c == '\0') {
 		bad_ = true;
 		return SBAD;
+	}
+
+	if (valid_ <= pos_) {
+		if ((bad_ = !utf8_.validate(c))) {
+			return SBAD;
+		}
+		++valid_;
 	}
 
 	++pos_;
