@@ -85,6 +85,11 @@ std::ostream & quote(std::ostream & os, std::string const& in)
 	std::string::const_iterator it(in.begin());
 	for (; it != in.end(); ++it) {
 		switch (*it) {
+/*
+   All Unicode characters may be placed within the quotation marks,
+   except for the characters that must be escaped: quotation mark,
+   reverse solidus, and the control characters (U+0000 through U+001F).
+*/
 #define ESCAPE(val, sym) case val: os << "\\" sym; break
 		ESCAPE(0x00, "u0000"); ESCAPE(0x01, "u0001");
 		ESCAPE(0x02, "u0002"); ESCAPE(0x03, "u0003");
