@@ -43,6 +43,17 @@ private:
 	void test_float_exp_pos();
 	void test_float_exp_plus();
 	void test_float_double_dot();
+	void test_empty_string();
+	void test_unterminated_string();
+	void test_ascii_string();
+	void test_control_string();
+	void test_unicode_string();
+	void test_ctrl_esc_string();
+	void test_utf8_esc_string();
+	void test_zero_esc_string();
+	void test_surrogate_string();
+	void test_utf8_incomplete_string();
+	void test_invalid_esc_string();
 
 	CPPUNIT_TEST_SUITE(test);
 	CPPUNIT_TEST(test_structural);
@@ -73,6 +84,17 @@ private:
 	CPPUNIT_TEST(test_float_exp_pos);
 	CPPUNIT_TEST(test_float_exp_plus);
 	CPPUNIT_TEST(test_float_double_dot);
+	CPPUNIT_TEST(test_empty_string);
+	CPPUNIT_TEST(test_unterminated_string);
+	CPPUNIT_TEST(test_ascii_string);
+	CPPUNIT_TEST(test_control_string);
+	CPPUNIT_TEST(test_unicode_string);
+	CPPUNIT_TEST(test_ctrl_esc_string);
+	CPPUNIT_TEST(test_utf8_esc_string);
+	CPPUNIT_TEST(test_zero_esc_string);
+	CPPUNIT_TEST(test_surrogate_string);
+	CPPUNIT_TEST(test_utf8_incomplete_string);
+	CPPUNIT_TEST(test_invalid_esc_string);
 	CPPUNIT_TEST_SUITE_END();
 };
 
@@ -540,6 +562,164 @@ void test::test_float_missing_minus_exp()
 	ts.scan();
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
 	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+}
+
+void test::test_empty_string()
+{
+	char data[] = "\"\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::STRING, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_unterminated_string()
+{
+	char data[] = "\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_ascii_string()
+{
+	char data[] = "\"Hello, World!\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::STRING, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("Hello, World!"), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_control_string()
+{
+	char data[] = "\"Hello, World!\n\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_unicode_string()
+{
+	char data[] = "\"ἀνερρίφθω κύβος\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::STRING, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("ἀνερρίφθω κύβος"), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_ctrl_esc_string()
+{
+	char data[] = "\"\\\\\\/\\\"\\b\\f\\n\\r\\t\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::STRING, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("\\/\"\b\f\n\r\t"), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_utf8_esc_string()
+{
+	// use code points which encode into one, two and three byte
+	// utf8 sequences.
+	char data[] = "\"\\u0065\\u00DC\\u1d2800\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::STRING, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("eÜᴨ00"), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_surrogate_string()
+{
+	// utf16 surrogate
+	char data[] = "\"\\udafe\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_zero_esc_string()
+{
+	char data[] = "\"Hello,\\u0000\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_utf8_incomplete_string()
+{
+	char data[] = "\"\\u00AX\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_invalid_esc_string()
+{
+	// utf16 surrogate
+	char data[] = "\"\\x\"";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
 }
 
 }}

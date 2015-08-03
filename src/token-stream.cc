@@ -132,11 +132,151 @@ void TokenStream::scan_literal(const char *literal)
 	}
 }
 
-void TokenStream::scan_string()
+enum StringState {
+	SREGULAR,
+	SESCAPED,
+	SUESCAPE,
+	SDONES,
+	// errors
+	SREGULAR_INVALID,
+	SESCAPED_INVALID,
+	SUESCAPE_INVALID,
+	SUESCAPE_SURROGATE,
+	SUNTERMINATED,
+	SZERO,
+};
+
+#define LINENO_STR(no) # no
+#define LINENO(no) LINENO_STR(no)
+
+StringState scan_regular(int c, std::string & str)
 {
-	// TODO
+	if (c == '"') {
+		return SDONES;
+	} else if (c == '\\') {
+		return SESCAPED;
+	} else if (c >= 0x0000 && c <= 0x001F) {
+		// control char must be escaped
+		return SREGULAR_INVALID;
+	}
+
+	str.push_back(c);
+	return SREGULAR;
 }
 
+StringState scan_escaped(int c, std::string & str)
+{
+	switch (c) {
+	case '\\': case '/': case '"': break;
+	case 'b': c = 0x0008; break;
+	case 'f': c = 0x000C; break;
+	case 'n': c = 0x000A; break;
+	case 'r': c = 0x000D; break;
+	case 't': c = 0x0009; break;
+	case 'u': return SUESCAPE;
+	default:
+		// invalid escape char
+		return SESCAPED_INVALID;
+	}
+
+	str.push_back(c);
+	return SREGULAR;
+}
+
+struct uescape {
+public:
+	uescape()
+	:
+		count_(0),
+		value_(0)
+	{ }
+
+	StringState scan(int c, std::string & str)
+	{
+		value_ *= 0x10;
+		if (c >= '0' && c <= '9') {
+			value_ += c - '0';
+		} else if (c >= 'a' && c <= 'f') {
+			value_ += 0x0a + c - 'a';
+		} else if (c >= 'A' && c <= 'F') {
+			value_ += 0x0a + c - 'A';
+		} else {
+			return SUESCAPE_INVALID;
+		}
+
+		if (++count_ == 4) {
+			StringState res(utf8encode(str));
+			count_ = value_ = 0;
+			return res;
+		}
+
+		return SUESCAPE;
+	}
+
+private:
+	StringState utf8encode(std::string & str) const
+	{
+		if (value_ == 0x0000) {
+			// ASCII 0
+			return SZERO;
+		} else if (value_ <= 0x007f) {
+			str.push_back(value_);
+		} else if (value_ <= 0x07ff) {
+			str.push_back(0xc0 | (value_ >> 6));
+			str.push_back(0x80 | (value_ & 0x3f));
+		} else if (value_ >= 0xd800 && value_ <= 0xdfff) {
+			// utf16 surrogate
+			return SUESCAPE_SURROGATE;
+		} else {
+			str.push_back(0xe0 | (value_ >> 12));
+			str.push_back(0x80 | ((value_ >> 6) & 0x3f));
+			str.push_back(0x80 | (value_ & 0x3f));
+		}
+
+		return SREGULAR;
+	}
+
+	size_t count_;
+	uint16_t value_;
+};
+
+void TokenStream::scan_string()
+{
+	StringState state(SREGULAR);
+	uescape unicode;
+	while (state != SDONES) {
+		int c(stream_.getc());
+		if (stream_.state() != Utf8Stream::SGOOD) {
+			// unterminated string
+			state = SUNTERMINATED;
+		}
+
+		switch (state) {
+		case SREGULAR:
+			state = scan_regular(c, token.str_value);
+			break;
+		case SESCAPED:
+			state = scan_escaped(c, token.str_value);
+			break;
+		case SUESCAPE:
+			state = unicode.scan(c, token.str_value);
+			break;
+		case SREGULAR_INVALID:
+		case SESCAPED_INVALID:
+		case SUESCAPE_INVALID:
+		case SUESCAPE_SURROGATE:
+		case SUNTERMINATED:
+		case SZERO:
+			token.str_value.clear();
+			token.type = Token::INVALID;
+			return;
+		case SDONES:
+			break;
+		}
+	}
+}
+
+// POSIX thread local locale setting.
 struct auto_locale {
 	auto_locale(const char *name)
 	:
