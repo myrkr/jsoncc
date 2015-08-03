@@ -1,5 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <math.h>
+
 #include "token-stream.h"
 #include "utf8stream.h"
 
@@ -24,7 +26,23 @@ private:
 	void test_int_number();
 	void test_int_neg_number();
 	void test_int_array();
+	void test_int_invalid_zero();
+	void test_int_leading_zero();
 	void test_number_delimiter();
+	void test_float_zero();
+	void test_float_neg_zero();
+	void test_float_zeros();
+	void test_float_number();
+	void test_float_missing_frac();
+	void test_float_missing_int();
+	void test_float_missing_exp();
+	void test_float_missing_plus_exp();
+	void test_float_missing_minus_exp();
+	void test_float_exp_zero();
+	void test_float_exp_neg();
+	void test_float_exp_pos();
+	void test_float_exp_plus();
+	void test_float_double_dot();
 
 	CPPUNIT_TEST_SUITE(test);
 	CPPUNIT_TEST(test_structural);
@@ -39,6 +57,22 @@ private:
 	CPPUNIT_TEST(test_int_neg_number);
 	CPPUNIT_TEST(test_number_delimiter);
 	CPPUNIT_TEST(test_int_array);
+	CPPUNIT_TEST(test_int_invalid_zero);
+	CPPUNIT_TEST(test_int_leading_zero);
+	CPPUNIT_TEST(test_float_zero);
+	CPPUNIT_TEST(test_float_neg_zero);
+	CPPUNIT_TEST(test_float_zeros);
+	CPPUNIT_TEST(test_float_number);
+	CPPUNIT_TEST(test_float_missing_frac);
+	CPPUNIT_TEST(test_float_missing_int);
+	CPPUNIT_TEST(test_float_missing_exp);
+	CPPUNIT_TEST(test_float_missing_plus_exp);
+	CPPUNIT_TEST(test_float_missing_minus_exp);
+	CPPUNIT_TEST(test_float_exp_zero);
+	CPPUNIT_TEST(test_float_exp_neg);
+	CPPUNIT_TEST(test_float_exp_pos);
+	CPPUNIT_TEST(test_float_exp_plus);
+	CPPUNIT_TEST(test_float_double_dot);
 	CPPUNIT_TEST_SUITE_END();
 };
 
@@ -165,6 +199,44 @@ void test::test_int_neg_zero()
 	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
 }
 
+void test::test_int_invalid_zero()
+{
+	char data[] = "00";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::INT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL(int64_t(0), ts.token.int_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::INT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL(int64_t(0), ts.token.int_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_int_leading_zero()
+{
+	char data[] = "01234";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::INT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL(int64_t(0), ts.token.int_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::INT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL(int64_t(1234), ts.token.int_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
 void test::test_int_digit()
 {
 	char data[] = "5";
@@ -271,6 +343,203 @@ void test::test_int_array()
 	CPPUNIT_ASSERT_EQUAL(Token::END_ARRAY, ts.token.type);
 	ts.scan();
 	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_zero()
+{
+	char data[] = "0.0";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL((long double)(0), ts.token.float_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_zeros()
+{
+	char data[] = "0.0000000";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL((long double)(0), ts.token.float_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_neg_zero()
+{
+	char data[] = "-0.0";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL((long double)(0), ts.token.float_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_number()
+{
+	char data[] = "1.000005";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	long double delta(fabsl((long double)(1.000005) - ts.token.float_value));
+	CPPUNIT_ASSERT((long double)(1.0E-10) > delta);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_exp_zero()
+{
+	char data[] = "1.5E0";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	long double delta(fabsl((long double)(1.5) - ts.token.float_value));
+	CPPUNIT_ASSERT((long double)(1.0E-10) > delta);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_exp_neg()
+{
+	char data[] = "1.5E-2";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	long double delta(fabsl((long double)(1.5E-2) - ts.token.float_value));
+	CPPUNIT_ASSERT((long double)(1.0E-10) > delta);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_exp_pos()
+{
+	char data[] = "1.5E2";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL((long double)(1.5E2), ts.token.float_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_exp_plus()
+{
+	char data[] = "1.5E+2";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::NUMBER, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::FLOAT, ts.token.number_type);
+	CPPUNIT_ASSERT_EQUAL((long double)(1.5E2), ts.token.float_value);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_missing_frac()
+{
+	char data[] = "1.";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_float_missing_int()
+{
+	char data[] = "-.0";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+}
+
+void test::test_float_double_dot()
+{
+	char data[] = "1..4";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+}
+
+void test::test_float_missing_exp()
+{
+	char data[] = "1.0E";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+}
+
+void test::test_float_missing_plus_exp()
+{
+	char data[] = "1.0E+";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+}
+
+void test::test_float_missing_minus_exp()
+{
+	char data[] = "1.0E-";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	ts.scan();
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
 }
 
 }}
