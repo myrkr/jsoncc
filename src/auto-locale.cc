@@ -8,13 +8,13 @@
 
 namespace jsonp {
 
-auto_locale::auto_locale(const char *name)
+AutoLocale::AutoLocale(const char *name)
 :
 	locale_(newlocale(LC_ALL_MASK, name, 0)),
 	saved_(uselocale(locale_))
 { }
 
-auto_locale::~auto_locale()
+AutoLocale::~AutoLocale()
 {
 	uselocale(saved_);
 	freelocale(locale_);

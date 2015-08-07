@@ -289,7 +289,7 @@ bool make_float(const char *str, long double *res)
 {
 	errno = 0;
 	char *endp(0);
-	auto_locale lc("C");
+	AutoLocale lc("C");
 	*res = strtold(str, &endp);
 	if (*endp != '\0') {
 		return false;

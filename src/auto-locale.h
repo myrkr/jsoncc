@@ -11,10 +11,10 @@
 
 namespace jsonp {
 // POSIX thread local locale setting.
-class auto_locale {
+class AutoLocale {
 public:
-	auto_locale(const char *);
-	~auto_locale();
+	AutoLocale(const char *);
+	~AutoLocale();
 
 private:
 	locale_t locale_;
