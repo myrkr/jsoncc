@@ -28,8 +28,17 @@ namespace jsonp {
 
 /* https://tools.ietf.org/html/rfc7159 */
 
+class ParserImpl;
+
 class Parser {
 public:
+	Parser();
+	~Parser();
+private:
+	Parser(Parser const&); // = deleted;
+	Parser & operator=(Parser const&); // = deleted;
+
+	ParserImpl *impl_;
 };
 
 }
