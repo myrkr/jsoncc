@@ -13,6 +13,7 @@
 #include <ostream>
 #include <stdexcept>
 
+#include "auto-locale.h"
 #include "token-stream.h"
 #include "utf8stream.h"
 
@@ -271,24 +272,6 @@ void TokenStream::scan_string()
 		}
 	}
 }
-
-// POSIX thread local locale setting.
-struct auto_locale {
-	auto_locale(const char *name)
-	:
-		locale_(newlocale(LC_ALL_MASK, name, 0)),
-		saved_(uselocale(locale_))
-	{ }
-
-	~auto_locale()
-	{
-		uselocale(saved_);
-		freelocale(locale_);
-	}
-
-	locale_t locale_;
-	locale_t saved_;
-};
 
 bool make_int(const char *str, int64_t *res)
 {
