@@ -264,8 +264,7 @@ void TokenStream::scan_string()
 		case SUESCAPE_SURROGATE:
 		case SUNTERMINATED:
 		case SZERO:
-			token.str_value.clear();
-			token.type = Token::INVALID;
+			token.reset();
 			return;
 		case SDONES:
 			break;
@@ -417,22 +416,18 @@ void TokenStream::scan_number()
 	switch (token.number_type) {
 	case Token::INT:
 		if (!make_int(buf, &token.int_value)) {
-			token.type = Token::INVALID;
-			token.number_type = Token::NONE;
-			token.int_value = 0;
+			token.reset();
 			return;
 		}
 		break;
 	case Token::FLOAT:
 		if (!make_float(buf, &token.float_value)) {
-			token.type = Token::INVALID;
-			token.number_type = Token::NONE;
-			token.float_value = 0;
+			token.reset();
 			return;
 		}
 		break;
 	case Token::NONE:
-		token.type = Token::INVALID;
+		token.reset();
 		break;
 	}
 }
