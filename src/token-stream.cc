@@ -5,9 +5,7 @@
 */
 
 #include <errno.h>
-#include <inttypes.h>
 
-#include <cassert>
 #include <cstdlib>
 #include <cstring>
 #include <ostream>
