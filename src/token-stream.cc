@@ -179,9 +179,9 @@ StringState scan_escaped(int c, std::string & str)
 	return SREGULAR;
 }
 
-struct uescape {
+struct UEscape {
 public:
-	uescape()
+	UEscape()
 	:
 		count_(0),
 		value_(0)
@@ -239,7 +239,7 @@ private:
 void TokenStream::scan_string()
 {
 	StringState state(SREGULAR);
-	uescape unicode;
+	UEscape unicode;
 	while (state != SDONES) {
 		int c(stream_.getc());
 		if (stream_.state() != Utf8Stream::SGOOD) {
