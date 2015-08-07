@@ -146,9 +146,6 @@ enum StringState {
 	SZERO,
 };
 
-#define LINENO_STR(no) # no
-#define LINENO(no) LINENO_STR(no)
-
 StringState scan_regular(int c, std::string & str)
 {
 	if (c == '"') {
