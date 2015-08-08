@@ -56,6 +56,10 @@ TokenStream::TokenStream(Utf8Stream & stream)
 
 void TokenStream::scan()
 {
+	if (stream_.state() == Utf8Stream::SBAD) {
+		return;
+	}
+
 	token.reset();
 
 	int c;
