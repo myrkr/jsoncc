@@ -70,4 +70,9 @@ void Utf8Stream::ungetc()
 	}
 }
 
+Location Utf8Stream::location() const
+{
+	return Location(pos_);
+}
+
 }

@@ -6,8 +6,7 @@
 #ifndef JSONP_UTF8_STREAM_H
 #define JSONP_UTF8_STREAM_H
 
-#include <stddef.h>
-
+#include <jsonp.h>
 #include "utf8.h"
 
 namespace jsonp {
@@ -24,6 +23,7 @@ public:
 	State state() const;
 	int getc();
 	void ungetc();
+	Location location() const;
 
 private:
 	const char *buf_;
