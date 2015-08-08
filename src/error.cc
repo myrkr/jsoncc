@@ -21,6 +21,17 @@ static const char *error_message[] = {
 	"unicode escape yields surrogate",
 	"invalid number format",
 	"number too long",
+	"maximum nesting depth reached",
+	"document contains bad token",
+	"array starts with bad element",
+	"expected ',' or ']' after array element",
+	"array contains bad element",
+	"object is not empty and does not start with a key",
+	"expected ':' after object key",
+	"bad or missing  value in object member",
+	"expected ',' or '}' after object member",
+	"object contains bad member",
+	"internal error",
 };
 
 Location::Location(size_t offs_, size_t character_, size_t line_)

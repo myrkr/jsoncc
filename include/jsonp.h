@@ -45,19 +45,30 @@ struct Location {
 
 struct Error : public std::runtime_error {
 	enum Type {
-		OK = 0,            /* no error */
-		STREAM_ZERO,       /* ascii zero found in source */
-		UTF8_INVALID,      /* invalid utf8 in source */
-		TOKEN_INVALID,     /* unrecognized token */
-		LITERAL_INVALID,   /* bad literal */
-		STRING_CTRL,       /* unescaped control char in string */
-		STRING_QUOTE,      /* unterminated string (at eof) */
-		ESCAPE_INVALID,    /* invalid escape char */
-		UESCAPE_INVALID,   /* invalide unicode escape */
-		UESCAPE_ZERO,      /* unicode escape yields zero */
-		UESCAPE_SURROGATE, /* unicode escape yields surrogate */
-		NUMBER_INVALID,    /* invalid number format */
-		NUMBER_OVERFLOW,   /* number too long */
+		OK = 0,                 /* no error */
+		STREAM_ZERO,            /* ascii zero found in source */
+		UTF8_INVALID,           /* invalid utf8 in source */
+		TOKEN_INVALID,          /* unrecognized token */
+		LITERAL_INVALID,        /* bad literal */
+		STRING_CTRL,            /* unescaped control char in string */
+		STRING_QUOTE,           /* unterminated string (at eof) */
+		ESCAPE_INVALID,         /* invalid escape char */
+		UESCAPE_INVALID,        /* invalide unicode escape */
+		UESCAPE_ZERO,           /* unicode escape yields zero */
+		UESCAPE_SURROGATE,      /* unicode escape yields surrogate */
+		NUMBER_INVALID,         /* invalid number format */
+		NUMBER_OVERFLOW,        /* number too long */
+		PARSER_OVERFLOW,        /* maximum nesting depth reached */
+		BAD_TOKEN_DOCUMENT,     /* document contains bad token */
+		BAD_TOKEN_ARRAY_START,  /* array starts with bad element */
+		BAD_TOKEN_ARRAY_VALUE,  /* expected ',' or ']' after array element */
+		BAD_TOKEN_ARRAY_NEXT,   /* array contains bad element */
+		BAD_TOKEN_OBJECT_START, /* object is not empty and does not start with a key */
+		BAD_TOKEN_OBJECT_NAME,  /* expected ':' after object key */
+		BAD_TOKEN_OBJECT_SEP,   /* bad or missing  value in object member */
+		BAD_TOKEN_OBJECT_VALUE, /* expected ',' or '}' after object member */
+		BAD_TOKEN_OBJECT_NEXT,  /* object contains bad member */
+		INTERNAL_ERROR,         /* internal error */
 	} type;
 
 	Location location;

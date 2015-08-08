@@ -10,9 +10,15 @@
 
 namespace jsonp {
 
+class TokenStream;
+
 class ParserImpl {
 public:
 	void parse(char const *, size_t);
+
+private:
+
+	void parse_document(TokenStream &);
 };
 
 }
