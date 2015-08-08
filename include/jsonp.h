@@ -24,6 +24,8 @@
    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstddef>
+
 namespace jsonp {
 
 /* https://tools.ietf.org/html/rfc7159 */
@@ -34,6 +36,8 @@ class Parser {
 public:
 	Parser();
 	~Parser();
+
+	void parse(char const *, size_t);
 private:
 	Parser(Parser const&); // = deleted;
 	Parser & operator=(Parser const&); // = deleted;

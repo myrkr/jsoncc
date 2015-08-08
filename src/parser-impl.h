@@ -6,10 +6,13 @@
 #ifndef RAD_PARSER_IMPL_H
 #define RAD_PARSER_IMPL_H
 
+#include <cstddef>
+
 namespace jsonp {
 
 class ParserImpl {
 public:
+	void parse(char const *, size_t);
 };
 
 }

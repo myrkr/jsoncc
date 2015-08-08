@@ -19,4 +19,9 @@ Parser::~Parser()
 	delete impl_;
 }
 
+void Parser::parse(char const * data, size_t size)
+{
+	impl_->parse(data, size);
+}
+
 }
