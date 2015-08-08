@@ -75,4 +75,10 @@ Location Utf8Stream::location() const
 	return Location(pos_);
 }
 
+void Utf8Stream::bad()
+{
+	bad_ = true;
+}
+
+
 }

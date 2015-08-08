@@ -24,6 +24,7 @@ public:
 	int getc();
 	void ungetc();
 	Location location() const;
+	void bad();
 
 private:
 	const char *buf_;
