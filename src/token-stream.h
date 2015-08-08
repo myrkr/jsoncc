@@ -8,6 +8,7 @@
 
 #include <iosfwd>
 #include <inttypes.h>
+#include <string>
 
 namespace jsonp {
 
