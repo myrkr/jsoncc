@@ -25,12 +25,43 @@
  */
 
 #include <cstddef>
+#include <stdexcept>
 
 namespace jsonp {
 
 /* https://tools.ietf.org/html/rfc7159 */
 
 class ParserImpl;
+
+struct Location {
+	size_t offs;
+	size_t character;
+	size_t line;
+
+	Location(size_t = 0, size_t = 0, size_t = 0);
+};
+
+struct Error : public std::runtime_error {
+	enum Type {
+		OK = 0,            /* no error */
+		STREAM_ZERO,       /* ascii zero found in source */
+		UTF8_INVALID,      /* invalid utf8 in source */
+		TOKEN_INVALID,     /* unrecognized token */
+		LITERAL_INVALID,   /* bad literal */
+		STRING_CTRL,       /* unescaped control char in string */
+		STRING_QUOTE,      /* unterminated string (at eof) */
+		ESCAPE_INVALID,    /* invalid escape char */
+		UESCAPE_INVALID,   /* invalide unicode escape */
+		UESCAPE_ZERO,      /* unicode escape yields zero */
+		UESCAPE_SURROGATE, /* unicode escape yields surrogate */
+		NUMBER_INVALID,    /* invalid number format */
+		NUMBER_OVERFLOW,   /* number too long */
+	} type;
+
+	Location location;
+
+	Error(Type = OK, Location = Location());
+};
 
 class Parser {
 public:
