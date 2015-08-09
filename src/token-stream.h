@@ -71,7 +71,6 @@ private:
 
 	scanner select_scanner(int);
 
-	void invalid_token();
 	void scan_structural();
 	void scan_true();
 	void scan_false();

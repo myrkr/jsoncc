@@ -90,18 +90,11 @@ TokenStream::scanner TokenStream::select_scanner(int c)
 		res = &TokenStream::scan_number;
 		break;
 	default:
-		c = 0;
-		res = &TokenStream::invalid_token;
-		break;
+		throw Error(Error::TOKEN_INVALID);
 	}
 
 	token.type = Token::Type(c);
 	return res;
-}
-
-void TokenStream::invalid_token()
-{
-	throw Error(Error::TOKEN_INVALID);
 }
 
 void TokenStream::scan_structural() { /* NOOP */ }
