@@ -63,7 +63,7 @@ class TokenStream {
 public:
 	TokenStream(Utf8Stream &);
 
-	void scan();
+	void scan(); // throws jsonp::Error
 
 	Token token;
 private:

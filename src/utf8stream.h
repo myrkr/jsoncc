@@ -21,7 +21,7 @@ public:
 
 	Utf8Stream(const char *, size_t);
 	State state() const;
-	int getc();
+	int getc(); // throws jsonp::Error
 	void ungetc();
 	Location location() const;
 	void bad();
