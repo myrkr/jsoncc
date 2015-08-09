@@ -6,7 +6,6 @@
 #ifndef JSONP_TOKEN_STREAM_H
 #define JSONP_TOKEN_STREAM_H
 
-#include <iosfwd>
 #include <inttypes.h>
 #include <string>
 
@@ -57,8 +56,6 @@ public:
 		str_value.clear();
 	}
 };
-
-std::ostream & operator<<(std::ostream &, Token::Type);
 
 class Utf8Stream;
 

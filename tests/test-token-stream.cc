@@ -1,8 +1,34 @@
 #include <math.h>
+#include <ostream>
 
 #include "error-assert.h"
 #include "token-stream.h"
 #include "utf8stream.h"
+
+namespace jsonp {
+
+std::ostream & operator<<(std::ostream & os, Token::Type type)
+{
+#define CASE_TOKEN_TYPE(name) case name: os << # name; break
+	switch (type) {
+	CASE_TOKEN_TYPE(Token::INVALID);
+	CASE_TOKEN_TYPE(Token::BEGIN_ARRAY);
+	CASE_TOKEN_TYPE(Token::END_ARRAY);
+	CASE_TOKEN_TYPE(Token::BEGIN_OBJECT);
+	CASE_TOKEN_TYPE(Token::END_OBJECT);
+	CASE_TOKEN_TYPE(Token::NAME_SEPARATOR);
+	CASE_TOKEN_TYPE(Token::VALUE_SEPARATOR);
+	CASE_TOKEN_TYPE(Token::TRUE_LITERAL);
+	CASE_TOKEN_TYPE(Token::FALSE_LITERAL);
+	CASE_TOKEN_TYPE(Token::NULL_LITERAL);
+	CASE_TOKEN_TYPE(Token::STRING);
+	CASE_TOKEN_TYPE(Token::NUMBER);
+	}
+#undef CASE_TOKEN_TYPE
+	return os;
+}
+
+}
 
 namespace unittests {
 namespace token_stream {
