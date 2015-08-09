@@ -21,6 +21,29 @@ bool is_ws(int c)
 	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
 
+uint64_t make_int(const char *str)
+{
+	errno = 0;
+	char *endp(0);
+	uint64_t res(strtoll(str, &endp, 10));
+	if (*endp != '\0' || errno != 0) {
+		throw jsonp::Error(jsonp::Error::NUMBER_INVALID);
+	}
+	return res;
+}
+
+long double make_float(const char *str)
+{
+	errno = 0;
+	char *endp(0);
+	jsonp::AutoLocale lc("C");
+	long double res(strtold(str, &endp));
+	if (*endp != '\0' || errno != 0) {
+		throw jsonp::Error(jsonp::Error::NUMBER_INVALID);
+	}
+	return res;
+}
+
 }
 
 namespace jsonp {
@@ -229,29 +252,6 @@ void TokenStream::scan_string()
 			break;
 		}
 	}
-}
-
-uint64_t make_int(const char *str)
-{
-	errno = 0;
-	char *endp(0);
-	uint64_t res(strtoll(str, &endp, 10));
-	if (*endp != '\0' || errno != 0) {
-		throw Error(Error::NUMBER_INVALID);
-	}
-	return res;
-}
-
-long double make_float(const char *str)
-{
-	errno = 0;
-	char *endp(0);
-	AutoLocale lc("C");
-	long double res(strtold(str, &endp));
-	if (*endp != '\0' || errno != 0) {
-		throw Error(Error::NUMBER_INVALID);
-	}
-	return res;
 }
 
 enum NumberState {
