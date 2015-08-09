@@ -14,6 +14,7 @@ namespace jsonp {
 class Token {
 public:
 	enum Type {
+		END             = -1,
 		INVALID         = '\0',
 		BEGIN_ARRAY     = '[',
 		BEGIN_OBJECT    = '{',

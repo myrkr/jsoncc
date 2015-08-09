@@ -66,10 +66,6 @@ void TokenStream::scan()
 		c = stream_.getc();
 	} while (is_ws(c));
 
-	if (c == int(Utf8Stream::SEOF)) {
-		return;
-	}
-
 	if (stream_.state() == Utf8Stream::SBAD) {
 		return;
 	}
@@ -91,6 +87,7 @@ TokenStream::scanner TokenStream::select_scanner(int c)
 	switch (c) {
 	case '[': case '{': case ']':
 	case '}': case ':': case ',':
+	case Utf8Stream::SEOF:
 		res = &TokenStream::scan_structural;
 		break;
 	case 't':
