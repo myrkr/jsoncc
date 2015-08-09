@@ -28,6 +28,28 @@ std::ostream & operator<<(std::ostream & os, Token::Type type)
 	return os;
 }
 
+std::ostream & operator<<(std::ostream & os, Error::Type type)
+{
+#define CASE_ERROR_TYPE(name) case name: os << # name; break
+	switch (type) {
+	CASE_ERROR_TYPE(Error::OK);
+	CASE_ERROR_TYPE(Error::STREAM_ZERO);
+	CASE_ERROR_TYPE(Error::UTF8_INVALID);
+	CASE_ERROR_TYPE(Error::TOKEN_INVALID);
+	CASE_ERROR_TYPE(Error::LITERAL_INVALID);
+	CASE_ERROR_TYPE(Error::STRING_CTRL);
+	CASE_ERROR_TYPE(Error::STRING_QUOTE);
+	CASE_ERROR_TYPE(Error::ESCAPE_INVALID);
+	CASE_ERROR_TYPE(Error::UESCAPE_INVALID);
+	CASE_ERROR_TYPE(Error::UESCAPE_ZERO);
+	CASE_ERROR_TYPE(Error::UESCAPE_SURROGATE);
+	CASE_ERROR_TYPE(Error::NUMBER_INVALID);
+	CASE_ERROR_TYPE(Error::NUMBER_OVERFLOW);
+	}
+#undef CASE_ERROR_TYPE
+	return os;
+}
+
 }
 
 namespace unittests {
@@ -40,8 +62,13 @@ public:
 	void tearDown();
 
 private:
+	void test_stream_zero();
+	void test_bad_utf8();
+	void test_utf8_bom();
 	void test_structural();
+	void test_invalid_token();
 	void test_literal();
+	void test_invalid_literal();
 	void test_empty_array();
 	void test_nospace_array();
 	void test_int_zero();
@@ -81,8 +108,13 @@ private:
 	void test_invalid_esc_string();
 
 	CPPUNIT_TEST_SUITE(test);
+	CPPUNIT_TEST(test_stream_zero);
+	CPPUNIT_TEST(test_bad_utf8);
+	CPPUNIT_TEST(test_utf8_bom);
 	CPPUNIT_TEST(test_structural);
+	CPPUNIT_TEST(test_invalid_token);
 	CPPUNIT_TEST(test_literal);
+	CPPUNIT_TEST(test_invalid_literal);
 	CPPUNIT_TEST(test_empty_array);
 	CPPUNIT_TEST(test_nospace_array);
 	CPPUNIT_TEST(test_int_zero);
@@ -136,6 +168,45 @@ void test::tearDown()
 
 using namespace jsonp;
 
+void test::test_stream_zero()
+{
+	char data[] = "  \0  {}";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::STREAM_ZERO, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
+}
+
+void test::test_bad_utf8()
+{
+	char data[] = "  \xa9 {}";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UTF8_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
+}
+
+void test::test_utf8_bom()
+{
+	char data[] = "\xef\xbb\xbf {}";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::TOKEN_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(1), error.location.offs);
+}
+
 void test::test_structural()
 {
 	char data[] = " { } [ ] : , ";
@@ -159,6 +230,19 @@ void test::test_structural()
 	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
 }
 
+void test::test_invalid_token()
+{
+	char data[] = "hello";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::TOKEN_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(1), error.location.offs);
+}
+
 void test::test_literal()
 {
 	char data[] = "true false null";
@@ -174,6 +258,19 @@ void test::test_literal()
 	CPPUNIT_ASSERT_EQUAL(Token::NULL_LITERAL, ts.token.type);
 	ts.scan();
 	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+}
+
+void test::test_invalid_literal()
+{
+	char data[] = "truE";
+	Utf8Stream us(data, sizeof(data) - 1);
+	TokenStream ts(us);
+
+	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::LITERAL_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(4), error.location.offs);
 }
 
 void test::test_empty_array()
