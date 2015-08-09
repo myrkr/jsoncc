@@ -1,7 +1,6 @@
-#include <cppunit/extensions/HelperMacros.h>
-
 #include <math.h>
 
+#include "error-assert.h"
 #include "token-stream.h"
 #include "utf8stream.h"
 
@@ -497,11 +496,10 @@ void test::test_float_missing_frac()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
 }
 
 void test::test_float_missing_int()
@@ -511,9 +509,10 @@ void test::test_float_missing_int()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
 }
 
 void test::test_float_double_dot()
@@ -523,9 +522,10 @@ void test::test_float_double_dot()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(3), error.location.offs);
 }
 
 void test::test_float_missing_exp()
@@ -535,9 +535,10 @@ void test::test_float_missing_exp()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(4), error.location.offs);
 }
 
 void test::test_float_missing_plus_exp()
@@ -547,9 +548,10 @@ void test::test_float_missing_plus_exp()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(5), error.location.offs);
 }
 
 void test::test_float_missing_minus_exp()
@@ -559,9 +561,10 @@ void test::test_float_missing_minus_exp()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(Token::NONE, ts.token.number_type);
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(5), error.location.offs);
 }
 
 void test::test_empty_string()
@@ -585,11 +588,10 @@ void test::test_unterminated_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::STRING_QUOTE, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(1), error.location.offs);
 }
 
 void test::test_ascii_string()
@@ -613,11 +615,10 @@ void test::test_control_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::STRING_CTRL, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(15), error.location.offs);
 }
 
 void test::test_unicode_string()
@@ -672,11 +673,10 @@ void test::test_surrogate_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UESCAPE_SURROGATE, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(7), error.location.offs);
 }
 
 void test::test_zero_esc_string()
@@ -686,11 +686,10 @@ void test::test_zero_esc_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UESCAPE_ZERO, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(13), error.location.offs);
 }
 
 void test::test_utf8_incomplete_string()
@@ -700,11 +699,10 @@ void test::test_utf8_incomplete_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UESCAPE_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(7), error.location.offs);
 }
 
 void test::test_invalid_esc_string()
@@ -715,11 +713,10 @@ void test::test_invalid_esc_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	CPPUNIT_ASSERT_EQUAL(std::string(), ts.token.str_value);
-	ts.scan();
-	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SEOF, us.state());
+	jsonp::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
+	CPPUNIT_ASSERT_EQUAL(jsonp::Error::ESCAPE_INVALID, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(3), error.location.offs);
 }
 
 }}

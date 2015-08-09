@@ -49,12 +49,12 @@ int Utf8Stream::getc()
 	uint8_t c(buf_[pos_]);
 	if (c == '\0') {
 		bad_ = true;
-		return SBAD;
+		throw Error(Error::STREAM_ZERO, location());
 	}
 
 	if (valid_ <= pos_) {
 		if ((bad_ = !utf8_.validate(c))) {
-			return SBAD;
+			throw Error(Error::UTF8_INVALID, location());
 		}
 		++valid_;
 	}

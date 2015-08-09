@@ -77,7 +77,10 @@ void TokenStream::scan()
 
 	try {
 		(this->*select_scanner(c))();
-	} catch (std::runtime_error const& e) {
+	} catch (Error & e) {
+		stream_.bad();
+		token.reset();
+		e.location = stream_.location();
 		throw;
 	}
 }
@@ -120,7 +123,11 @@ TokenStream::scanner TokenStream::select_scanner(int c)
 	return res;
 }
 
-void TokenStream::invalid_token() { throw std::runtime_error("invalid token"); }
+void TokenStream::invalid_token()
+{
+	throw Error(Error::TOKEN_INVALID);
+}
+
 void TokenStream::scan_structural() { /* NOOP */ }
 void TokenStream::scan_true() { scan_literal("true"); }
 void TokenStream::scan_false() { scan_literal("false"); }
@@ -130,7 +137,7 @@ void TokenStream::scan_literal(const char *literal)
 {
 	for (const char *p(&literal[1]); *p; p++) {
 		if (stream_.getc() != *p) {
-			throw std::runtime_error(literal);
+			throw Error(Error::LITERAL_INVALID);
 		}
 	}
 }
@@ -140,13 +147,6 @@ enum StringState {
 	SESCAPED,
 	SUESCAPE,
 	SDONES,
-	// errors
-	SREGULAR_INVALID,
-	SESCAPED_INVALID,
-	SUESCAPE_INVALID,
-	SUESCAPE_SURROGATE,
-	SUNTERMINATED,
-	SZERO,
 };
 
 StringState scan_regular(int c, std::string & str)
@@ -156,8 +156,7 @@ StringState scan_regular(int c, std::string & str)
 	} else if (c == '\\') {
 		return SESCAPED;
 	} else if (c >= 0x0000 && c <= 0x001F) {
-		// control char must be escaped
-		return SREGULAR_INVALID;
+		throw Error(Error::STRING_CTRL);
 	}
 
 	str.push_back(c);
@@ -175,8 +174,7 @@ StringState scan_escaped(int c, std::string & str)
 	case 't': c = 0x0009; break;
 	case 'u': return SUESCAPE;
 	default:
-		// invalid escape char
-		return SESCAPED_INVALID;
+		throw Error(Error::ESCAPE_INVALID);
 	}
 
 	str.push_back(c);
@@ -201,7 +199,7 @@ public:
 		} else if (c >= 'A' && c <= 'F') {
 			value_ += 0x0a + c - 'A';
 		} else {
-			return SUESCAPE_INVALID;
+			throw Error(Error::UESCAPE_INVALID);
 		}
 
 		if (++count_ == 4) {
@@ -217,16 +215,14 @@ private:
 	StringState utf8encode(std::string & str) const
 	{
 		if (value_ == 0x0000) {
-			// ASCII 0
-			return SZERO;
+			throw Error(Error::UESCAPE_ZERO);
 		} else if (value_ <= 0x007f) {
 			str.push_back(value_);
 		} else if (value_ <= 0x07ff) {
 			str.push_back(0xc0 | (value_ >> 6));
 			str.push_back(0x80 | (value_ & 0x3f));
 		} else if (value_ >= 0xd800 && value_ <= 0xdfff) {
-			// utf16 surrogate
-			return SUESCAPE_SURROGATE;
+			throw Error(Error::UESCAPE_SURROGATE);
 		} else {
 			str.push_back(0xe0 | (value_ >> 12));
 			str.push_back(0x80 | ((value_ >> 6) & 0x3f));
@@ -247,8 +243,7 @@ void TokenStream::scan_string()
 	while (state != SDONES) {
 		int c(stream_.getc());
 		if (stream_.state() != Utf8Stream::SGOOD) {
-			// unterminated string
-			state = SUNTERMINATED;
+			throw Error(Error::STRING_QUOTE);
 		}
 
 		switch (state) {
@@ -261,47 +256,33 @@ void TokenStream::scan_string()
 		case SUESCAPE:
 			state = unicode.scan(c, token.str_value);
 			break;
-		case SREGULAR_INVALID:
-		case SESCAPED_INVALID:
-		case SUESCAPE_INVALID:
-		case SUESCAPE_SURROGATE:
-		case SUNTERMINATED:
-		case SZERO:
-			token.reset();
-			return;
 		case SDONES:
 			break;
 		}
 	}
 }
 
-bool make_int(const char *str, int64_t *res)
+uint64_t make_int(const char *str)
 {
 	errno = 0;
 	char *endp(0);
-	*res = strtoll(str, &endp, 10);
-	if (*endp != '\0') {
-		return false;
+	uint64_t res(strtoll(str, &endp, 10));
+	if (*endp != '\0' || errno != 0) {
+		throw Error(Error::NUMBER_INVALID);
 	}
-	if (errno != 0) {
-		return false;
-	}
-	return true;
+	return res;
 }
 
-bool make_float(const char *str, long double *res)
+long double make_float(const char *str)
 {
 	errno = 0;
 	char *endp(0);
 	AutoLocale lc("C");
-	*res = strtold(str, &endp);
-	if (*endp != '\0') {
-		return false;
+	long double res(strtold(str, &endp));
+	if (*endp != '\0' || errno != 0) {
+		throw Error(Error::NUMBER_INVALID);
 	}
-	if (errno != 0) {
-		return false;
-	}
-	return true;
+	return res;
 }
 
 enum NumberState {
@@ -377,13 +358,11 @@ Token::NumberType validate_number(Utf8Stream & stream, char *buf, size_t size)
 		case SE_DIGIT:
 			buf[i] = c;
 			if (++i == size) {
-				buf[i - 1] = '\0';
-				return Token::NONE;
+				throw Error(Error::NUMBER_OVERFLOW);
 			}
 			break;
 		case SERROR:
-			res = Token::NONE;
-			// fallthrough
+			throw Error(Error::NUMBER_INVALID);
 		case SDONE:
 			buf[i] = '\0';
 			stream.ungetc();
@@ -400,16 +379,10 @@ void TokenStream::scan_number()
 	token.number_type = validate_number(stream_, buf, sizeof(buf));
 	switch (token.number_type) {
 	case Token::INT:
-		if (!make_int(buf, &token.int_value)) {
-			token.reset();
-			return;
-		}
+		token.int_value = make_int(buf);
 		break;
 	case Token::FLOAT:
-		if (!make_float(buf, &token.float_value)) {
-			token.reset();
-			return;
-		}
+		token.float_value = make_float(buf);
 		break;
 	case Token::NONE:
 		token.reset();
