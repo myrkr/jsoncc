@@ -27,21 +27,6 @@ bool is_match(jsonp::Token::Type token, const char *match)
 		strchr(match, token);
 }
 
-}
-
-namespace jsonp {
-
-void ParserImpl::parse(char const * data, size_t size)
-{
-	Utf8Stream utf8stream(data, size);
-	TokenStream tokenizer(utf8stream);
-	try {
-		parse_document(tokenizer);
-	} catch (Error & e) {
-		throw;
-	}
-}
-
 enum ParserState {
 	SDOC = 0,
 	SA_START,
@@ -59,11 +44,11 @@ enum ParserState {
 	SMAX,
 };
 
-ParserState parser_state(Token::Type token, ParserState state, bool rec)
+ParserState parser_state(jsonp::Token::Type token, ParserState state, bool rec)
 {
 	assert(state < SMAX);
 	if (!(state < SMAX)) {
-		throw Error(Error::INTERNAL_ERROR);
+		throw jsonp::Error(jsonp::Error::INTERNAL_ERROR);
 	}
 
 	struct {
@@ -108,18 +93,18 @@ ParserState parser_state(Token::Type token, ParserState state, bool rec)
 	return SERROR;
 }
 
-Error::Type parser_error(ParserState state)
+jsonp::Error::Type parser_error(ParserState state)
 {
 	switch (state) {
-	case SDOC:     return Error::BAD_TOKEN_DOCUMENT;
-	case SA_START: return Error::BAD_TOKEN_ARRAY_START;
-	case SA_VALUE: return Error::BAD_TOKEN_ARRAY_VALUE;
-	case SA_NEXT:  return Error::BAD_TOKEN_ARRAY_NEXT;
-	case SO_START: return Error::BAD_TOKEN_OBJECT_START;
-	case SO_NAME:  return Error::BAD_TOKEN_OBJECT_NAME;
-	case SO_SEP:   return Error::BAD_TOKEN_OBJECT_SEP;
-	case SO_VALUE: return Error::BAD_TOKEN_OBJECT_VALUE;
-	case SO_NEXT:  return Error::BAD_TOKEN_OBJECT_NEXT;
+	case SDOC:     return jsonp::Error::BAD_TOKEN_DOCUMENT;
+	case SA_START: return jsonp::Error::BAD_TOKEN_ARRAY_START;
+	case SA_VALUE: return jsonp::Error::BAD_TOKEN_ARRAY_VALUE;
+	case SA_NEXT:  return jsonp::Error::BAD_TOKEN_ARRAY_NEXT;
+	case SO_START: return jsonp::Error::BAD_TOKEN_OBJECT_START;
+	case SO_NAME:  return jsonp::Error::BAD_TOKEN_OBJECT_NAME;
+	case SO_SEP:   return jsonp::Error::BAD_TOKEN_OBJECT_SEP;
+	case SO_VALUE: return jsonp::Error::BAD_TOKEN_OBJECT_VALUE;
+	case SO_NEXT:  return jsonp::Error::BAD_TOKEN_OBJECT_NEXT;
 	case SEND:     assert(false);
 	case SERROR:   assert(false);
 	case SO_STOP:  assert(false);
@@ -128,7 +113,7 @@ Error::Type parser_error(ParserState state)
 		break;
 	}
 
-	return Error::INTERNAL_ERROR;
+	return jsonp::Error::INTERNAL_ERROR;
 }
 
 class Stack {
@@ -148,7 +133,7 @@ public:
 	void push()
 	{
 		if (top_ == (sizeof(data_) / sizeof(ParserState) - 1)) {
-			throw Error(Error::PARSER_OVERFLOW);
+			throw jsonp::Error(jsonp::Error::PARSER_OVERFLOW);
 		}
 		data_[++top_] = SERROR;
 	}
@@ -157,7 +142,7 @@ public:
 	{
 		assert(top_ > 0);
 		if (!(top_ > 0)) {
-			throw Error(Error::INTERNAL_ERROR);
+			throw jsonp::Error(jsonp::Error::INTERNAL_ERROR);
 		}
 		--top_;
 	}
@@ -166,6 +151,21 @@ private:
 	size_t top_;
 	ParserState data_[256];
 };
+
+}
+
+namespace jsonp {
+
+void ParserImpl::parse(char const * data, size_t size)
+{
+	Utf8Stream utf8stream(data, size);
+	TokenStream tokenizer(utf8stream);
+	try {
+		parse_document(tokenizer);
+	} catch (Error & e) {
+		throw;
+	}
+}
 
 void ParserImpl::parse_document(TokenStream & tokenizer)
 {
