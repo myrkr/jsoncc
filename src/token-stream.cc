@@ -44,6 +44,189 @@ long double make_float(const char *str)
 	return res;
 }
 
+enum NumberState {
+	SSTART = 0,
+	SMINUS,
+	SINT_ZERO,
+	SINT_DIGIT,
+	SINT_DIGIT19,
+	SDEC_POINT,
+	SFRAC_DIGIT,
+	SE,
+	SE_PLUS,
+	SE_MINUS,
+	SE_DIGIT,
+	SDONE,
+	SERROR,
+};
+
+NumberState number_state(int c, NumberState state)
+{
+#define DIGIT19 "123456789"
+#define DIGIT "0" DIGIT19
+	struct {
+		const char *match;
+		NumberState state;
+	} transitions[][4] = {
+	/* SSTART       */ {{"-", SMINUS},   {"0", SINT_ZERO},  {DIGIT19, SINT_DIGIT19}, {0, SERROR}},
+	/* SMINUS       */ {                 {"0", SINT_ZERO},  {DIGIT19, SINT_DIGIT19}, {0, SERROR}},
+	/* SINT_ZERO    */ {{"eE", SE},      {".", SDEC_POINT},                          {0, SDONE} },
+	/* SINT_DIGIT   */ {{"eE", SE},      {".", SDEC_POINT}, {DIGIT, SINT_DIGIT},     {0, SDONE} },
+	/* SINT_DIGIT19 */ {{"eE", SE},      {".", SDEC_POINT}, {DIGIT, SINT_DIGIT},     {0, SDONE} },
+	/* SDEC_POINT   */ {{"eE", SE},                         {DIGIT, SFRAC_DIGIT},    {0, SERROR}},
+	/* SFRAC_DIGIT  */ {{"eE", SE},                         {DIGIT, SFRAC_DIGIT},    {0, SDONE} },
+	/* SE           */ {{"-", SE_MINUS}, {"+", SE_PLUS},    {DIGIT, SE_DIGIT},       {0, SERROR}},
+	/* SE_PLUS      */ {                                    {DIGIT, SE_DIGIT},       {0, SERROR}},
+	/* SE_MINUS     */ {                                    {DIGIT, SE_DIGIT},       {0, SERROR}},
+	/* SE_DIGIT     */ {                                    {DIGIT, SE_DIGIT},       {0, SDONE} },
+	};
+
+	for (size_t t(0); true; ++t) {
+		const char *match(transitions[state][t].match);
+		if (!match || strchr(match, c)) {
+			return transitions[state][t].state;
+		}
+	}
+
+	return SERROR;
+}
+
+jsonp::Token::NumberType
+validate_number(jsonp::Utf8Stream & stream, char *buf, size_t size)
+{
+	NumberState state(SSTART);
+	jsonp::Token::NumberType res(jsonp::Token::INT);
+	size_t i(0);
+	for (;;) {
+		int c(stream.getc());
+		state = number_state(c, state);
+
+		switch (state) {
+		case SSTART:
+			break;
+		case SDEC_POINT:
+		case SE:
+			res = jsonp::Token::FLOAT;
+			// fallthrough
+		case SMINUS:
+		case SINT_ZERO:
+		case SINT_DIGIT:
+		case SINT_DIGIT19:
+		case SFRAC_DIGIT:
+		case SE_MINUS:
+		case SE_PLUS:
+		case SE_DIGIT:
+			buf[i] = c;
+			if (++i == size) {
+				throw jsonp::Error(jsonp::Error::NUMBER_OVERFLOW);
+			}
+			break;
+		case SERROR:
+			throw jsonp::Error(jsonp::Error::NUMBER_INVALID);
+		case SDONE:
+			buf[i] = '\0';
+			stream.ungetc();
+			return res;
+		}
+	}
+
+	return jsonp::Token::NONE;
+}
+
+enum StringState {
+	SREGULAR,
+	SESCAPED,
+	SUESCAPE,
+	SDONES,
+};
+
+StringState scan_regular(int c, std::string & str)
+{
+	if (c == '"') {
+		return SDONES;
+	} else if (c == '\\') {
+		return SESCAPED;
+	} else if (c >= 0x0000 && c <= 0x001F) {
+		throw jsonp::Error(jsonp::Error::STRING_CTRL);
+	}
+
+	str.push_back(c);
+	return SREGULAR;
+}
+
+StringState scan_escaped(int c, std::string & str)
+{
+	switch (c) {
+	case '\\': case '/': case '"': break;
+	case 'b': c = 0x0008; break;
+	case 'f': c = 0x000C; break;
+	case 'n': c = 0x000A; break;
+	case 'r': c = 0x000D; break;
+	case 't': c = 0x0009; break;
+	case 'u': return SUESCAPE;
+	default:
+		throw jsonp::Error(jsonp::Error::ESCAPE_INVALID);
+	}
+
+	str.push_back(c);
+	return SREGULAR;
+}
+
+struct UEscape {
+public:
+	UEscape()
+	:
+		count_(0),
+		value_(0)
+	{ }
+
+	StringState scan(int c, std::string & str)
+	{
+		value_ *= 0x10;
+		if (c >= '0' && c <= '9') {
+			value_ += c - '0';
+		} else if (c >= 'a' && c <= 'f') {
+			value_ += 0x0a + c - 'a';
+		} else if (c >= 'A' && c <= 'F') {
+			value_ += 0x0a + c - 'A';
+		} else {
+			throw jsonp::Error(jsonp::Error::UESCAPE_INVALID);
+		}
+
+		if (++count_ == 4) {
+			StringState res(utf8encode(str));
+			count_ = value_ = 0;
+			return res;
+		}
+
+		return SUESCAPE;
+	}
+
+private:
+	StringState utf8encode(std::string & str) const
+	{
+		if (value_ == 0x0000) {
+			throw jsonp::Error(jsonp::Error::UESCAPE_ZERO);
+		} else if (value_ <= 0x007f) {
+			str.push_back(value_);
+		} else if (value_ <= 0x07ff) {
+			str.push_back(0xc0 | (value_ >> 6));
+			str.push_back(0x80 | (value_ & 0x3f));
+		} else if (value_ >= 0xd800 && value_ <= 0xdfff) {
+			throw jsonp::Error(jsonp::Error::UESCAPE_SURROGATE);
+		} else {
+			str.push_back(0xe0 | (value_ >> 12));
+			str.push_back(0x80 | ((value_ >> 6) & 0x3f));
+			str.push_back(0x80 | (value_ & 0x3f));
+		}
+
+		return SREGULAR;
+	}
+
+	size_t count_;
+	uint16_t value_;
+};
+
 }
 
 namespace jsonp {
@@ -131,100 +314,6 @@ void TokenStream::scan_literal(const char *literal)
 	}
 }
 
-enum StringState {
-	SREGULAR,
-	SESCAPED,
-	SUESCAPE,
-	SDONES,
-};
-
-StringState scan_regular(int c, std::string & str)
-{
-	if (c == '"') {
-		return SDONES;
-	} else if (c == '\\') {
-		return SESCAPED;
-	} else if (c >= 0x0000 && c <= 0x001F) {
-		throw Error(Error::STRING_CTRL);
-	}
-
-	str.push_back(c);
-	return SREGULAR;
-}
-
-StringState scan_escaped(int c, std::string & str)
-{
-	switch (c) {
-	case '\\': case '/': case '"': break;
-	case 'b': c = 0x0008; break;
-	case 'f': c = 0x000C; break;
-	case 'n': c = 0x000A; break;
-	case 'r': c = 0x000D; break;
-	case 't': c = 0x0009; break;
-	case 'u': return SUESCAPE;
-	default:
-		throw Error(Error::ESCAPE_INVALID);
-	}
-
-	str.push_back(c);
-	return SREGULAR;
-}
-
-struct UEscape {
-public:
-	UEscape()
-	:
-		count_(0),
-		value_(0)
-	{ }
-
-	StringState scan(int c, std::string & str)
-	{
-		value_ *= 0x10;
-		if (c >= '0' && c <= '9') {
-			value_ += c - '0';
-		} else if (c >= 'a' && c <= 'f') {
-			value_ += 0x0a + c - 'a';
-		} else if (c >= 'A' && c <= 'F') {
-			value_ += 0x0a + c - 'A';
-		} else {
-			throw Error(Error::UESCAPE_INVALID);
-		}
-
-		if (++count_ == 4) {
-			StringState res(utf8encode(str));
-			count_ = value_ = 0;
-			return res;
-		}
-
-		return SUESCAPE;
-	}
-
-private:
-	StringState utf8encode(std::string & str) const
-	{
-		if (value_ == 0x0000) {
-			throw Error(Error::UESCAPE_ZERO);
-		} else if (value_ <= 0x007f) {
-			str.push_back(value_);
-		} else if (value_ <= 0x07ff) {
-			str.push_back(0xc0 | (value_ >> 6));
-			str.push_back(0x80 | (value_ & 0x3f));
-		} else if (value_ >= 0xd800 && value_ <= 0xdfff) {
-			throw Error(Error::UESCAPE_SURROGATE);
-		} else {
-			str.push_back(0xe0 | (value_ >> 12));
-			str.push_back(0x80 | ((value_ >> 6) & 0x3f));
-			str.push_back(0x80 | (value_ & 0x3f));
-		}
-
-		return SREGULAR;
-	}
-
-	size_t count_;
-	uint16_t value_;
-};
-
 void TokenStream::scan_string()
 {
 	StringState state(SREGULAR);
@@ -249,94 +338,6 @@ void TokenStream::scan_string()
 			break;
 		}
 	}
-}
-
-enum NumberState {
-	SSTART = 0,
-	SMINUS,
-	SINT_ZERO,
-	SINT_DIGIT,
-	SINT_DIGIT19,
-	SDEC_POINT,
-	SFRAC_DIGIT,
-	SE,
-	SE_PLUS,
-	SE_MINUS,
-	SE_DIGIT,
-	SDONE,
-	SERROR,
-};
-
-NumberState number_state(int c, NumberState state)
-{
-#define DIGIT19 "123456789"
-#define DIGIT "0" DIGIT19
-	struct {
-		const char *match;
-		NumberState state;
-	} transitions[][4] = {
-	/* SSTART       */ {{"-", SMINUS},   {"0", SINT_ZERO},  {DIGIT19, SINT_DIGIT19}, {0, SERROR}},
-	/* SMINUS       */ {                 {"0", SINT_ZERO},  {DIGIT19, SINT_DIGIT19}, {0, SERROR}},
-	/* SINT_ZERO    */ {{"eE", SE},      {".", SDEC_POINT},                          {0, SDONE} },
-	/* SINT_DIGIT   */ {{"eE", SE},      {".", SDEC_POINT}, {DIGIT, SINT_DIGIT},     {0, SDONE} },
-	/* SINT_DIGIT19 */ {{"eE", SE},      {".", SDEC_POINT}, {DIGIT, SINT_DIGIT},     {0, SDONE} },
-	/* SDEC_POINT   */ {{"eE", SE},                         {DIGIT, SFRAC_DIGIT},    {0, SERROR}},
-	/* SFRAC_DIGIT  */ {{"eE", SE},                         {DIGIT, SFRAC_DIGIT},    {0, SDONE} },
-	/* SE           */ {{"-", SE_MINUS}, {"+", SE_PLUS},    {DIGIT, SE_DIGIT},       {0, SERROR}},
-	/* SE_PLUS      */ {                                    {DIGIT, SE_DIGIT},       {0, SERROR}},
-	/* SE_MINUS     */ {                                    {DIGIT, SE_DIGIT},       {0, SERROR}},
-	/* SE_DIGIT     */ {                                    {DIGIT, SE_DIGIT},       {0, SDONE} },
-	};
-
-	for (size_t t(0); true; ++t) {
-		const char *match(transitions[state][t].match);
-		if (!match || strchr(match, c)) {
-			return transitions[state][t].state;
-		}
-	}
-
-	return SERROR;
-}
-
-Token::NumberType validate_number(Utf8Stream & stream, char *buf, size_t size)
-{
-	NumberState state(SSTART);
-	Token::NumberType res(Token::INT);
-	size_t i(0);
-	for (;;) {
-		int c(stream.getc());
-		state = number_state(c, state);
-
-		switch (state) {
-		case SSTART:
-			break;
-		case SDEC_POINT:
-		case SE:
-			res = Token::FLOAT;
-			// fallthrough
-		case SMINUS:
-		case SINT_ZERO:
-		case SINT_DIGIT:
-		case SINT_DIGIT19:
-		case SFRAC_DIGIT:
-		case SE_MINUS:
-		case SE_PLUS:
-		case SE_DIGIT:
-			buf[i] = c;
-			if (++i == size) {
-				throw Error(Error::NUMBER_OVERFLOW);
-			}
-			break;
-		case SERROR:
-			throw Error(Error::NUMBER_INVALID);
-		case SDONE:
-			buf[i] = '\0';
-			stream.ungetc();
-			return res;
-		}
-	}
-
-	return Token::NONE;
 }
 
 void TokenStream::scan_number()
