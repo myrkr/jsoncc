@@ -3,9 +3,6 @@
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
 */
-#ifndef JSONP_UTF8_STREAM_H
-#define JSONP_UTF8_STREAM_H
-
 #include <jsonp.h>
 #include "utf8.h"
 
@@ -37,5 +34,3 @@ private:
 };
 
 }
-
-#endif

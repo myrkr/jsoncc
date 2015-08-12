@@ -3,9 +3,6 @@
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
 */
-#ifndef RAD_PARSER_IMPL_H
-#define RAD_PARSER_IMPL_H
-
 #include <cstddef>
 
 namespace jsonp {
@@ -22,5 +19,3 @@ private:
 };
 
 }
-
-#endif

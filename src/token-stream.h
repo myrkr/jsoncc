@@ -3,9 +3,6 @@
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
 */
-#ifndef JSONP_TOKEN_STREAM_H
-#define JSONP_TOKEN_STREAM_H
-
 #include <inttypes.h>
 #include <string>
 
@@ -84,5 +81,3 @@ private:
 };
 
 }
-
-#endif

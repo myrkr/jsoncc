@@ -4,9 +4,6 @@
    license that can be found in the LICENSE file.
 */
 
-#ifndef RAD_AUTO_LOCALE_H
-#define RAD_AUTO_LOCALE_H
-
 #include <locale.h>
 
 namespace jsonp {
@@ -22,4 +19,3 @@ private:
 };
 
 }
-#endif
