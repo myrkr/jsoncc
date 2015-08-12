@@ -8,9 +8,9 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <stdexcept>
 
 #include "auto-locale.h"
+#include "error.h"
 #include "token-stream.h"
 #include "utf8stream.h"
 
@@ -27,7 +27,7 @@ uint64_t make_int(const char *str)
 	char *endp(0);
 	uint64_t res(strtoll(str, &endp, 10));
 	if (*endp != '\0' || errno != 0) {
-		throw jsonp::Error(jsonp::Error::NUMBER_INVALID);
+		JSONP_THROW(NUMBER_INVALID);
 	}
 	return res;
 }
@@ -39,7 +39,7 @@ long double make_float(const char *str)
 	jsonp::AutoLocale lc("C");
 	long double res(strtold(str, &endp));
 	if (*endp != '\0' || errno != 0) {
-		throw jsonp::Error(jsonp::Error::NUMBER_INVALID);
+		JSONP_THROW(NUMBER_INVALID);
 	}
 	return res;
 }
@@ -118,11 +118,11 @@ validate_number(jsonp::Utf8Stream & stream, char *buf, size_t size)
 		case SE_DIGIT:
 			buf[i] = c;
 			if (++i == size) {
-				throw jsonp::Error(jsonp::Error::NUMBER_OVERFLOW);
+				JSONP_THROW(NUMBER_OVERFLOW);
 			}
 			break;
 		case SERROR:
-			throw jsonp::Error(jsonp::Error::NUMBER_INVALID);
+			JSONP_THROW(NUMBER_INVALID);
 		case SDONE:
 			buf[i] = '\0';
 			stream.ungetc();
@@ -147,7 +147,7 @@ StringState scan_regular(int c, std::string & str)
 	} else if (c == '\\') {
 		return SESCAPED;
 	} else if (c >= 0x0000 && c <= 0x001F) {
-		throw jsonp::Error(jsonp::Error::STRING_CTRL);
+		JSONP_THROW(STRING_CTRL);
 	}
 
 	str.push_back(c);
@@ -165,7 +165,7 @@ StringState scan_escaped(int c, std::string & str)
 	case 't': c = 0x0009; break;
 	case 'u': return SUESCAPE;
 	default:
-		throw jsonp::Error(jsonp::Error::ESCAPE_INVALID);
+		JSONP_THROW(ESCAPE_INVALID);
 	}
 
 	str.push_back(c);
@@ -190,7 +190,7 @@ public:
 		} else if (c >= 'A' && c <= 'F') {
 			value_ += 0x0a + c - 'A';
 		} else {
-			throw jsonp::Error(jsonp::Error::UESCAPE_INVALID);
+			JSONP_THROW(UESCAPE_INVALID);
 		}
 
 		if (++count_ == 4) {
@@ -206,14 +206,14 @@ private:
 	StringState utf8encode(std::string & str) const
 	{
 		if (value_ == 0x0000) {
-			throw jsonp::Error(jsonp::Error::UESCAPE_ZERO);
+			JSONP_THROW(UESCAPE_ZERO);
 		} else if (value_ <= 0x007f) {
 			str.push_back(value_);
 		} else if (value_ <= 0x07ff) {
 			str.push_back(0xc0 | (value_ >> 6));
 			str.push_back(0x80 | (value_ & 0x3f));
 		} else if (value_ >= 0xd800 && value_ <= 0xdfff) {
-			throw jsonp::Error(jsonp::Error::UESCAPE_SURROGATE);
+			JSONP_THROW(UESCAPE_SURROGATE);
 		} else {
 			str.push_back(0xe0 | (value_ >> 12));
 			str.push_back(0x80 | ((value_ >> 6) & 0x3f));
@@ -293,7 +293,7 @@ TokenStream::scanner TokenStream::select_scanner(int c)
 		res = &TokenStream::scan_number;
 		break;
 	default:
-		throw Error(Error::TOKEN_INVALID);
+		JSONP_THROW(TOKEN_INVALID);
 	}
 
 	token.type = Token::Type(c);
@@ -309,7 +309,7 @@ void TokenStream::scan_literal(const char *literal)
 {
 	for (const char *p(&literal[1]); *p; p++) {
 		if (stream_.getc() != *p) {
-			throw Error(Error::LITERAL_INVALID);
+			JSONP_THROW(LITERAL_INVALID);
 		}
 	}
 }
@@ -321,7 +321,7 @@ void TokenStream::scan_string()
 	while (state != SDONES) {
 		int c(stream_.getc());
 		if (stream_.state() != Utf8Stream::SGOOD) {
-			throw Error(Error::STRING_QUOTE);
+			JSONP_THROW(STRING_QUOTE);
 		}
 
 		switch (state) {

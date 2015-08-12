@@ -9,6 +9,7 @@
 
 #include "parser-impl.h"
 
+#include "error.h"
 #include "token-stream.h"
 #include "utf8stream.h"
 
@@ -48,7 +49,7 @@ ParserState parser_state(jsonp::Token::Type token, ParserState state, bool rec)
 {
 	assert(state < SMAX);
 	if (!(state < SMAX)) {
-		throw jsonp::Error(jsonp::Error::INTERNAL_ERROR);
+		JSONP_THROW(INTERNAL_ERROR);
 	}
 
 	struct {
@@ -133,7 +134,7 @@ public:
 	void push()
 	{
 		if (top_ == (sizeof(data_) / sizeof(ParserState) - 1)) {
-			throw jsonp::Error(jsonp::Error::PARSER_OVERFLOW);
+			JSONP_THROW(PARSER_OVERFLOW);
 		}
 		data_[++top_] = SERROR;
 	}
@@ -142,7 +143,7 @@ public:
 	{
 		assert(top_ > 0);
 		if (!(top_ > 0)) {
-			throw jsonp::Error(jsonp::Error::INTERNAL_ERROR);
+			JSONP_THROW(INTERNAL_ERROR);
 		}
 		--top_;
 	}
