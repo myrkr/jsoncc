@@ -3,7 +3,7 @@ JSONCC_DEBUG ?=
 CXX ?= g++
 CXXFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -L.
-CPPFLAGS = -Iinclude
+CPPFLAGS = -Iinclude -Isrc
 
 ifeq ($(JSONCC_DEBUG),1)
 DEBUG_CXXFLAGS += -g -O0
