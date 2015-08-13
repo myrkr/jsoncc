@@ -9,7 +9,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "auto-locale.h"
 #include "error.h"
 #include "token-stream.h"
 #include "utf8stream.h"
@@ -32,11 +31,31 @@ uint64_t make_int(const char *str)
 	return res;
 }
 
+// POSIX thread local locale setting.
+class AutoLocale {
+public:
+	AutoLocale(const char *name)
+	:
+		locale_(newlocale(LC_ALL_MASK, name, 0)),
+		saved_(uselocale(locale_))
+	{ }
+
+	~AutoLocale()
+	{
+		uselocale(saved_);
+		freelocale(locale_);
+	}
+
+private:
+	locale_t locale_;
+	locale_t saved_;
+};
+
 long double make_float(const char *str)
 {
 	errno = 0;
 	char *endp(0);
-	Json::AutoLocale lc("C");
+	AutoLocale lc("C");
 	long double res(strtold(str, &endp));
 	if (*endp != '\0' || errno != 0) {
 		JSONCC_THROW(NUMBER_INVALID);
