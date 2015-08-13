@@ -1,4 +1,4 @@
-JASON_DEBUG ?=
+JSONCC_DEBUG ?=
 
 CXX ?= g++
 CXXFLAGS = -Wall -Wextra -Werror
