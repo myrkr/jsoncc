@@ -9,7 +9,7 @@
 
 #include "utf8stream.h"
 
-namespace jsonp {
+namespace Json {
 
 Utf8Stream::Utf8Stream(const char *buf, size_t len)
 :

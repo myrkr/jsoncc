@@ -6,7 +6,7 @@
 
 #include "auto-locale.h"
 
-namespace jsonp {
+namespace Json {
 
 AutoLocale::AutoLocale(const char *name)
 :

@@ -3,10 +3,10 @@
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
 */
-#include <jsonp.h>
+#include <jsoncc.h>
 #include "utf8.h"
 
-namespace jsonp {
+namespace Json {
 
 class Utf8Stream {
 public:

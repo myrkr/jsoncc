@@ -36,7 +36,7 @@ void test::setUp()
 void test::tearDown()
 { }
 
-using namespace jsonp;
+using namespace Json;
 
 void test::test_empty()
 {

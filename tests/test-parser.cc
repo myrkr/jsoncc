@@ -68,7 +68,7 @@ void test::setUp()
 void test::tearDown()
 { }
 
-using namespace jsonp;
+using namespace Json;
 
 void test::test_empty_document()
 {
@@ -97,10 +97,10 @@ void test::test_unbalanced_empty_array()
 	ParserImpl parser;
 
 	char data[] = "[";
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_ARRAY_START, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_ARRAY_START, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -117,10 +117,10 @@ void test::test_unbalanced_simple_array()
 	ParserImpl parser;
 
 	char data[] = "[ true,";
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_ARRAY_NEXT, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_ARRAY_NEXT, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -137,10 +137,10 @@ void test::test_unbalanced_nested_array()
 	ParserImpl parser;
 
 	char data[] = "[[ true ], [[], [ true, false, [ null, 1 ]]]";
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_ARRAY_VALUE, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_ARRAY_VALUE, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -160,10 +160,10 @@ void test::test_unbalanced_empty_object()
 	ParserImpl parser;
 
 	char data[] = "{";
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_OBJECT_START, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_START, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -191,10 +191,10 @@ void test::test_unbalanced_simple_object()
 	"\"key4\": \"hello\"\n"
 	"\n";
 
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_OBJECT_VALUE, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_VALUE, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -209,10 +209,10 @@ void test::test_missing_key_simple_object()
 	"\"key4\": \"hello\"\n"
 	"}\n";
 
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_OBJECT_START, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_START, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -227,10 +227,10 @@ void test::test_missing_colon_simple_object()
 	"\"key4\": \"hello\"\n"
 	"}\n";
 
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_OBJECT_NAME, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_NAME, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -245,10 +245,10 @@ void test::test_missing_value_simple_object()
 	"\"key4\": \"hello\"\n"
 	"}\n";
 
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_OBJECT_SEP, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_SEP, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -263,10 +263,10 @@ void test::test_missing_seperator_simple_object()
 	"\"key4\": \"hello\"\n"
 	"}\n";
 
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_OBJECT_VALUE, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_VALUE, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -299,10 +299,10 @@ void test::test_unbalanced_nested_object()
 	",\n"
 	"\"key4\": \"hello\"\n"
 	"}\n";
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, sizeof(data) - 1), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::BAD_TOKEN_OBJECT_VALUE, error.type);
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_VALUE, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
@@ -329,10 +329,10 @@ void test::test_max_nesting()
 	char data[256];
 	memset(data, '[', sizeof(data));
 
-	jsonp::Error error;
+	Json::Error error;
 	CPPUNIT_ASSERT_THROW_VAR(
-		parser.parse(data, 256), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::PARSER_OVERFLOW, error.type);
+		parser.parse(data, 256), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::PARSER_OVERFLOW, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 

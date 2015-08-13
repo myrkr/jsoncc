@@ -4,7 +4,7 @@
    license that can be found in the LICENSE file.
 */
 
-namespace jsonp {
+namespace Json {
 
 class utf8validator {
 public:

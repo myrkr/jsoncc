@@ -6,7 +6,7 @@
 #include <inttypes.h>
 #include <string>
 
-namespace jsonp {
+namespace Json {
 
 class Token {
 public:

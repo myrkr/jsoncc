@@ -6,7 +6,7 @@
 
 #include <locale.h>
 
-namespace jsonp {
+namespace Json {
 // POSIX thread local locale setting.
 class AutoLocale {
 public:

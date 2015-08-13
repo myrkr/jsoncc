@@ -1,8 +1,8 @@
 #include <ostream>
 
-#include <jsonp.h>
+#include <jsoncc.h>
 
-namespace jsonp {
+namespace Json {
 
 static inline std::ostream & operator<<(std::ostream & os, Error::Type type)
 {

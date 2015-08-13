@@ -4,10 +4,10 @@
    license that can be found in the LICENSE file.
 */
 
-#include <jsonp.h>
+#include <jsoncc.h>
 #include "parser-impl.h"
 
-namespace jsonp {
+namespace Json {
 
 Parser::Parser()
 :

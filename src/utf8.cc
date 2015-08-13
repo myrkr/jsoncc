@@ -99,7 +99,7 @@ static inline int next_state(int state, unsigned char c)
 
 }
 
-namespace jsonp {
+namespace Json {
 
 utf8validator::utf8validator()
 :

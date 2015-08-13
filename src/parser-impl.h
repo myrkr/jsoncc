@@ -5,7 +5,7 @@
 */
 #include <cstddef>
 
-namespace jsonp {
+namespace Json {
 
 class TokenStream;
 

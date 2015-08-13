@@ -4,4 +4,4 @@
    license that can be found in the LICENSE file.
 */
 
-#define JSONP_THROW(type) throw jsonp::Error(jsonp::Error::type)
+#define JSONCC_THROW(type) throw Json::Error(Json::Error::type)

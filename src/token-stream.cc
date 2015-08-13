@@ -27,7 +27,7 @@ uint64_t make_int(const char *str)
 	char *endp(0);
 	uint64_t res(strtoll(str, &endp, 10));
 	if (*endp != '\0' || errno != 0) {
-		JSONP_THROW(NUMBER_INVALID);
+		JSONCC_THROW(NUMBER_INVALID);
 	}
 	return res;
 }
@@ -36,10 +36,10 @@ long double make_float(const char *str)
 {
 	errno = 0;
 	char *endp(0);
-	jsonp::AutoLocale lc("C");
+	Json::AutoLocale lc("C");
 	long double res(strtold(str, &endp));
 	if (*endp != '\0' || errno != 0) {
-		JSONP_THROW(NUMBER_INVALID);
+		JSONCC_THROW(NUMBER_INVALID);
 	}
 	return res;
 }
@@ -91,11 +91,11 @@ NumberState number_state(int c, NumberState state)
 	return SERROR;
 }
 
-jsonp::Token::NumberType
-validate_number(jsonp::Utf8Stream & stream, char *buf, size_t size)
+Json::Token::NumberType
+validate_number(Json::Utf8Stream & stream, char *buf, size_t size)
 {
 	NumberState state(SSTART);
-	jsonp::Token::NumberType res(jsonp::Token::INT);
+	Json::Token::NumberType res(Json::Token::INT);
 	size_t i(0);
 	for (;;) {
 		int c(stream.getc());
@@ -106,7 +106,7 @@ validate_number(jsonp::Utf8Stream & stream, char *buf, size_t size)
 			break;
 		case SDEC_POINT:
 		case SE:
-			res = jsonp::Token::FLOAT;
+			res = Json::Token::FLOAT;
 			// fallthrough
 		case SMINUS:
 		case SINT_ZERO:
@@ -118,11 +118,11 @@ validate_number(jsonp::Utf8Stream & stream, char *buf, size_t size)
 		case SE_DIGIT:
 			buf[i] = c;
 			if (++i == size) {
-				JSONP_THROW(NUMBER_OVERFLOW);
+				JSONCC_THROW(NUMBER_OVERFLOW);
 			}
 			break;
 		case SERROR:
-			JSONP_THROW(NUMBER_INVALID);
+			JSONCC_THROW(NUMBER_INVALID);
 		case SDONE:
 			buf[i] = '\0';
 			stream.ungetc();
@@ -130,7 +130,7 @@ validate_number(jsonp::Utf8Stream & stream, char *buf, size_t size)
 		}
 	}
 
-	return jsonp::Token::NONE;
+	return Json::Token::NONE;
 }
 
 enum StringState {
@@ -147,7 +147,7 @@ StringState scan_regular(int c, std::string & str)
 	} else if (c == '\\') {
 		return SESCAPED;
 	} else if (c >= 0x0000 && c <= 0x001F) {
-		JSONP_THROW(STRING_CTRL);
+		JSONCC_THROW(STRING_CTRL);
 	}
 
 	str.push_back(c);
@@ -165,7 +165,7 @@ StringState scan_escaped(int c, std::string & str)
 	case 't': c = 0x0009; break;
 	case 'u': return SUESCAPE;
 	default:
-		JSONP_THROW(ESCAPE_INVALID);
+		JSONCC_THROW(ESCAPE_INVALID);
 	}
 
 	str.push_back(c);
@@ -190,7 +190,7 @@ public:
 		} else if (c >= 'A' && c <= 'F') {
 			value_ += 0x0a + c - 'A';
 		} else {
-			JSONP_THROW(UESCAPE_INVALID);
+			JSONCC_THROW(UESCAPE_INVALID);
 		}
 
 		if (++count_ == 4) {
@@ -206,14 +206,14 @@ private:
 	StringState utf8encode(std::string & str) const
 	{
 		if (value_ == 0x0000) {
-			JSONP_THROW(UESCAPE_ZERO);
+			JSONCC_THROW(UESCAPE_ZERO);
 		} else if (value_ <= 0x007f) {
 			str.push_back(value_);
 		} else if (value_ <= 0x07ff) {
 			str.push_back(0xc0 | (value_ >> 6));
 			str.push_back(0x80 | (value_ & 0x3f));
 		} else if (value_ >= 0xd800 && value_ <= 0xdfff) {
-			JSONP_THROW(UESCAPE_SURROGATE);
+			JSONCC_THROW(UESCAPE_SURROGATE);
 		} else {
 			str.push_back(0xe0 | (value_ >> 12));
 			str.push_back(0x80 | ((value_ >> 6) & 0x3f));
@@ -229,7 +229,7 @@ private:
 
 }
 
-namespace jsonp {
+namespace Json {
 
 TokenStream::TokenStream(Utf8Stream & stream)
 :
@@ -293,7 +293,7 @@ TokenStream::scanner TokenStream::select_scanner(int c)
 		res = &TokenStream::scan_number;
 		break;
 	default:
-		JSONP_THROW(TOKEN_INVALID);
+		JSONCC_THROW(TOKEN_INVALID);
 	}
 
 	token.type = Token::Type(c);
@@ -309,7 +309,7 @@ void TokenStream::scan_literal(const char *literal)
 {
 	for (const char *p(&literal[1]); *p; p++) {
 		if (stream_.getc() != *p) {
-			JSONP_THROW(LITERAL_INVALID);
+			JSONCC_THROW(LITERAL_INVALID);
 		}
 	}
 }
@@ -321,7 +321,7 @@ void TokenStream::scan_string()
 	while (state != SDONES) {
 		int c(stream_.getc());
 		if (stream_.state() != Utf8Stream::SGOOD) {
-			JSONP_THROW(STRING_QUOTE);
+			JSONCC_THROW(STRING_QUOTE);
 		}
 
 		switch (state) {

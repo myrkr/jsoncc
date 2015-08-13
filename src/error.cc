@@ -3,9 +3,9 @@
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
 */
-#include <jsonp.h>
+#include <jsoncc.h>
 
-namespace jsonp {
+namespace Json {
 
 static const char *error_message[] = {
 	"no error",

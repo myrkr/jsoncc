@@ -5,7 +5,7 @@
 #include "token-stream.h"
 #include "utf8stream.h"
 
-namespace jsonp {
+namespace Json {
 
 std::ostream & operator<<(std::ostream & os, Token::Type type)
 {
@@ -147,7 +147,7 @@ void test::setUp()
 void test::tearDown()
 { }
 
-using namespace jsonp;
+using namespace Json;
 
 void test::test_stream_zero()
 {
@@ -156,9 +156,9 @@ void test::test_stream_zero()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::STREAM_ZERO, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::STREAM_ZERO, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
 }
 
@@ -169,9 +169,9 @@ void test::test_bad_utf8()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UTF8_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::UTF8_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
 }
 
@@ -182,9 +182,9 @@ void test::test_utf8_bom()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::TOKEN_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::TOKEN_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(1), error.location.offs);
 }
 
@@ -218,9 +218,9 @@ void test::test_invalid_token()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::TOKEN_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::TOKEN_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(1), error.location.offs);
 }
 
@@ -248,9 +248,9 @@ void test::test_invalid_literal()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::LITERAL_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::LITERAL_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(4), error.location.offs);
 }
 
@@ -600,9 +600,9 @@ void test::test_float_missing_frac()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::NUMBER_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
 }
 
@@ -613,9 +613,9 @@ void test::test_float_missing_int()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::NUMBER_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(2), error.location.offs);
 }
 
@@ -626,9 +626,9 @@ void test::test_float_double_dot()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::NUMBER_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(3), error.location.offs);
 }
 
@@ -639,9 +639,9 @@ void test::test_float_missing_exp()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::NUMBER_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(4), error.location.offs);
 }
 
@@ -652,9 +652,9 @@ void test::test_float_missing_plus_exp()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::NUMBER_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(5), error.location.offs);
 }
 
@@ -665,9 +665,9 @@ void test::test_float_missing_minus_exp()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::NUMBER_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::NUMBER_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(5), error.location.offs);
 }
 
@@ -692,9 +692,9 @@ void test::test_unterminated_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::STRING_QUOTE, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::STRING_QUOTE, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(1), error.location.offs);
 }
 
@@ -719,9 +719,9 @@ void test::test_control_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::STRING_CTRL, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::STRING_CTRL, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(15), error.location.offs);
 }
 
@@ -777,9 +777,9 @@ void test::test_surrogate_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UESCAPE_SURROGATE, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::UESCAPE_SURROGATE, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(7), error.location.offs);
 }
 
@@ -790,9 +790,9 @@ void test::test_zero_esc_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UESCAPE_ZERO, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::UESCAPE_ZERO, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(13), error.location.offs);
 }
 
@@ -803,9 +803,9 @@ void test::test_utf8_incomplete_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::UESCAPE_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::UESCAPE_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(7), error.location.offs);
 }
 
@@ -817,9 +817,9 @@ void test::test_invalid_esc_string()
 	TokenStream ts(us);
 
 	CPPUNIT_ASSERT_EQUAL(Token::INVALID, ts.token.type);
-	jsonp::Error error;
-	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), jsonp::Error, error);
-	CPPUNIT_ASSERT_EQUAL(jsonp::Error::ESCAPE_INVALID, error.type);
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(ts.scan(), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::ESCAPE_INVALID, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(3), error.location.offs);
 }
 
