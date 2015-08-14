@@ -157,18 +157,18 @@ private:
 
 namespace Json {
 
-void ParserImpl::parse(char const * data, size_t size)
+Value ParserImpl::parse(char const * data, size_t size)
 {
 	Utf8Stream utf8stream(data, size);
 	TokenStream tokenizer(utf8stream);
 	try {
-		parse_document(tokenizer);
+		return parse_document(tokenizer);
 	} catch (Error & e) {
 		throw;
 	}
 }
 
-void ParserImpl::parse_document(TokenStream & tokenizer)
+Value ParserImpl::parse_document(TokenStream & tokenizer)
 {
 	Stack stack;
 	for (;;) {
@@ -203,7 +203,7 @@ recurse:
 	        case SMAX: case SERROR:
 			throw Error(parser_error(state));
 		case SEND:
-			return;
+			return Value();
 		}
 
 		if (!rec && must_recurse(tokenizer.token.type)) {

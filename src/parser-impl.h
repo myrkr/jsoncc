@@ -3,7 +3,7 @@
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
 */
-#include <cstddef>
+#include <jsoncc.h>
 
 namespace Json {
 
@@ -11,11 +11,11 @@ class TokenStream;
 
 class ParserImpl {
 public:
-	void parse(char const *, size_t);
+	Value parse(char const *, size_t);
 
 private:
 
-	void parse_document(TokenStream &);
+	Value parse_document(TokenStream &);
 };
 
 }

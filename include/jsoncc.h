@@ -332,7 +332,7 @@ public:
 	Parser();
 	~Parser();
 
-	void parse(char const *, size_t);
+	Value parse(char const *, size_t);
 private:
 	Parser(Parser const&); // = deleted;
 	Parser & operator=(Parser const&); // = deleted;
