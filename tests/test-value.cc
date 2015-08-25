@@ -79,6 +79,8 @@ void test::test_invalid_type()
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_INVALID, t3.tag());
 
 	CPPUNIT_ASSERT_EQUAL(t1, t3);
+
+	CPPUNIT_ASSERT(!t1);
 }
 
 void test::test_null_type()

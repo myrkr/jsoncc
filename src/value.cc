@@ -61,6 +61,9 @@ Value::~Value()
 	clear();
 }
 
+void Value::bool_true_value() const
+{ }
+
 void Value::clone(Value const& o)
 {
 	assert(&o != this);
