@@ -29,6 +29,7 @@ private:
 	void test_missing_colon_simple_object();
 	void test_missing_value_simple_object();
 	void test_missing_seperator_simple_object();
+	void test_missing_next_key_object();
 	void test_nested_object();
 	void test_unbalanced_nested_object();
 	void test_complex();
@@ -50,6 +51,7 @@ private:
 	CPPUNIT_TEST(test_missing_colon_simple_object);
 	CPPUNIT_TEST(test_missing_value_simple_object);
 	CPPUNIT_TEST(test_missing_seperator_simple_object);
+	CPPUNIT_TEST(test_missing_next_key_object);
 	CPPUNIT_TEST(test_nested_object);
 	CPPUNIT_TEST(test_unbalanced_nested_object);
 	CPPUNIT_TEST(test_complex);
@@ -267,6 +269,22 @@ void test::test_missing_seperator_simple_object()
 	CPPUNIT_ASSERT_THROW_VAR(
 		parser.parse(data, sizeof(data) - 1), Json::Error, error);
 	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_VALUE, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
+}
+
+void test::test_missing_next_key_object()
+{
+	ParserImpl parser;
+
+	char data[] = "{\n"
+	"\"key1\": true,\n"
+	"false\n"
+	"}\n";
+
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_OBJECT_NEXT, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
