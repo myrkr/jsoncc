@@ -105,10 +105,10 @@ protected:
 		case SVALUE: result << parse_value(); break;
 		case SNEXT:  break;
 		case SEND:   break;
-		case SMAX:   assert(false);
-		case SERROR: assert(false);
-		case SSTART: assert(false);
-			JSONCC_THROW(INTERNAL_ERROR);
+		case SMAX:   assert(false);           // LCOV_EXCL_LINE
+		case SERROR: assert(false);           // LCOV_EXCL_LINE
+		case SSTART: assert(false);           // LCOV_EXCL_LINE
+			JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
 		}
 	}
 
@@ -118,11 +118,11 @@ protected:
 		case SSTART: return Json::Error::BAD_TOKEN_ARRAY_START;
 		case SVALUE: return Json::Error::BAD_TOKEN_ARRAY_VALUE;
 		case SNEXT:  return Json::Error::BAD_TOKEN_ARRAY_NEXT;
-		case SERROR: assert(false);
-		case SEND:   assert(false);
-		case SMAX:   assert(false);
+		case SERROR: assert(false);         // LCOV_EXCL_LINE
+		case SEND:   assert(false);         // LCOV_EXCL_LINE
+		case SMAX:   assert(false);         // LCOV_EXCL_LINE
 		}
-		return Json::Error::INTERNAL_ERROR;
+		return Json::Error::INTERNAL_ERROR; // LCOV_EXCL_LINE
 	}
 
 	Json::Array result;
@@ -161,10 +161,10 @@ protected:
 		case SNEXT:  break;
 		case SEND:   break;
 		case SSEP:   break;
-		case SERROR: assert(false);
-		case SSTART: assert(false);
-		case SMAX:   assert(false);
-			JSONCC_THROW(INTERNAL_ERROR);
+		case SERROR: assert(false);           // LCOV_EXCL_LINE
+		case SSTART: assert(false);           // LCOV_EXCL_LINE
+		case SMAX:   assert(false);           // LCOV_EXCL_LINE
+			JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
 		}
 	}
 
@@ -176,11 +176,11 @@ protected:
 		case SSEP:   return Json::Error::BAD_TOKEN_OBJECT_SEP;
 		case SVALUE: return Json::Error::BAD_TOKEN_OBJECT_VALUE;
 		case SNEXT:  return Json::Error::BAD_TOKEN_OBJECT_NEXT;
-		case SERROR: assert(false);
-		case SEND:   assert(false);
-		case SMAX:   assert(false);
+		case SERROR: assert(false);         // LCOV_EXCL_LINE
+		case SEND:   assert(false);         // LCOV_EXCL_LINE
+		case SMAX:   assert(false);         // LCOV_EXCL_LINE
 		}
-		return Json::Error::INTERNAL_ERROR;
+		return Json::Error::INTERNAL_ERROR; // LCOV_EXCL_LINE
 	}
 
 	std::string key;
@@ -216,10 +216,10 @@ protected:
 		switch (state) {
 		case SVALUE: result = parse_value(); break;
 		case SEND:   break;
-		case SSTART: assert(false);
-		case SERROR: assert(false);
-		case SMAX:   assert(false);
-			JSONCC_THROW(INTERNAL_ERROR);
+		case SSTART: assert(false);           // LCOV_EXCL_LINE
+		case SERROR: assert(false);           // LCOV_EXCL_LINE
+		case SMAX:   assert(false);           // LCOV_EXCL_LINE
+			JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
 		}
 	}
 
@@ -228,11 +228,11 @@ protected:
 		switch (state) {
 		case SSTART:
 		case SVALUE: return Json::Error::BAD_TOKEN_DOCUMENT;
-		case SERROR: assert(false);
-		case SEND:   assert(false);
-		case SMAX:   assert(false);
+		case SERROR: assert(false);         // LCOV_EXCL_LINE
+		case SEND:   assert(false);         // LCOV_EXCL_LINE
+		case SMAX:   assert(false);         // LCOV_EXCL_LINE
 		}
-		return Json::Error::INTERNAL_ERROR;
+		return Json::Error::INTERNAL_ERROR; // LCOV_EXCL_LINE
 	}
 
 	Json::Value result;
@@ -264,16 +264,16 @@ Json::Value ParserState::parse_value()
 		return StateEngine<ArrayState>(tokenizer, depth_).parse();
 	case Json::Token::BEGIN_OBJECT:
 		return StateEngine<ObjectState>(tokenizer, depth_).parse();
-	case Json::Token::END:             assert(false);
-	case Json::Token::INVALID:         assert(false);
-	case Json::Token::END_ARRAY:       assert(false);
-	case Json::Token::END_OBJECT:      assert(false);
-	case Json::Token::NAME_SEPARATOR:  assert(false);
-	case Json::Token::VALUE_SEPARATOR: assert(false);
+	case Json::Token::END:             assert(false); // LCOV_EXCL_LINE
+	case Json::Token::INVALID:         assert(false); // LCOV_EXCL_LINE
+	case Json::Token::END_ARRAY:       assert(false); // LCOV_EXCL_LINE
+	case Json::Token::END_OBJECT:      assert(false); // LCOV_EXCL_LINE
+	case Json::Token::NAME_SEPARATOR:  assert(false); // LCOV_EXCL_LINE
+	case Json::Token::VALUE_SEPARATOR: assert(false); // LCOV_EXCL_LINE
 		break;
 	}
 
-	JSONCC_THROW(INTERNAL_ERROR);
+	JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
 	return Json::Value();
 }
 
