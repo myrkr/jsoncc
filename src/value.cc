@@ -61,8 +61,10 @@ Value::~Value()
 	clear();
 }
 
+// LCOV_EXCL_START
 void Value::bool_true_value() const
 { }
+// LCOV_EXCL_STOP
 
 void Value::clone(Value const& o)
 {
