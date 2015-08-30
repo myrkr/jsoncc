@@ -376,7 +376,7 @@ void test::test_nested_object()
 		<< Json::Member("key3", (
 			Json::Object()
 				<< Json::Member("key1", true)
-				<< Json::Member("key2", false)))
+				<< Json::Member("key2", 1.0)))
 		<< Json::Member("key4", "hello");
 
 	char data[] = "{\n"
@@ -384,7 +384,7 @@ void test::test_nested_object()
 	"\"key2\": null,\n"
 	"\"key3\": {\n"
 	"	\"key1\": true,\n"
-	"	\"key2\": false\n"
+	"	\"key2\": 1.0\n"
 	"},\n"
 	"\"key4\": \"hello\"\n"
 	"}\n";
