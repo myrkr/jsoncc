@@ -1,5 +1,6 @@
 #include <cstring>
 
+#include "equality.h"
 #include "error-assert.h"
 #include "error-io.h"
 #include "parser-impl.h"
@@ -15,6 +16,8 @@ public:
 
 private:
 	void test_empty_document();
+	void test_bad_doc_token();
+	void test_double_doc();
 	void test_empty_array();
 	void test_unbalanced_empty_array();
 	void test_simple_array();
@@ -37,6 +40,8 @@ private:
 
 	CPPUNIT_TEST_SUITE(test);
 	CPPUNIT_TEST(test_empty_document);
+	CPPUNIT_TEST(test_bad_doc_token);
+	CPPUNIT_TEST(test_double_doc);
 	CPPUNIT_TEST(test_empty_array);
 	CPPUNIT_TEST(test_unbalanced_empty_array);
 	CPPUNIT_TEST(test_simple_array);
@@ -75,12 +80,43 @@ using namespace Json;
 void test::test_empty_document()
 {
 	ParserImpl parser;
+	Json::Value value;
 
 	char data[] = "";
-	parser.parse(data, sizeof(data) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(),
+		parser.parse(data, sizeof(data) - 1)
+	);
 
 	char data2[] = "              ";
-	parser.parse(data2, sizeof(data2) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(),
+		parser.parse(data2, sizeof(data2) - 1)
+	);
+}
+
+void test::test_bad_doc_token()
+{
+	ParserImpl parser;
+
+	char data[] = "true";
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_DOCUMENT, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
+}
+
+void test::test_double_doc()
+{
+	ParserImpl parser;
+
+	char data[] = "[][]";
+	Json::Error error;
+	CPPUNIT_ASSERT_THROW_VAR(
+		parser.parse(data, sizeof(data) - 1), Json::Error, error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::BAD_TOKEN_DOCUMENT, error.type);
+	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
 }
 
 void test::test_empty_array()
@@ -88,10 +124,16 @@ void test::test_empty_array()
 	ParserImpl parser;
 
 	char data[] = "[]";
-	parser.parse(data, sizeof(data) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(Json::Array()),
+		parser.parse(data, sizeof(data) - 1)
+	);
 
 	char data2[] = "   [      ]   ";
-	parser.parse(data2, sizeof(data2) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(Json::Array()),
+		parser.parse(data2, sizeof(data2) - 1)
+	);
 }
 
 void test::test_unbalanced_empty_array()
@@ -110,8 +152,14 @@ void test::test_simple_array()
 {
 	ParserImpl parser;
 
+	Json::Array expected;
+	expected << true << false << Json::Null() << "hello" << 1234;
+
 	char data[] = "[ true, false, null, \"hello\", 1234]";
-	parser.parse(data, sizeof(data) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(expected),
+		parser.parse(data, sizeof(data) - 1)
+	);
 }
 
 void test::test_unbalanced_simple_array()
@@ -130,8 +178,21 @@ void test::test_nested_array()
 {
 	ParserImpl parser;
 
+	Json::Array expected;
+	expected << (Json::Array() << true)
+		 << (Json::Array() << Json::Array())
+		 << (Json::Array()
+			<< true
+			<< false
+			<< (Json::Array()
+				<< Json::Null()
+				<< 1));
+
 	char data[] = "[[ true ], [[]], [ true, false, [ null, 1 ]]]";
-	parser.parse(data, sizeof(data) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(expected),
+		parser.parse(data, sizeof(data) - 1)
+	);
 }
 
 void test::test_unbalanced_nested_array()
@@ -151,10 +212,16 @@ void test::test_empty_object()
 	ParserImpl parser;
 
 	char data[] = "{}";
-	parser.parse(data, sizeof(data) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(Json::Object()),
+		parser.parse(data, sizeof(data) - 1)
+	);
 
 	char data2[] = "   {      }   ";
-	parser.parse(data2, sizeof(data2) - 1);
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(Json::Object()),
+		parser.parse(data2, sizeof(data2) - 1)
+	);
 }
 
 void test::test_unbalanced_empty_object()
@@ -173,19 +240,29 @@ void test::test_simple_object()
 {
 	ParserImpl parser;
 
+	Json::Object expected;
+	expected
+		<< Json::Member("key1", true)
+		<< Json::Member("key2", Json::Null())
+		<< Json::Member("key3", 1234)
+		<< Json::Member("key4", "hello");
+
 	char data[] = "{\n"
 	"\"key1\": true,\n"
 	"\"key2\": null,\n"
 	"\"key3\": 1234,\n"
 	"\"key4\": \"hello\"\n"
 	"}\n";
-	parser.parse(data, sizeof(data) - 1);
+
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(expected),
+		parser.parse(data, sizeof(data) - 1)
+	);
 }
 
 void test::test_unbalanced_simple_object()
 {
 	ParserImpl parser;
-
 	char data[] = "{\n"
 	"\"key1\": true,\n"
 	"\"key2\": null,\n"
@@ -292,6 +369,16 @@ void test::test_nested_object()
 {
 	ParserImpl parser;
 
+	Json::Object expected;
+	expected
+		<< Json::Member("key1", Json::Object())
+		<< Json::Member("key2", Json::Null())
+		<< Json::Member("key3", (
+			Json::Object()
+				<< Json::Member("key1", true)
+				<< Json::Member("key2", false)))
+		<< Json::Member("key4", "hello");
+
 	char data[] = "{\n"
 	"\"key1\": {},\n"
 	"\"key2\": null,\n"
@@ -301,7 +388,11 @@ void test::test_nested_object()
 	"},\n"
 	"\"key4\": \"hello\"\n"
 	"}\n";
-	parser.parse(data, sizeof(data) - 1);
+
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(expected),
+		parser.parse(data, sizeof(data) - 1)
+	);
 }
 
 void test::test_unbalanced_nested_object()
@@ -328,6 +419,27 @@ void test::test_complex()
 {
 	ParserImpl parser;
 
+	Json::Object expected;
+	expected
+		<< Json::Member("key1", Json::Object())
+		<< Json::Member("key2", Json::Array())
+		<< Json::Member("key3", (
+			Json::Object()
+				<< Json::Member("key1", (
+					Json::Array()
+						<< true
+						<< false
+						<< Json::Object()))
+				<< Json::Member("key2", (
+					Json::Object()
+						<< Json::Member("on", false)
+						<< Json::Member("off", true)))))
+		<< Json::Member("key4", (
+			Json::Array()
+				<< "hello"
+				<< (Json::Object()
+					<< Json::Member("world", Json::Null()))));
+
 	char data[] = "{\n"
 	"\"key1\": {},\n"
 	"\"key2\": [],\n"
@@ -337,7 +449,11 @@ void test::test_complex()
 	"},\n"
 	"\"key4\": [ \"hello\", { \"world\" : null } ]\n"
 	"}\n";
-	parser.parse(data, sizeof(data) - 1);
+
+	CPPUNIT_ASSERT_EQUAL(
+		Json::Value(expected),
+		parser.parse(data, sizeof(data) - 1)
+	);
 }
 
 void test::test_max_nesting()

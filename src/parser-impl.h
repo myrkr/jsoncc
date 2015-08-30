@@ -7,15 +7,9 @@
 
 namespace Json {
 
-class TokenStream;
-
 class ParserImpl {
 public:
 	Value parse(char const *, size_t);
-
-private:
-
-	Value parse_document(TokenStream &);
 };
 
 }

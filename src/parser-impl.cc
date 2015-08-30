@@ -15,143 +15,267 @@
 
 namespace {
 
-bool must_recurse(Json::Token::Type token)
-{
-	return token == Json::Token::BEGIN_ARRAY ||
-		token == Json::Token::BEGIN_OBJECT;
-}
-
-bool is_match(Json::Token::Type token, const char *match)
-{
-	return !match ||
-		(!match[0] && token == Json::Token::END) ||
-		strchr(match, token);
-}
-
-enum ParserState {
-	SDOC = 0,
-	SA_START,
-	SA_VALUE,
-	SA_NEXT,
-	SA_STOP,
-	SO_START,
-	SO_NAME,
-	SO_SEP,
-	SO_VALUE,
-	SO_NEXT,
-	SO_STOP,
-	SEND,
-	SERROR,
-	SMAX,
+template <typename State>
+struct Transition {
+	const char *match;
+	State state;
 };
 
-ParserState parser_state(Json::Token::Type token, ParserState state, bool rec)
-{
-	assert(state < SMAX);
-	if (!(state < SMAX)) {
-		JSONCC_THROW(INTERNAL_ERROR);
-	}
-
-	struct {
-		const char *match;
-		ParserState state;
-	} transitions[2][SMAX][3] = {{
-		/* SDOC */     {{"[{",       SDOC},     {"",  SEND},    {0, SERROR}},
-		/* SA_START */ {{"[{tfn\"0", SA_VALUE}, {"]", SA_STOP}, {0, SERROR}},
-		/* SA_VALUE */ {{",",        SA_NEXT},  {"]", SA_STOP}, {0, SERROR}},
-		/* SA_NEXT */  {{"[{tfn\"0", SA_VALUE},                 {0, SERROR}},
-		/* SA_STOP */  {                                        {0, SERROR}},
-		/* SO_START */ {{"\"",       SO_NAME},  {"}", SO_STOP}, {0, SERROR}},
-		/* SO_NAME */  {{":",        SO_SEP},                   {0, SERROR}},
-		/* SO_SEP */   {{"[{tfn\"0", SO_VALUE},                 {0, SERROR}},
-		/* SO_VALUE */ {{",",        SO_NEXT},  {"}", SO_STOP}, {0, SERROR}},
-		/* SO_NEXT */  {{"\"",       SO_NAME},                  {0, SERROR}},
-		/* SO_STOP */  {                                        {0, SERROR}},
-		/* SEND */     {                                        {0, SERROR}},
-		/* SERROR */   {                                        {0, SERROR}},
-	},{
-		/* SDOC */     {{"[", SA_START}, {"{", SO_START}, {0, SERROR}},
-		/* SA_START */ {{"[", SA_START}, {"{", SO_START}, {0, SERROR}},
-		/* SA_VALUE */ {                                  {0, SERROR}},
-		/* SA_NEXT */  {{"[", SA_START}, {"{", SO_START}, {0, SERROR}},
-		/* SA_STOP */  {                                  {0, SERROR}},
-		/* SO_START */ {                                  {0, SERROR}},
-		/* SO_NAME */  {                                  {0, SERROR}},
-		/* SO_SEP */   {{"[", SA_START}, {"{", SO_START}, {0, SERROR}},
-		/* SO_VALUE */ {                                  {0, SERROR}},
-		/* SO_NEXT */  {                                  {0, SERROR}},
-		/* SO_STOP */  {                                  {0, SERROR}},
-		/* SEND */     {                                  {0, SERROR}},
-		/* SERROR */   {                                  {0, SERROR}},
-	}};
-
-	for (size_t t(0); true; ++t) {
-		if (is_match(token, transitions[rec][state][t].match)) {
-			return transitions[rec][state][t].state;
-		}
-	}
-
-	return SERROR;
-}
-
-Json::Error::Type parser_error(ParserState state)
-{
-	switch (state) {
-	case SDOC:     return Json::Error::BAD_TOKEN_DOCUMENT;
-	case SA_START: return Json::Error::BAD_TOKEN_ARRAY_START;
-	case SA_VALUE: return Json::Error::BAD_TOKEN_ARRAY_VALUE;
-	case SA_NEXT:  return Json::Error::BAD_TOKEN_ARRAY_NEXT;
-	case SO_START: return Json::Error::BAD_TOKEN_OBJECT_START;
-	case SO_NAME:  return Json::Error::BAD_TOKEN_OBJECT_NAME;
-	case SO_SEP:   return Json::Error::BAD_TOKEN_OBJECT_SEP;
-	case SO_VALUE: return Json::Error::BAD_TOKEN_OBJECT_VALUE;
-	case SO_NEXT:  return Json::Error::BAD_TOKEN_OBJECT_NEXT;
-	case SEND:     assert(false);
-	case SERROR:   assert(false);
-	case SO_STOP:  assert(false);
-	case SA_STOP:  assert(false);
-	case SMAX:     assert(false);
-		break;
-	}
-
-	return Json::Error::INTERNAL_ERROR;
-}
-
-class Stack {
+template <typename T>
+class StateEngine : public T {
 public:
-	Stack()
-	:
-		top_(0)
-	{
-		data_[0] = SDOC;
-	}
+	StateEngine(Json::TokenStream & tokenizer_, size_t depth)
+	: T(tokenizer_, depth) { }
 
-	ParserState & top()
+	Json::Value parse()
 	{
-		return data_[top_];
-	}
+		typename T::State state(T::SSTART);
+		do {
+			T::tokenizer.scan();
+			typename T::State nstate(
+				transition(T::tokenizer.token.type, state));
 
-	void push()
-	{
-		if (top_ == (sizeof(data_) / sizeof(ParserState) - 1)) {
-			JSONCC_THROW(PARSER_OVERFLOW);
-		}
-		data_[++top_] = SERROR;
-	}
+			if (nstate == T::SERROR) {
+				throw Json::Error(T::error(state));
+			}
 
-	void pop()
-	{
-		assert(top_ > 0);
-		if (!(top_ > 0)) {
-			JSONCC_THROW(INTERNAL_ERROR);
-		}
-		--top_;
+			T::build(nstate);
+			state = nstate;
+		} while (state != T::SEND);
+
+		return T::result;
 	}
 
 private:
-	size_t top_;
-	ParserState data_[256];
+	typename T::State
+	transition(Json::Token::Type token, typename T::State state) const
+	{
+		for (size_t t(0); true; ++t) {
+			if (is_match(token, T::transitions[state][t].match)) {
+				return T::transitions[state][t].state;
+			}
+		}
+
+		return T::SERROR;
+	}
+
+	bool is_match(Json::Token::Type token, const char *match) const
+	{
+		return !match ||
+			(!match[0] && token == Json::Token::END) ||
+			strchr(match, token);
+	}
 };
+
+class ParserState {
+protected:
+	ParserState(Json::TokenStream & tokenizer_, size_t depth)
+	: tokenizer(tokenizer_), depth_(depth + 1)
+	{
+		if (depth > 255) {
+			JSONCC_THROW(PARSER_OVERFLOW);
+		}
+	}
+
+	Json::Value parse_value();
+
+	Json::TokenStream & tokenizer;
+
+private:
+	size_t depth_;
+};
+
+class ArrayState : public ParserState {
+protected:
+	ArrayState(Json::TokenStream & tokenizer_, size_t depth)
+	: ParserState(tokenizer_, depth) { }
+
+	enum State {
+		SERROR = 0,
+		SSTART,
+		SVALUE,
+		SNEXT,
+		SEND,
+		SMAX,
+	};
+
+	void build(State state)
+	{
+		switch (state) {
+		case SVALUE: result << parse_value(); break;
+		case SNEXT:  break;
+		case SEND:   break;
+		case SMAX:   assert(false);
+		case SERROR: assert(false);
+		case SSTART: assert(false);
+			JSONCC_THROW(INTERNAL_ERROR);
+		}
+	}
+
+	Json::Error::Type error(State state) const
+	{
+		switch (state) {
+		case SSTART: return Json::Error::BAD_TOKEN_ARRAY_START;
+		case SVALUE: return Json::Error::BAD_TOKEN_ARRAY_VALUE;
+		case SNEXT:  return Json::Error::BAD_TOKEN_ARRAY_NEXT;
+		case SERROR: assert(false);
+		case SEND:   assert(false);
+		case SMAX:   assert(false);
+		}
+		return Json::Error::INTERNAL_ERROR;
+	}
+
+	Json::Array result;
+	static Transition<State> transitions[SMAX][SMAX];
+};
+
+Transition<ArrayState::State> ArrayState::transitions[SMAX][SMAX] = {
+/* SERROR */ {                                   {0, SERROR}},
+/* SSTART */ {{"[{tfn\"0", SVALUE}, {"]", SEND}, {0, SERROR}},
+/* SVALUE */ {{",",        SNEXT},  {"]", SEND}, {0, SERROR}},
+/* SNEXT  */ {{"[{tfn\"0", SVALUE}, {"]", SEND}, {0, SERROR}},
+/* SEND   */ {                                   {0, SERROR}},
+};
+
+class ObjectState : public ParserState {
+protected:
+	ObjectState(Json::TokenStream & tokenizer_, size_t depth)
+	: ParserState(tokenizer_, depth) { }
+
+	enum State {
+		SERROR = 0,
+		SSTART,
+		SNAME,
+		SSEP,
+		SVALUE,
+		SNEXT,
+		SEND,
+		SMAX,
+	};
+
+	void build(State state)
+	{
+		switch (state) {
+		case SNAME:  key = tokenizer.token.str_value; break;
+		case SVALUE: result << Json::Member(key, parse_value()); break;
+		case SNEXT:  break;
+		case SEND:   break;
+		case SSEP:   break;
+		case SERROR: assert(false);
+		case SSTART: assert(false);
+		case SMAX:   assert(false);
+			JSONCC_THROW(INTERNAL_ERROR);
+		}
+	}
+
+	Json::Error::Type error(State state) const
+	{
+		switch (state) {
+		case SSTART: return Json::Error::BAD_TOKEN_OBJECT_START;
+		case SNAME:  return Json::Error::BAD_TOKEN_OBJECT_NAME;
+		case SSEP:   return Json::Error::BAD_TOKEN_OBJECT_SEP;
+		case SVALUE: return Json::Error::BAD_TOKEN_OBJECT_VALUE;
+		case SNEXT:  return Json::Error::BAD_TOKEN_OBJECT_NEXT;
+		case SERROR: assert(false);
+		case SEND:   assert(false);
+		case SMAX:   assert(false);
+		}
+		return Json::Error::INTERNAL_ERROR;
+	}
+
+	std::string key;
+	Json::Object result;
+	static Transition<State> transitions[SMAX][SMAX];
+};
+
+Transition<ObjectState::State> ObjectState::transitions[SMAX][SMAX] = {
+/* SO_ERROR */ {                                   {0, SERROR}},
+/* SO_START */ {{"\"",       SNAME},  {"}", SEND}, {0, SERROR}},
+/* SO_NAME  */ {{":",        SSEP},                {0, SERROR}},
+/* SO_SEP   */ {{"[{tfn\"0", SVALUE},              {0, SERROR}},
+/* SO_VALUE */ {{",",        SNEXT},  {"}", SEND}, {0, SERROR}},
+/* SO_NEXT  */ {{"\"",       SNAME},               {0, SERROR}},
+/* SO_END   */ {                                   {0, SERROR}},
+};
+
+class DocState : public ParserState {
+protected:
+	DocState(Json::TokenStream & tokenizer_, size_t & depth)
+	: ParserState(tokenizer_, depth) { }
+
+	enum State {
+		SERROR = 0,
+		SSTART,
+		SVALUE,
+		SEND,
+		SMAX,
+	};
+
+	void build(State state)
+	{
+		switch (state) {
+		case SVALUE: result = parse_value(); break;
+		case SEND:   break;
+		case SSTART: assert(false);
+		case SERROR: assert(false);
+		case SMAX:   assert(false);
+			JSONCC_THROW(INTERNAL_ERROR);
+		}
+	}
+
+	Json::Error::Type error(State state) const
+	{
+		switch (state) {
+		case SSTART:
+		case SVALUE: return Json::Error::BAD_TOKEN_DOCUMENT;
+		case SERROR: assert(false);
+		case SEND:   assert(false);
+		case SMAX:   assert(false);
+		}
+		return Json::Error::INTERNAL_ERROR;
+	}
+
+	Json::Value result;
+	static Transition<State> transitions[SMAX][SMAX];
+};
+
+Transition<DocState::State> DocState::transitions[SMAX][SMAX] = {
+/* SERROR  */ {                            {0, SERROR}},
+/* SSTART  */ {{"[{", SVALUE}, {"", SEND}, {0, SERROR}},
+/* SVALUE  */ {                {"", SEND}, {0, SERROR}},
+/* SEND    */ {                            {0, SERROR}},
+};
+
+Json::Value ParserState::parse_value()
+{
+	switch (tokenizer.token.type) {
+	case Json::Token::TRUE_LITERAL:    return Json::True();
+	case Json::Token::FALSE_LITERAL:   return Json::False();
+	case Json::Token::NULL_LITERAL:    return Json::Null();
+	case Json::Token::STRING:          return tokenizer.token.str_value;
+	case Json::Token::NUMBER:
+		if (tokenizer.token.number_type == Json::Token::FLOAT) {
+			return Json::Number(tokenizer.token.float_value);
+		} else {
+			return Json::Number(tokenizer.token.int_value);
+		}
+		break;
+	case Json::Token::BEGIN_ARRAY:
+		return StateEngine<ArrayState>(tokenizer, depth_).parse();
+	case Json::Token::BEGIN_OBJECT:
+		return StateEngine<ObjectState>(tokenizer, depth_).parse();
+	case Json::Token::END:             assert(false);
+	case Json::Token::INVALID:         assert(false);
+	case Json::Token::END_ARRAY:       assert(false);
+	case Json::Token::END_OBJECT:      assert(false);
+	case Json::Token::NAME_SEPARATOR:  assert(false);
+	case Json::Token::VALUE_SEPARATOR: assert(false);
+		break;
+	}
+
+	JSONCC_THROW(INTERNAL_ERROR);
+	return Json::Value();
+}
 
 }
 
@@ -162,55 +286,9 @@ Value ParserImpl::parse(char const * data, size_t size)
 	Utf8Stream utf8stream(data, size);
 	TokenStream tokenizer(utf8stream);
 	try {
-		return parse_document(tokenizer);
+		return StateEngine<DocState>(tokenizer, 0).parse();
 	} catch (Error & e) {
 		throw;
-	}
-}
-
-Value ParserImpl::parse_document(TokenStream & tokenizer)
-{
-	Stack stack;
-	for (;;) {
-		tokenizer.scan();
-		bool rec(false);
-		ParserState state(stack.top());
-recurse:
-		stack.top() = parser_state(tokenizer.token.type, state, rec);
-		switch (stack.top()) {
-		case SA_START:
-			// construct array
-			break;
-		case SA_VALUE:
-			// append value
-			break;
-		case SO_START:
-			// construct object
-			break;
-		case SO_NAME:
-			// construct member
-			break;
-		case SO_VALUE:
-			// append value
-			break;
-		case SA_NEXT: case SO_SEP:
-		case SO_NEXT: case SDOC:
-			// noop get next token
-			break;
-		case SA_STOP: case SO_STOP:
-			stack.pop();
-			break;
-	        case SMAX: case SERROR:
-			throw Error(parser_error(state));
-		case SEND:
-			return Value();
-		}
-
-		if (!rec && must_recurse(tokenizer.token.type)) {
-			rec = true;
-			stack.push();
-			goto recurse;
-		}
 	}
 }
 
