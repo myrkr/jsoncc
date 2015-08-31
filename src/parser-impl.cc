@@ -32,16 +32,7 @@ public:
 		typename T::State state(T::SSTART);
 		do {
 			T::tokenizer.scan();
-			typename T::State nstate(
-				transition(T::tokenizer.token.type, state));
-
-			if (nstate == T::SERROR) {
-				T::throw_error(state);
-				JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
-			}
-
-			T::build(nstate);
-			state = nstate;
+			state = transition(T::tokenizer.token.type, state);
 		} while (state != T::SEND);
 
 		return T::result;
@@ -49,12 +40,22 @@ public:
 
 private:
 	typename T::State
-	transition(Json::Token::Type token, typename T::State state) const
+	transition(Json::Token::Type token, typename T::State state)
 	{
 		for (size_t t(0); t < T::SMAX; ++t) {
-			if (is_match(token, T::transitions[state][t].match)) {
-				return T::transitions[state][t].state;
+			if (!is_match(token, T::transitions[state][t].match)) {
+				continue;
 			}
+
+			typename T::State nstate(T::transitions[state][t].state);
+			if (nstate == T::SERROR) {
+				T::throw_error(state);
+				JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
+			} else {
+				T::build(nstate);
+			}
+
+			return nstate;
 		}
 
 		return T::SERROR;
