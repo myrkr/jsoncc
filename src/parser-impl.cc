@@ -36,7 +36,8 @@ public:
 				transition(T::tokenizer.token.type, state));
 
 			if (nstate == T::SERROR) {
-				throw Json::Error(T::error(state));
+				T::throw_error(state);
+				JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
 			}
 
 			T::build(nstate);
@@ -112,17 +113,16 @@ protected:
 		}
 	}
 
-	Json::Error::Type error(State state) const
+	void throw_error(State state) const
 	{
 		switch (state) {
-		case SSTART: return Json::Error::BAD_TOKEN_ARRAY_START;
-		case SVALUE: return Json::Error::BAD_TOKEN_ARRAY_VALUE;
-		case SNEXT:  return Json::Error::BAD_TOKEN_ARRAY_NEXT;
-		case SERROR: assert(false);         // LCOV_EXCL_LINE
-		case SEND:   assert(false);         // LCOV_EXCL_LINE
-		case SMAX:   assert(false);         // LCOV_EXCL_LINE
+		case SSTART: JSONCC_THROW(BAD_TOKEN_ARRAY_START);
+		case SVALUE: JSONCC_THROW(BAD_TOKEN_ARRAY_VALUE);
+		case SNEXT:  JSONCC_THROW(BAD_TOKEN_ARRAY_NEXT);
+		case SERROR: assert(false); // LCOV_EXCL_LINE
+		case SEND:   assert(false); // LCOV_EXCL_LINE
+		case SMAX:   assert(false); // LCOV_EXCL_LINE
 		}
-		return Json::Error::INTERNAL_ERROR; // LCOV_EXCL_LINE
 	}
 
 	Json::Array result;
@@ -168,19 +168,18 @@ protected:
 		}
 	}
 
-	Json::Error::Type error(State state) const
+	void throw_error(State state) const
 	{
 		switch (state) {
-		case SSTART: return Json::Error::BAD_TOKEN_OBJECT_START;
-		case SNAME:  return Json::Error::BAD_TOKEN_OBJECT_NAME;
-		case SSEP:   return Json::Error::BAD_TOKEN_OBJECT_SEP;
-		case SVALUE: return Json::Error::BAD_TOKEN_OBJECT_VALUE;
-		case SNEXT:  return Json::Error::BAD_TOKEN_OBJECT_NEXT;
-		case SERROR: assert(false);         // LCOV_EXCL_LINE
-		case SEND:   assert(false);         // LCOV_EXCL_LINE
-		case SMAX:   assert(false);         // LCOV_EXCL_LINE
+		case SSTART: JSONCC_THROW(BAD_TOKEN_OBJECT_START);
+		case SNAME:  JSONCC_THROW(BAD_TOKEN_OBJECT_NAME);
+		case SSEP:   JSONCC_THROW(BAD_TOKEN_OBJECT_SEP);
+		case SVALUE: JSONCC_THROW(BAD_TOKEN_OBJECT_VALUE);
+		case SNEXT:  JSONCC_THROW(BAD_TOKEN_OBJECT_NEXT);
+		case SERROR: assert(false); // LCOV_EXCL_LINE
+		case SEND:   assert(false); // LCOV_EXCL_LINE
+		case SMAX:   assert(false); // LCOV_EXCL_LINE
 		}
-		return Json::Error::INTERNAL_ERROR; // LCOV_EXCL_LINE
 	}
 
 	std::string key;
@@ -223,16 +222,15 @@ protected:
 		}
 	}
 
-	Json::Error::Type error(State state) const
+	void throw_error(State state) const
 	{
 		switch (state) {
-		case SSTART:
-		case SVALUE: return Json::Error::BAD_TOKEN_DOCUMENT;
-		case SERROR: assert(false);         // LCOV_EXCL_LINE
-		case SEND:   assert(false);         // LCOV_EXCL_LINE
-		case SMAX:   assert(false);         // LCOV_EXCL_LINE
+		case SSTART: JSONCC_THROW(BAD_TOKEN_DOCUMENT);
+		case SVALUE: JSONCC_THROW(BAD_TOKEN_DOCUMENT);
+		case SERROR: assert(false); // LCOV_EXCL_LINE
+		case SEND:   assert(false); // LCOV_EXCL_LINE
+		case SMAX:   assert(false); // LCOV_EXCL_LINE
 		}
-		return Json::Error::INTERNAL_ERROR; // LCOV_EXCL_LINE
 	}
 
 	Json::Value result;
@@ -270,10 +268,8 @@ Json::Value ParserState::parse_value()
 	case Json::Token::END_OBJECT:      assert(false); // LCOV_EXCL_LINE
 	case Json::Token::NAME_SEPARATOR:  assert(false); // LCOV_EXCL_LINE
 	case Json::Token::VALUE_SEPARATOR: assert(false); // LCOV_EXCL_LINE
-		break;
 	}
-
-	JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE
+	JSONCC_THROW(INTERNAL_ERROR);                     // LCOV_EXCL_LINE
 	return Json::Value();
 }
 
