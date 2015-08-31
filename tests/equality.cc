@@ -29,6 +29,8 @@
 
 namespace Json {
 
+// LCOV_EXCL_START
+
 bool operator==(Null const&, Null const&)
 {
 	return true;
@@ -119,5 +121,7 @@ bool operator==(Value const& l, Value const& r)
 
 	return false;
 }
+
+// LCOV_EXCL_STOP
 
 }
