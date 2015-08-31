@@ -50,7 +50,7 @@ private:
 	typename T::State
 	transition(Json::Token::Type token, typename T::State state) const
 	{
-		for (size_t t(0); true; ++t) {
+		for (size_t t(0); t < T::SMAX; ++t) {
 			if (is_match(token, T::transitions[state][t].match)) {
 				return T::transitions[state][t].state;
 			}
