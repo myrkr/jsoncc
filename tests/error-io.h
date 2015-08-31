@@ -4,6 +4,7 @@
 
 namespace Json {
 
+// LCOV_EXCL_START
 static inline std::ostream & operator<<(std::ostream & os, Error::Type type)
 {
 #define CASE_ERROR_TYPE(name) case name: os << # name; break
@@ -36,5 +37,6 @@ static inline std::ostream & operator<<(std::ostream & os, Error::Type type)
 #undef CASE_ERROR_TYPE
 	return os;
 }
+// LCOV_EXCL_STOP
 
 }

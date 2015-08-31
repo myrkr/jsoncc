@@ -7,6 +7,7 @@
 
 namespace Json {
 
+// LCOV_EXCL_START
 std::ostream & operator<<(std::ostream & os, Token::Type type)
 {
 #define CASE_TOKEN_TYPE(name) case name: os << # name; break
@@ -28,6 +29,7 @@ std::ostream & operator<<(std::ostream & os, Token::Type type)
 #undef CASE_TOKEN_TYPE
 	return os;
 }
+// LCOV_EXCL_STOP
 
 }
 
