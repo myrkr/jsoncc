@@ -10,8 +10,10 @@ public:
 	void tearDown();
 
 private:
+	void simple_test();
 
 	CPPUNIT_TEST_SUITE(test);
+	CPPUNIT_TEST(simple_test);
 	CPPUNIT_TEST_SUITE_END();
 };
 
@@ -24,6 +26,9 @@ void test::setUp()
 { }
 
 void test::tearDown()
+{ }
+
+void test::simple_test()
 { }
 
 }}
