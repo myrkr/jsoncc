@@ -30,6 +30,8 @@ private:
 	void test_object_equality();
 	void test_vector();
 	void test_vector_nested();
+	void test_list();
+	void test_set();
 
 	CPPUNIT_TEST_SUITE(test);
 	CPPUNIT_TEST(test_null);
@@ -49,6 +51,8 @@ private:
 	CPPUNIT_TEST(test_object_equality);
 	CPPUNIT_TEST(test_vector);
 	CPPUNIT_TEST(test_vector_nested);
+	CPPUNIT_TEST(test_list);
+	CPPUNIT_TEST(test_set);
 	CPPUNIT_TEST_SUITE_END();
 };
 
@@ -504,6 +508,48 @@ void test::test_vector_nested()
 		"		2\n"
 		"	],\n"
 		"	[]\n"
+		"]"
+	);
+	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
+void test::test_list()
+{
+	std::stringstream ss;
+	std::list<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+	ss << Json::Value(v);
+
+	std::string expected(
+		"[\n"
+		"	1,\n"
+		"	2,\n"
+		"	3,\n"
+		"	4\n"
+		"]"
+	);
+	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
+void test::test_set()
+{
+	std::stringstream ss;
+	std::set<int> v;
+	v.insert(1);
+	v.insert(2);
+	v.insert(3);
+	v.insert(4);
+	ss << Json::Value(v);
+
+	std::string expected(
+		"[\n"
+		"	1,\n"
+		"	2,\n"
+		"	3,\n"
+		"	4\n"
 		"]"
 	);
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
