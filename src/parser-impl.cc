@@ -15,6 +15,14 @@
 
 namespace {
 
+/*
+ * Generic parser state engine
+ * Check all transitions for the current State
+ * until the token is found in Transition::match,
+ * change to the associated state.
+ *
+ * Instances of this are build for Document, Array and Object
+ */
 template <typename State>
 struct Transition {
 	const char *match;
@@ -69,6 +77,7 @@ private:
 	}
 };
 
+/* Base class for state engine configurations */
 class ParserState {
 protected:
 	ParserState(Json::TokenStream & tokenizer_, size_t depth)
@@ -87,6 +96,7 @@ private:
 	size_t depth_;
 };
 
+/* State engine config for Json::Array */
 class ArrayState : public ParserState {
 protected:
 	ArrayState(Json::TokenStream & tokenizer_, size_t depth)
@@ -138,6 +148,7 @@ Transition<ArrayState::State> ArrayState::transitions[SMAX][SMAX] = {
 /* SEND   */ {                                   {0, SERROR}},
 };
 
+/* State engine config for Json::Object */
 class ObjectState : public ParserState {
 protected:
 	ObjectState(Json::TokenStream & tokenizer_, size_t depth)
@@ -198,6 +209,7 @@ Transition<ObjectState::State> ObjectState::transitions[SMAX][SMAX] = {
 /* SO_END   */ {                                   {0, SERROR}},
 };
 
+/* State engine config for a Json document */
 class DocState : public ParserState {
 protected:
 	DocState(Json::TokenStream & tokenizer_, size_t & depth)
@@ -245,6 +257,7 @@ Transition<DocState::State> DocState::transitions[SMAX][SMAX] = {
 /* SEND    */ {                            {0, SERROR}},
 };
 
+/* select recursive parser for nested constructs */
 Json::Value ParserState::parse_value()
 {
 	switch (tokenizer.token.type) {
@@ -278,6 +291,7 @@ Json::Value ParserState::parse_value()
 
 namespace Json {
 
+/* Toplevel parser for a single document */
 Value ParserImpl::parse(char const * data, size_t size)
 {
 	Utf8Stream utf8stream(data, size);
