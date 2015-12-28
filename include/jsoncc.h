@@ -332,7 +332,11 @@ public:
 	Parser();
 	~Parser();
 
+	// throws Json::Error
 	Value parse(char const *, size_t);
+
+	// does not throw
+	Value parse(char const *, size_t, Error &);
 private:
 	Parser(Parser const&); // = deleted;
 	Parser & operator=(Parser const&); // = deleted;

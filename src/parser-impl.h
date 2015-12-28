@@ -10,6 +10,7 @@ namespace Json {
 class ParserImpl {
 public:
 	Value parse(char const *, size_t);
+	Value parse(char const *, size_t, Error &);
 };
 
 }

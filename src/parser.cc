@@ -24,4 +24,14 @@ Value Parser::parse(char const * data, size_t size)
 	return impl_->parse(data, size);
 }
 
+Value Parser::parse(char const * data, size_t size, Error & err)
+{
+	try {
+		parse(data, size);
+	} catch (Error & e) {
+		err = e;
+	}
+	return Value();
+}
+
 }
