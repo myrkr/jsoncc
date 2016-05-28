@@ -8,8 +8,6 @@
 
 #include "utf8.h"
 
-namespace {
-
 /* utf8 state engine
  *
  * The macros below assemble the cases for a switch statement
@@ -95,8 +93,6 @@ static inline int next_state(int state, unsigned char c)
 	}
 
 	return -1;
-}
-
 }
 
 namespace Json {
