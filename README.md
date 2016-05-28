@@ -3,6 +3,10 @@
 
 jsoncc
 
-simple json writer for C++
+simple json writer and parser for C++
 
 BSD licensed, see LICENSE.
+
+Parser limitations:
+ * no support for utf16 surrogate encoding in strings
+ * unicode escape for 0 ie \u0000 is treated as an error

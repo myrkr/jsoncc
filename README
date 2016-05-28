@@ -1,7 +1,0 @@
-json parser
-
-rough prototype
-
-Limitations:
- * no support for utf16 surrogate encoding in strings
- * unicode escape for 0 ie \u0000 is treated as an error
