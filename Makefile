@@ -19,6 +19,7 @@ CXXFLAGS += $(shell pkg-config --cflags $(DEPS))
 LIBS = -Wl,--as-needed $(shell pkg-config --libs $(DEPS))
 
 TARGET = libjsoncc.so
+PKGCONFIG = jsoncc.pc
 TESTS = test_jsoncc
 
 SRC = $(wildcard src/*.cc)
@@ -33,7 +34,7 @@ ALL_OBJ = $(OBJ) $(TEST_OBJ) $(COV_OBJ)
 GCNO = $(ALL_OBJ:%.o=%.gcno)
 GCDA = $(ALL_OBJ:%.o=%.gcda)
 
-all: $(TARGET) $(TESTS)
+all: $(TARGET) $(TESTS) $(PKGCONFIG)
 
 $(TARGET): $(OBJ)
 	$(CXX) -o $@ $(OBJ) $(LDFLAGS) -shared $(LIBS)
@@ -64,13 +65,18 @@ coverage: run_tests
 	lcov -r coverage/lcov.raw "/usr/include/*" --output-file coverage/lcov.info; \
 	genhtml coverage/lcov.info --output-directory coverage
 
+$(PKGCONFIG): $(PKGCONFIG).in
+	sed -e 's#@PREFIX@#${PREFIX}#' $< > $@
+
 install: all
 	install -d $(PREFIX)/lib
 	install -m 755 $(TARGET) $(PREFIX)/lib/
 	install -d $(PREFIX)/include/
 	install -m 644 include/*.h $(PREFIX)/include/
+	install -d $(PREFIX)/lib/pkgconfig
+	install -m 644 $(PKGCONFIG) $(PREFIX)/lib/pkgconfig/
 
 clean:
-	rm -rf $(TARGET) $(TESTS) $(TEST_LIB) $(ALL_OBJ) $(GCNO) $(GCDA) coverage/*
+	rm -rf $(TARGET) $(TESTS) $(TEST_LIB) $(ALL_OBJ) $(GCNO) $(GCDA) coverage/* *.pc
 
 .PHONY: all clean run_tests run_valgrind run_gdb coverage

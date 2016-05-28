@@ -7,3 +7,4 @@ test_*
 *.gcno
 *.gcda
 coverage/*
+*.pc
