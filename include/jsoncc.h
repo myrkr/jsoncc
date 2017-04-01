@@ -103,10 +103,9 @@ class Array;
 
 class Value {
 public:
-	typedef void (Value::*unspecified_bool_type)() const;
-	operator unspecified_bool_type() const
+	explicit operator bool() const
 	{
-		return tag_ == TAG_INVALID ? 0 : &Value::bool_true_value;
+		return tag_ != TAG_INVALID;
 	}
 
 	enum Tag {
@@ -162,8 +161,6 @@ public:
 	Array const& array() const;
 
 private:
-	void bool_true_value() const;
-
 	void clone(Value const&);
 	void clear();
 
