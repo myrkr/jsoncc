@@ -351,8 +351,8 @@ public:
 	// does not throw
 	Value parse(char const *, size_t, Error &);
 private:
-	Parser(Parser const&); // = deleted;
-	Parser & operator=(Parser const&); // = deleted;
+	Parser(Parser const&) = delete;
+	Parser & operator=(Parser const&) = delete;
 
 	std::unique_ptr<ParserImpl> impl_;
 };
