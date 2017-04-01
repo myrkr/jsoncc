@@ -15,9 +15,7 @@ Parser::Parser()
 { }
 
 Parser::~Parser()
-{
-	delete impl_;
-}
+{ }
 
 Value Parser::parse(char const * data, size_t size)
 {

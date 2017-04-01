@@ -29,6 +29,7 @@
 #include <stdint.h>
 
 #include <list>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -356,7 +357,7 @@ private:
 	Parser(Parser const&); // = deleted;
 	Parser & operator=(Parser const&); // = deleted;
 
-	ParserImpl *impl_;
+	std::unique_ptr<ParserImpl> impl_;
 };
 
 }
