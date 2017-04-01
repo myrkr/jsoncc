@@ -55,9 +55,8 @@ int indent::overflow(int ch)
 std::ostream & quote(std::ostream & os, std::string const& in)
 {
 	os << '"';
-	std::string::const_iterator it(in.begin());
-	for (; it != in.end(); ++it) {
-		switch (*it) {
+	for (auto c: in) {
+		switch (c) {
 /*
    All Unicode characters may be placed within the quotation marks,
    except for the characters that must be escaped: quotation mark,
@@ -83,7 +82,7 @@ std::ostream & quote(std::ostream & os, std::string const& in)
 		ESCAPE(0x22, "\"");    ESCAPE(0x5c, "\\");
 #undef ESCAPE
 		default:
-			os << *it;
+			os << c;
 		}
 	}
 	return os << '"';
