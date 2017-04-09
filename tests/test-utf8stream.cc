@@ -40,7 +40,7 @@ using namespace Json;
 
 void test::test_empty()
 {
-	Utf8Stream us(NULL, 0);
+	Utf8Stream us(nullptr, 0);
 	CPPUNIT_ASSERT_EQUAL(Utf8Stream::SGOOD, us.state());
 	CPPUNIT_ASSERT_EQUAL(int(Utf8Stream::SEOF), us.getc());
 	us.ungetc();

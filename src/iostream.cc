@@ -37,7 +37,7 @@ indent::indent(std::ostream& dest, std::string indent)
 
 indent::~indent()
 {
-	if (owner_ != NULL) {
+	if (owner_ != nullptr) {
 		owner_->rdbuf(dest_);
 	}
 }
