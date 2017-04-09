@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2015, 2016, Andreas Fett. All rights reserved.
+   Copyright (c) 2015, 2016, 2017 Andreas Fett. All rights reserved.
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
  */
@@ -27,12 +27,66 @@ Value::Value(Value const& o)
 	clone(o);
 }
 
+Value::Value(Value&& o)
+:
+	tag_(TAG_INVALID)
+{
+	*this = std::move(o);
+}
+
 Value & Value::operator=(Value const& o)
 {
 	if (&o != this) {
 		clear();
 		clone(o);
 	}
+	return *this;
+}
+
+Value & Value::operator=(Value&& o)
+{
+	if (&o == this) {
+		return *this;
+	}
+
+	clear();
+	tag_ = o.tag_;
+
+	switch (tag_) {
+	case TAG_INVALID:
+		break;
+	case TAG_TRUE:
+		assert(o.type_.true_);
+		type_.true_ = o.type_.true_;
+		break;
+	case TAG_FALSE:
+		assert(o.type_.false_);
+		type_.false_ = o.type_.false_;
+		break;
+	case TAG_NULL:
+		assert(o.type_.null_);
+		type_.null_ = o.type_.null_;
+		break;
+	case TAG_NUMBER:
+		assert(o.type_.number_);
+		type_.number_ = o.type_.number_;
+		break;
+	case TAG_STRING:
+		assert(o.type_.string_);
+		type_.string_ = o.type_.string_;
+		break;
+	case TAG_OBJECT:
+		assert(o.type_.object_);
+		type_.object_ = o.type_.object_;
+		break;
+	case TAG_ARRAY:
+		assert(o.type_.array_);
+		type_.array_ = o.type_.array_;
+		break;
+	}
+
+	o.tag_ = TAG_INVALID;
+	memset(&o.type_, 0, sizeof(Type));
 	return *this;
 }
 
