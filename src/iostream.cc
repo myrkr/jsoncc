@@ -12,7 +12,6 @@ namespace {
 
 class indent : public std::streambuf {
 public:
-	explicit indent(std::streambuf*);
 	explicit indent(std::ostream &, std::string indent = "\t");
 	virtual ~indent();
 
@@ -25,13 +24,6 @@ private:
 	bool line_start_;
 	std::ostream* owner_;
 };
-
-indent::indent(std::streambuf* dest)
-:
-	dest_(dest),
-	line_start_(true),
-	owner_(NULL)
-{ }
 
 indent::indent(std::ostream& dest, std::string indent)
 :
