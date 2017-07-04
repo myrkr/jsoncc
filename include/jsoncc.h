@@ -296,7 +296,14 @@ struct Location {
 	Location(size_t = 0, size_t = 0, size_t = 0);
 };
 
-struct Error : public std::runtime_error {
+class Error : public std::runtime_error {
+public:
+	typedef void (Error::*unspecified_bool_type)() const;
+	operator unspecified_bool_type() const
+	{
+		return type == OK ? 0 : &Error::bool_true_value;
+	}
+
 	enum Type {
 		OK = 0,                 /* no error */
 		STREAM_ZERO,            /* ascii zero found in source */
@@ -327,6 +334,9 @@ struct Error : public std::runtime_error {
 	Location location;
 
 	Error(Type = OK, Location = Location());
+
+private:
+	void bool_true_value() const;
 };
 
 class Parser {
