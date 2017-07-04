@@ -299,10 +299,9 @@ struct Location {
 
 class Error : public std::runtime_error {
 public:
-	typedef void (Error::*unspecified_bool_type)() const;
-	operator unspecified_bool_type() const
+	explicit operator bool() const
 	{
-		return type == OK ? 0 : &Error::bool_true_value;
+		return type != OK;
 	}
 
 	enum Type {
@@ -335,9 +334,6 @@ public:
 	Location location;
 
 	Error(Type = OK, Location = Location());
-
-private:
-	void bool_true_value() const;
 };
 
 class ParserImpl;

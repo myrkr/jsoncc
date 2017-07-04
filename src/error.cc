@@ -48,7 +48,4 @@ Error::Error(Type type_, Location location_)
 	location(location_)
 { }
 
-void Error::bool_true_value() const
-{ }
-
 }
