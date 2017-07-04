@@ -36,4 +36,14 @@ std::vector<Member> Object::members() const
 	return members_;
 }
 
+Value Object::member(std::string const& key) const
+{
+	for (std::vector<Member>::const_iterator it = members_.begin(); it != members_.end(); ++it) {
+		if (it->key().value() == key) {
+			return it->value();
+		}
+	}
+	return Value();
+}
+
 }

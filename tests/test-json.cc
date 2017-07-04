@@ -27,6 +27,7 @@ private:
 	void test_object_empty();
 	void test_object_simple();
 	void test_object_nested();
+	void test_object_member();
 	void test_object_equality();
 	void test_vector();
 	void test_vector_nested();
@@ -48,6 +49,7 @@ private:
 	CPPUNIT_TEST(test_object_empty);
 	CPPUNIT_TEST(test_object_simple);
 	CPPUNIT_TEST(test_object_nested);
+	CPPUNIT_TEST(test_object_member);
 	CPPUNIT_TEST(test_object_equality);
 	CPPUNIT_TEST(test_vector);
 	CPPUNIT_TEST(test_vector_nested);
@@ -423,6 +425,16 @@ void test::test_object_nested()
 	);
 
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
+void test::test_object_member()
+{
+	Json::Object o;
+	o << Json::Member("foo", true);
+	o << Json::Member("bar", 5);
+
+	CPPUNIT_ASSERT_EQUAL(Json::Value(true), o.member("foo"));
+	CPPUNIT_ASSERT_EQUAL(Json::Value(5), o.member("bar"));
 }
 
 void test::test_object_equality()

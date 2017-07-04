@@ -204,6 +204,8 @@ public:
 	Object & operator<<(Member const&);
 
 	std::vector<Member> members() const;
+	Value member(std::string const&) const;
+
 private:
 	std::vector<Member> members_;
 };
