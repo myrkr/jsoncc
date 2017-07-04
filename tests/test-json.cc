@@ -22,11 +22,13 @@ private:
 	void test_array_empty();
 	void test_array_numbers();
 	void test_array_nested();
+	void test_array_nested_noindent();
 	void test_array_equality();
 	void test_array_from_container();
 	void test_object_empty();
 	void test_object_simple();
 	void test_object_nested();
+	void test_object_nested_noindent();
 	void test_object_member();
 	void test_object_equality();
 	void test_vector();
@@ -44,11 +46,13 @@ private:
 	CPPUNIT_TEST(test_array_empty);
 	CPPUNIT_TEST(test_array_numbers);
 	CPPUNIT_TEST(test_array_nested);
+	CPPUNIT_TEST(test_array_nested_noindent);
 	CPPUNIT_TEST(test_array_equality);
 	CPPUNIT_TEST(test_array_from_container);
 	CPPUNIT_TEST(test_object_empty);
 	CPPUNIT_TEST(test_object_simple);
 	CPPUNIT_TEST(test_object_nested);
+	CPPUNIT_TEST(test_object_nested_noindent);
 	CPPUNIT_TEST(test_object_member);
 	CPPUNIT_TEST(test_object_equality);
 	CPPUNIT_TEST(test_vector);
@@ -301,6 +305,26 @@ void test::test_array_nested()
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
 }
 
+void test::test_array_nested_noindent()
+{
+	std::stringstream ss;
+
+	Json::Array a;
+	Json::Array a1;
+	a1 << 1 << 2;
+	Json::Array a2;
+	a2 << true << false;
+	a << a1;
+	a << a2;
+	a << Json::Array();
+	ss << Json::noindent << a;
+
+	std::string expected(
+		"[[1, 2], [true, false], []]"
+	);
+	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
 void test::test_array_equality()
 {
 	CPPUNIT_ASSERT_EQUAL(Json::Array(), Json::Array());
@@ -422,6 +446,26 @@ void test::test_object_nested()
 		"	},\n"
 		"	\"3\": {}\n"
 		"}"
+	);
+
+	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
+void test::test_object_nested_noindent()
+{
+	std::stringstream ss;
+	Json::Object o1;
+	o1 << Json::Member("foo", true);
+	Json::Object o2;
+	o2 << Json::Member("bar", 5);
+	Json::Object o;
+	o << Json::Member("1", o1);
+	o << Json::Member("2", o2);
+	o << Json::Member("3", Json::Object());
+	ss << Json::noindent << o;
+
+	std::string expected(
+		"{\"1\": {\"foo\": true}, \"2\": {\"bar\": 5}, \"3\": {}}"
 	);
 
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());

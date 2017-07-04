@@ -276,6 +276,9 @@ template<typename T> struct ValueFactory {
 	}
 };
 
+std::ios_base & indent(std::ios_base &);
+std::ios_base & noindent(std::ios_base &);
+
 std::ostream & operator<<(std::ostream &, Null const&);
 std::ostream & operator<<(std::ostream &, True const&);
 std::ostream & operator<<(std::ostream &, False const&);

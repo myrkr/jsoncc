@@ -89,13 +89,15 @@ std::ostream & quote(std::ostream & os, std::string const& in)
 	return os << '"';
 }
 
-template <typename C>
-std::ostream & stream_container(std::ostream & os, const char delim[3], C const& c)
-{
-	if (c.empty()) {
-		return os << delim;
-	}
+enum IOS_Flags {
+	IOS_NOINDENT = 1 << 0,
+};
 
+const int xalloc_id = std::ios_base::xalloc();
+
+template <typename C>
+std::ostream & container_indent(std::ostream & os, const char delim[3], C const& c)
+{
 	os << delim[0] << "\n";
 	{
 		indent in(os);
@@ -109,9 +111,45 @@ std::ostream & stream_container(std::ostream & os, const char delim[3], C const&
 	return os << "\n" << delim[1] ;
 }
 
+template <typename C>
+std::ostream & container_noindent(std::ostream & os, const char delim[3], C const& c)
+{
+	os << delim[0];
+	std::string sep;
+	typename C::const_iterator it(c.begin());
+	for (; it != c.end(); ++it) {
+		os << sep << *it;
+		sep = ", ";
+	}
+	return os << delim[1] ;
+}
+
+template <typename C>
+std::ostream & stream_container(std::ostream & os, const char delim[3], C const& c)
+{
+	if (c.empty()) {
+		return os << delim;
+	}
+
+	return (os.iword(xalloc_id) & ::IOS_NOINDENT) ?
+		container_noindent(os, delim, c) : container_indent(os, delim, c);
+}
+
 }
 
 namespace Json {
+
+std::ios_base & indent(std::ios_base & os)
+{
+	os.iword(xalloc_id) &= ~::IOS_NOINDENT;
+	return os;
+}
+
+std::ios_base & noindent(std::ios_base & os)
+{
+	os.iword(xalloc_id) |= ::IOS_NOINDENT;
+	return os;
+}
 
 std::ostream & operator<<(std::ostream & os, Null const&)
 {
