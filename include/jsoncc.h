@@ -210,6 +210,7 @@ public:
 	Object & operator=(Object const&);
 	Object & operator=(Object &&);
 	Object & operator<<(Member const&);
+	Object & operator<<(Member &&);
 
 	std::vector<Member> members() const;
 	Value member(std::string const&) const;

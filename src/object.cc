@@ -44,6 +44,12 @@ Object & Object::operator<<(Member const& member)
 	return *this;
 }
 
+Object & Object::operator<<(Member && member)
+{
+	members_.push_back(std::move(member));
+	return *this;
+}
+
 std::vector<Member> Object::members() const
 {
 	return members_;
