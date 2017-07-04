@@ -20,6 +20,12 @@ Number::Number(Number const& o)
 	value_(o.value_)
 { }
 
+Number::Number(Number && o)
+:
+	type_(std::move(o.type_)),
+	value_(std::move(o.value_))
+{ }
+
 Number::Number(uint8_t value)
 :
 	type_(TYPE_UINT),
@@ -113,6 +119,15 @@ Number & Number::operator=(Number const& o)
 	if (&o != this) {
 		type_ = o.type_;
 		value_ = o.value_;
+	}
+	return *this;
+}
+
+Number & Number::operator=(Number && o)
+{
+	if (&o != this) {
+		type_ = std::move(o.type_);
+		value_ = std::move(o.value_);
 	}
 	return *this;
 }

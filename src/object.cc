@@ -17,10 +17,23 @@ Object::Object(Object const& o)
 	members_(o.members_)
 { }
 
+Object::Object(Object && o)
+:
+	members_(std::move(o.members_))
+{ }
+
 Object & Object::operator=(Object const& o)
 {
 	if (&o != this) {
 		members_ = o.members_;
+	}
+	return *this;
+}
+
+Object & Object::operator=(Object && o)
+{
+	if (&o != this) {
+		members_ = std::move(o.members_);
 	}
 	return *this;
 }

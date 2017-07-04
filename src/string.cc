@@ -17,6 +17,11 @@ String::String(String const& o)
 	value_(o.value_)
 { }
 
+String::String(String && o)
+:
+	value_(std::move(o.value_))
+{ }
+
 String::String(std::string const& value)
 :
 	value_(value)
@@ -31,6 +36,14 @@ String & String::operator=(String const& o)
 {
 	if (&o != this) {
 		value_ = o.value_;
+	}
+	return *this;
+}
+
+String & String::operator=(String && o)
+{
+	if (&o != this) {
+		value_ = std::move(o.value_);
 	}
 	return *this;
 }

@@ -18,10 +18,23 @@ Array::Array(Array const& o)
 	elements_(o.elements_)
 { }
 
+Array::Array(Array && o)
+:
+	elements_(std::move(o.elements_))
+{ }
+
 Array & Array::operator=(Array const& o)
 {
 	if (&o != this) {
 		elements_ = o.elements_;
+	}
+	return *this;
+}
+
+Array & Array::operator=(Array && o)
+{
+	if (&o != this) {
+		elements_ = std::move(o.elements_);
 	}
 	return *this;
 }

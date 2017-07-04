@@ -52,6 +52,7 @@ public:
 
 	Number();
 	Number(Number const&);
+	Number(Number &&);
 	Number(uint8_t);
 	Number(int8_t);
 	Number(uint16_t);
@@ -65,6 +66,7 @@ public:
 	Number(long double);
 
 	Number & operator=(Number const&);
+	Number & operator=(Number &&);
 
 	Type type() const;
 	uint64_t uint_value() const;
@@ -85,10 +87,12 @@ class String {
 public:
 	String();
 	String(String const&);
+	String(String &&);
 	String(std::string const&);
 	String(const char *);
 
 	String & operator=(String const&);
+	String & operator=(String &&);
 
 	std::string value() const;
 
@@ -183,9 +187,11 @@ class Member {
 public:
 	Member();
 	Member(Member const&);
+	Member(Member &&);
 	Member(std::string const&, Value const&);
 
 	Member & operator=(Member const&);
+	Member & operator=(Member &&);
 
 	String key() const;
 	Value value() const;
@@ -199,8 +205,10 @@ class Object {
 public:
 	Object();
 	Object(Object const&);
+	Object(Object &&);
 
 	Object & operator=(Object const&);
+	Object & operator=(Object &&);
 	Object & operator<<(Member const&);
 
 	std::vector<Member> members() const;
@@ -214,6 +222,7 @@ class Array {
 public:
 	Array();
 	Array(Array const&);
+	Array(Array &&);
 
 	template <typename InputIterator>
 	Array(InputIterator first, InputIterator last)
@@ -222,6 +231,7 @@ public:
 	{ }
 
 	Array & operator=(Array const&);
+	Array & operator=(Array &&);
 	Array & operator<<(Value const&);
 
 	std::vector<Value> elements() const;

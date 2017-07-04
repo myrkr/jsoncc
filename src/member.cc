@@ -20,6 +20,12 @@ Member::Member(Member const& o)
 	value_(o.value_)
 { }
 
+Member::Member(Member && o)
+:
+	key_(std::move(o.key_)),
+	value_(std::move(o.value_))
+{ }
+
 Member::Member(std::string const& key, Value const& value)
 :
 	key_(key),
@@ -33,6 +39,15 @@ Member & Member::operator=(Member const& o)
 	if (&o != this) {
 		key_ = o.key_;
 		value_ = o.value_;
+	}
+	return *this;
+}
+
+Member & Member::operator=(Member && o)
+{
+	if (&o != this) {
+		key_ = std::move(o.key_);
+		value_ = std::move(o.value_);
 	}
 	return *this;
 }
