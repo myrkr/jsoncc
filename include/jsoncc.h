@@ -289,8 +289,6 @@ std::ostream & operator<<(std::ostream &, Member const&);
 std::ostream & operator<<(std::ostream &, Object const&);
 std::ostream & operator<<(std::ostream &, Value const&);
 
-class ParserImpl;
-
 struct Location {
 	size_t offs;
 	size_t character;
@@ -341,6 +339,8 @@ public:
 private:
 	void bool_true_value() const;
 };
+
+class ParserImpl;
 
 class Parser {
 public:
