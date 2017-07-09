@@ -3,6 +3,7 @@
 #include <cppunit/TextTestRunner.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/CompilerOutputter.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 namespace {
