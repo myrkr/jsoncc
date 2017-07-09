@@ -1,9 +1,10 @@
 /*
-   Copyright (c) 2015, 2016, Andreas Fett. All rights reserved.
+   Copyright (c) 2015 - 2017 Andreas Fett. All rights reserved.
    Use of this source code is governed by a BSD-style
    license that can be found in the LICENSE file.
  */
 #include <jsoncc.h>
+#include <algorithm>
 
 namespace Json {
 
@@ -57,12 +58,10 @@ std::vector<Member> Object::members() const
 
 Value Object::member(std::string const& key) const
 {
-	for (std::vector<Member>::const_iterator it = members_.begin(); it != members_.end(); ++it) {
-		if (it->key().value() == key) {
-			return it->value();
-		}
-	}
-	return Value();
+
+	auto it(std::find_if(members_.begin(), members_.end(),
+		[key](Member const& m) { return m.key().value() == key; }));
+	return it != members_.end() ? it->value() : Value();
 }
 
 }
