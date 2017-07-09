@@ -37,6 +37,9 @@ private:
 	void test_unbalanced_nested_object();
 	void test_complex();
 	void test_max_nesting();
+	void test_error();
+	void test_parse_no_throw_fail();
+	void test_parse_no_throw_ok();
 
 	CPPUNIT_TEST_SUITE(test);
 	CPPUNIT_TEST(test_empty_document);
@@ -61,6 +64,9 @@ private:
 	CPPUNIT_TEST(test_unbalanced_nested_object);
 	CPPUNIT_TEST(test_complex);
 	CPPUNIT_TEST(test_max_nesting);
+	CPPUNIT_TEST(test_error);
+	CPPUNIT_TEST(test_parse_no_throw_fail);
+	CPPUNIT_TEST(test_parse_no_throw_ok);
 	CPPUNIT_TEST_SUITE_END();
 };
 
@@ -468,6 +474,40 @@ void test::test_max_nesting()
 		parser.parse(data, 256), Json::Error, error);
 	CPPUNIT_ASSERT_EQUAL(Json::Error::PARSER_OVERFLOW, error.type);
 	CPPUNIT_ASSERT_EQUAL(size_t(0), error.location.offs);
+}
+
+void test::test_error()
+{
+	Json::Error error;
+	CPPUNIT_ASSERT_EQUAL(Json::Error::OK, error.type);
+	CPPUNIT_ASSERT(!error);
+
+	error.type = Json::Error::INTERNAL_ERROR;
+	CPPUNIT_ASSERT(error);
+}
+
+void test::test_parse_no_throw_fail()
+{
+	Parser parser;
+
+	char data[] = "xxx";
+	Json::Error error;
+	CPPUNIT_ASSERT_EQUAL(Json::Value(),
+		parser.parse(data, sizeof(data) - 1, error));
+	CPPUNIT_ASSERT(error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::TOKEN_INVALID, error.type);
+}
+
+void test::test_parse_no_throw_ok()
+{
+	Parser parser;
+
+	char data[] = "{}";
+	Json::Error error;
+	CPPUNIT_ASSERT_EQUAL(Json::Value(),
+		parser.parse(data, sizeof(data) - 1, error));
+	CPPUNIT_ASSERT(!error);
+	CPPUNIT_ASSERT_EQUAL(Json::Error::OK, error.type);
 }
 
 }}
