@@ -101,9 +101,8 @@ std::ostream & container_indent(std::ostream & os, const char delim[3], C const&
 	{
 		indent in(os);
 		std::string sep;
-		auto it(c.begin());
-		for (; it != c.end(); ++it) {
-			os << sep << *it;
+		for (auto item: c) {
+			os << sep << item;
 			sep = ",\n";
 		}
 	}
@@ -115,9 +114,8 @@ std::ostream & container_noindent(std::ostream & os, const char delim[3], C cons
 {
 	os << delim[0];
 	std::string sep;
-	auto it(c.begin());
-	for (; it != c.end(); ++it) {
-		os << sep << *it;
+	for (auto item: c) {
+		os << sep << item;
 		sep = ", ";
 	}
 	return os << delim[1] ;
