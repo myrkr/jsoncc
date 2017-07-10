@@ -101,7 +101,7 @@ std::ostream & container_indent(std::ostream & os, const char delim[3], C const&
 	{
 		indent in(os);
 		std::string sep;
-		typename C::const_iterator it(c.begin());
+		auto it(c.begin());
 		for (; it != c.end(); ++it) {
 			os << sep << *it;
 			sep = ",\n";
@@ -115,7 +115,7 @@ std::ostream & container_noindent(std::ostream & os, const char delim[3], C cons
 {
 	os << delim[0];
 	std::string sep;
-	typename C::const_iterator it(c.begin());
+	auto it(c.begin());
 	for (; it != c.end(); ++it) {
 		os << sep << *it;
 		sep = ", ";

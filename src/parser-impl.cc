@@ -37,7 +37,7 @@ public:
 
 	Json::Value parse()
 	{
-		typename T::State state(T::SSTART);
+		auto state(T::SSTART);
 		do {
 			T::tokenizer.scan();
 			state = transition(T::tokenizer.token.type, state);
@@ -50,12 +50,12 @@ private:
 	typename T::State
 	transition(Json::Token::Type token, typename T::State state)
 	{
-		for (size_t t(0); t < T::SMAX; ++t) {
+		for (auto t(0); t < T::SMAX; ++t) {
 			if (!is_match(token, T::transitions[state][t].match)) {
 				continue;
 			}
 
-			typename T::State nstate(T::transitions[state][t].state);
+			auto nstate(T::transitions[state][t].state);
 			if (nstate == T::SERROR) {
 				T::throw_error(state);
 				JSONCC_THROW(INTERNAL_ERROR); // LCOV_EXCL_LINE

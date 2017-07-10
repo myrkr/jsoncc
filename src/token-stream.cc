@@ -24,7 +24,7 @@ uint64_t make_int(const char *str)
 {
 	errno = 0;
 	char *endp(0);
-	uint64_t res(strtoll(str, &endp, 10));
+	auto res(strtoll(str, &endp, 10));
 	if (*endp != '\0' || errno != 0) {
 		JSONCC_THROW(NUMBER_INVALID);
 	}
@@ -56,7 +56,7 @@ long double make_float(const char *str)
 	errno = 0;
 	char *endp(0);
 	AutoLocale lc("C");
-	long double res(strtold(str, &endp));
+	auto res(strtold(str, &endp));
 	if (*endp != '\0' || errno != 0) {
 		JSONCC_THROW(NUMBER_INVALID);
 	}
@@ -100,8 +100,8 @@ NumberState number_state(int c, NumberState state)
 	/* SE_DIGIT     */ {                                    {DIGIT, SE_DIGIT},       {0, SDONE} },
 	};
 
-	for (size_t t(0); true; ++t) {
-		const char *match(transitions[state][t].match);
+	for (auto t(0); true; ++t) {
+		auto *match(transitions[state][t].match);
 		if (!match || strchr(match, c)) {
 			return transitions[state][t].state;
 		}
@@ -113,11 +113,11 @@ NumberState number_state(int c, NumberState state)
 Json::Token::NumberType
 validate_number(Json::Utf8Stream & stream, char *buf, size_t size)
 {
-	NumberState state(SSTART);
-	Json::Token::NumberType res(Json::Token::INT);
-	size_t i(0);
+	auto state(SSTART);
+	auto res(Json::Token::INT);
+	auto i(0U);
 	for (;;) {
-		int c(stream.getc());
+		auto c(stream.getc());
 		state = number_state(c, state);
 
 		switch (state) {
@@ -326,7 +326,7 @@ void TokenStream::scan_null() { scan_literal("null"); }
 
 void TokenStream::scan_literal(const char *literal)
 {
-	for (const char *p(&literal[1]); *p; p++) {
+	for (auto *p(&literal[1]); *p; p++) {
 		if (stream_.getc() != *p) {
 			JSONCC_THROW(LITERAL_INVALID);
 		}
@@ -335,10 +335,10 @@ void TokenStream::scan_literal(const char *literal)
 
 void TokenStream::scan_string()
 {
-	StringState state(SREGULAR);
+	auto state(SREGULAR);
 	UEscape unicode;
 	while (state != SDONES) {
-		int c(stream_.getc());
+		auto c(stream_.getc());
 		if (stream_.state() != Utf8Stream::SGOOD) {
 			JSONCC_THROW(STRING_QUOTE);
 		}
