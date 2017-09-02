@@ -351,10 +351,7 @@ void test::test_array_equality()
 
 void test::test_array_from_container()
 {
-	std::vector<uint32_t> v;
-	v.push_back(1);
-	v.push_back(2);
-	v.push_back(3);
+	std::vector<uint32_t> v{1, 2, 3};
 
 	Json::Array a1(v.begin(), v.end());
 	CPPUNIT_ASSERT_EQUAL(size_t(3), a1.elements().size());
@@ -379,10 +376,7 @@ void test::test_array_from_container()
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, a2.elements()[2].tag());
 	CPPUNIT_ASSERT_EQUAL(std::string("foo"), a2.elements()[2].string().value());
 
-	std::list<int32_t> l;
-	l.push_back(1);
-	l.push_back(2);
-	l.push_back(3);
+	std::list<int32_t> l{1, 2, 3};
 
 	Json::Array a3(l.begin(), l.end());
 	CPPUNIT_ASSERT_EQUAL(size_t(3), a3.elements().size());
@@ -534,11 +528,7 @@ void test::test_object_equality()
 void test::test_vector()
 {
 	std::stringstream ss;
-	std::vector<int> v;
-	v.push_back(1);
-	v.push_back(2);
-	v.push_back(3);
-	v.push_back(4);
+	std::vector<int> v{1, 2, 3, 4};
 	ss << Json::Value(v);
 
 	std::string expected(
@@ -556,9 +546,7 @@ void test::test_vector_nested()
 {
 	std::stringstream ss;
 	std::vector<std::vector<int> > v;
-	std::vector<int> v1;
-	v1.push_back(1);
-	v1.push_back(2);
+	std::vector<int> v1{1, 2};
 	v.push_back(v1);
 	v.push_back(v1);
 	v.push_back(std::vector<int>());
@@ -583,11 +571,7 @@ void test::test_vector_nested()
 void test::test_list()
 {
 	std::stringstream ss;
-	std::list<int> v;
-	v.push_back(1);
-	v.push_back(2);
-	v.push_back(3);
-	v.push_back(4);
+	std::list<int> v{1, 2, 3, 4};
 	ss << Json::Value(v);
 
 	std::string expected(
@@ -604,11 +588,7 @@ void test::test_list()
 void test::test_set()
 {
 	std::stringstream ss;
-	std::set<int> v;
-	v.insert(1);
-	v.insert(2);
-	v.insert(3);
-	v.insert(4);
+	std::set<int> v{1, 2, 3, 4};
 	ss << Json::Value(v);
 
 	std::string expected(
