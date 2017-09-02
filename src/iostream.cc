@@ -13,10 +13,10 @@ namespace {
 class indent : public std::streambuf {
 public:
 	explicit indent(std::ostream &, std::string indent = "\t");
-	virtual ~indent();
+	~indent();
 
 protected:
-	virtual int overflow(int);
+	int overflow(int);
 
 private:
 	std::string indent_;
