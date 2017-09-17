@@ -25,6 +25,7 @@ private:
 	void test_array_nested_noindent();
 	void test_array_equality();
 	void test_array_from_container();
+	void test_array_iterators();
 	void test_object_empty();
 	void test_object_simple();
 	void test_object_nested();
@@ -50,6 +51,7 @@ private:
 	CPPUNIT_TEST(test_array_nested_noindent);
 	CPPUNIT_TEST(test_array_equality);
 	CPPUNIT_TEST(test_array_from_container);
+	CPPUNIT_TEST(test_array_iterators);
 	CPPUNIT_TEST(test_object_empty);
 	CPPUNIT_TEST(test_object_simple);
 	CPPUNIT_TEST(test_object_nested);
@@ -386,6 +388,16 @@ void test::test_array_from_container()
 	CPPUNIT_ASSERT_EQUAL(int64_t(2), a3.elements()[1].number().int_value());
 	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, a3.elements()[2].tag());
 	CPPUNIT_ASSERT_EQUAL(int64_t(3), a3.elements()[2].number().int_value());
+}
+
+void test::test_array_iterators()
+{
+	std::vector<uint32_t> v{1, 2, 3};
+
+	Json::Array a1(v.begin(), v.end());
+	for (auto & v: a1) {
+		CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, v.tag());
+	}
 }
 
 void test::test_object_empty()

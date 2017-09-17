@@ -50,4 +50,14 @@ std::vector<Value> Array::elements() const
 	return elements_;
 }
 
+std::vector<Value>::const_iterator Array::begin() const
+{
+	return elements_.begin();
+}
+
+std::vector<Value>::const_iterator Array::end() const
+{
+	return elements_.end();
+}
+
 }

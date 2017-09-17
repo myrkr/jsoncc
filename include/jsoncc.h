@@ -237,6 +237,9 @@ public:
 
 	std::vector<Value> elements() const;
 
+	std::vector<Value>::const_iterator begin() const;
+	std::vector<Value>::const_iterator end() const;
+
 private:
 	std::vector<Value> elements_;
 };
