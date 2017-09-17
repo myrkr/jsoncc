@@ -234,6 +234,7 @@ public:
 	Array & operator=(Array const&);
 	Array & operator=(Array &&);
 	Array & operator<<(Value const&);
+	Array & operator<<(Value &&);
 
 	std::vector<Value> elements() const;
 

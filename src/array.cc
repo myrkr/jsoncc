@@ -45,6 +45,12 @@ Array & Array::operator<<(Value const& element)
 	return *this;
 }
 
+Array & Array::operator<<(Value && element)
+{
+	elements_.push_back(std::move(element));
+	return *this;
+}
+
 std::vector<Value> Array::elements() const
 {
 	return elements_;
