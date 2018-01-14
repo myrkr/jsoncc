@@ -13,6 +13,11 @@ Array::Array()
 	elements_()
 { }
 
+Array::Array(std::initializer_list<Value> l)
+:
+	elements_(l)
+{ }
+
 Array::Array(Array const& o)
 :
 	elements_(o.elements_)

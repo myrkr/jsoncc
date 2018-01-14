@@ -230,6 +230,7 @@ private:
 class Array {
 public:
 	Array();
+	explicit Array(std::initializer_list<Value>);
 	Array(Array const&);
 	Array(Array &&);
 
@@ -237,11 +238,6 @@ public:
 	Array(InputIterator first, InputIterator last)
 	:
 		elements_(first, last)
-	{ }
-
-	explicit Array(std::initializer_list<Value> l)
-	:
-		elements_(l)
 	{ }
 
 	Array & operator=(Array const&);
