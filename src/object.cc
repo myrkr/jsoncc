@@ -13,6 +13,11 @@ Object::Object()
 	members_()
 { }
 
+Object::Object(std::initializer_list<Member> l)
+:
+	members_(l)
+{ }
+
 Object::Object(Object const& o)
 :
 	members_(o.members_)
