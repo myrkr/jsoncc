@@ -207,6 +207,11 @@ public:
 	Object(Object const&);
 	Object(Object &&);
 
+	explicit Object(std::initializer_list<Member> l)
+	:
+		members_(l)
+	{ }
+
 	Object & operator=(Object const&);
 	Object & operator=(Object &&);
 	Object & operator<<(Member const&);
