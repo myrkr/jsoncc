@@ -37,6 +37,7 @@ private:
 	void test_object_equality();
 	void test_object_iterators();
 	void test_object_list_initialization();
+	void test_object_move();
 	void test_vector();
 	void test_vector_nested();
 	void test_list();
@@ -67,6 +68,7 @@ private:
 	CPPUNIT_TEST(test_object_equality);
 	CPPUNIT_TEST(test_object_iterators);
 	CPPUNIT_TEST(test_object_list_initialization);
+	CPPUNIT_TEST(test_object_move);
 	CPPUNIT_TEST(test_vector);
 	CPPUNIT_TEST(test_vector_nested);
 	CPPUNIT_TEST(test_list);
@@ -645,6 +647,46 @@ void test::test_object_list_initialization()
 		{"bar", 5},
 		{"baz", "bla"}
 	};
+
+	for (auto const& m: o3) {
+		if (m.key() == "foo") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
+		} else if (m.key() == "bar") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
+		} else if (m.key() == "baz") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
+		} else {
+			CPPUNIT_ASSERT(false);
+		}
+	}
+}
+
+void test::test_object_move()
+{
+	Json::Object o1{
+		Json::Member("foo", true),
+		Json::Member("bar", 5),
+		Json::Member("baz", "bla"),
+	};
+
+	Json::Object o2(std::move(o1));
+	CPPUNIT_ASSERT(o1.members().empty());
+
+	for (auto const& m: o2) {
+		if (m.key() == "foo") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
+		} else if (m.key() == "bar") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
+		} else if (m.key() == "baz") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
+		} else {
+			CPPUNIT_ASSERT(false);
+		}
+	}
+
+	Json::Object o3;
+	o3 = std::move(o2);
+	CPPUNIT_ASSERT(o2.members().empty());
 
 	for (auto const& m: o3) {
 		if (m.key() == "foo") {
