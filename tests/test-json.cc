@@ -26,6 +26,7 @@ private:
 	void test_array_equality();
 	void test_array_from_container();
 	void test_array_iterators();
+	void test_array_list_initialization();
 	void test_object_empty();
 	void test_object_simple();
 	void test_object_nested();
@@ -53,6 +54,7 @@ private:
 	CPPUNIT_TEST(test_array_equality);
 	CPPUNIT_TEST(test_array_from_container);
 	CPPUNIT_TEST(test_array_iterators);
+	CPPUNIT_TEST(test_array_list_initialization);
 	CPPUNIT_TEST(test_object_empty);
 	CPPUNIT_TEST(test_object_simple);
 	CPPUNIT_TEST(test_object_nested);
@@ -400,6 +402,24 @@ void test::test_array_iterators()
 	for (auto & v: a1) {
 		CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, v.tag());
 	}
+}
+
+void test::test_array_list_initialization()
+{
+	Json::Array a1{ 1, 2, 3 };
+	for (auto & v: a1) {
+		CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, v.tag());
+	}
+
+	Json::Array a2{ "foo", 2, true };
+	auto it = a2.begin();
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, it->tag());
+	++it;
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, it->tag());
+	++it;
+	CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, it->tag());
+	++it;
+	CPPUNIT_ASSERT_EQUAL(a2.end(), it);
 }
 
 void test::test_object_empty()

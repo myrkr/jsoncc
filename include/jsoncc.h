@@ -234,6 +234,11 @@ public:
 		elements_(first, last)
 	{ }
 
+	explicit Array(std::initializer_list<Value> l)
+	:
+		elements_(l)
+	{ }
+
 	Array & operator=(Array const&);
 	Array & operator=(Array &&);
 	Array & operator<<(Value const&);
