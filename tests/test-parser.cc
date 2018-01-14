@@ -81,11 +81,9 @@ void test::setUp()
 void test::tearDown()
 { }
 
-using namespace Json;
-
 void test::test_empty_document()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 	Json::Value value;
 
 	char data[] = "";
@@ -103,7 +101,7 @@ void test::test_empty_document()
 
 void test::test_bad_doc_token()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "true";
 	Json::Error error;
@@ -115,7 +113,7 @@ void test::test_bad_doc_token()
 
 void test::test_double_doc()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "[][]";
 	Json::Error error;
@@ -127,7 +125,7 @@ void test::test_double_doc()
 
 void test::test_empty_array()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "[]";
 	CPPUNIT_ASSERT_EQUAL(
@@ -144,7 +142,7 @@ void test::test_empty_array()
 
 void test::test_unbalanced_empty_array()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "[";
 	Json::Error error;
@@ -156,7 +154,7 @@ void test::test_unbalanced_empty_array()
 
 void test::test_simple_array()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	Json::Array expected;
 	expected << true << false << Json::Null() << "hello" << 1234;
@@ -170,7 +168,7 @@ void test::test_simple_array()
 
 void test::test_unbalanced_simple_array()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "[ true,";
 	Json::Error error;
@@ -182,7 +180,7 @@ void test::test_unbalanced_simple_array()
 
 void test::test_nested_array()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	Json::Array expected;
 	expected << (Json::Array() << true)
@@ -203,7 +201,7 @@ void test::test_nested_array()
 
 void test::test_unbalanced_nested_array()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "[[ true ], [[], [ true, false, [ null, 1 ]]]";
 	Json::Error error;
@@ -215,7 +213,7 @@ void test::test_unbalanced_nested_array()
 
 void test::test_empty_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{}";
 	CPPUNIT_ASSERT_EQUAL(
@@ -232,7 +230,7 @@ void test::test_empty_object()
 
 void test::test_unbalanced_empty_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{";
 	Json::Error error;
@@ -244,7 +242,7 @@ void test::test_unbalanced_empty_object()
 
 void test::test_simple_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	Json::Object expected;
 	expected
@@ -268,7 +266,7 @@ void test::test_simple_object()
 
 void test::test_unbalanced_simple_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 	char data[] = "{\n"
 	"\"key1\": true,\n"
 	"\"key2\": null,\n"
@@ -285,7 +283,7 @@ void test::test_unbalanced_simple_object()
 
 void test::test_missing_key_simple_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{\n"
 	" : true,\n"
@@ -303,7 +301,7 @@ void test::test_missing_key_simple_object()
 
 void test::test_missing_colon_simple_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{\n"
 	"\"key1\" true,\n"
@@ -321,7 +319,7 @@ void test::test_missing_colon_simple_object()
 
 void test::test_missing_value_simple_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{\n"
 	"\"key1\": true,\n"
@@ -339,7 +337,7 @@ void test::test_missing_value_simple_object()
 
 void test::test_missing_seperator_simple_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{\n"
 	"\"key1\": true,\n"
@@ -357,7 +355,7 @@ void test::test_missing_seperator_simple_object()
 
 void test::test_missing_next_key_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{\n"
 	"\"key1\": true,\n"
@@ -373,7 +371,7 @@ void test::test_missing_next_key_object()
 
 void test::test_nested_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	Json::Object expected;
 	expected
@@ -403,7 +401,7 @@ void test::test_nested_object()
 
 void test::test_unbalanced_nested_object()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[] = "{\n"
 	"\"key1\": {},\n"
@@ -423,7 +421,7 @@ void test::test_unbalanced_nested_object()
 
 void test::test_complex()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	Json::Object expected;
 	expected
@@ -464,7 +462,7 @@ void test::test_complex()
 
 void test::test_max_nesting()
 {
-	ParserImpl parser;
+	Json::ParserImpl parser;
 
 	char data[256];
 	memset(data, '[', sizeof(data));
@@ -488,7 +486,7 @@ void test::test_error()
 
 void test::test_parse_no_throw_fail()
 {
-	Parser parser;
+	Json::Parser parser;
 
 	char data[] = "xxx";
 	Json::Error error;
@@ -500,7 +498,7 @@ void test::test_parse_no_throw_fail()
 
 void test::test_parse_no_throw_ok()
 {
-	Parser parser;
+	Json::Parser parser;
 
 	char data[] = "{}";
 	Json::Error error;
