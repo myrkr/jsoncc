@@ -33,6 +33,7 @@ private:
 	void test_object_member();
 	void test_object_unknown_member();
 	void test_object_equality();
+	void test_object_iterators();
 	void test_vector();
 	void test_vector_nested();
 	void test_list();
@@ -59,6 +60,7 @@ private:
 	CPPUNIT_TEST(test_object_member);
 	CPPUNIT_TEST(test_object_unknown_member);
 	CPPUNIT_TEST(test_object_equality);
+	CPPUNIT_TEST(test_object_iterators);
 	CPPUNIT_TEST(test_vector);
 	CPPUNIT_TEST(test_vector_nested);
 	CPPUNIT_TEST(test_list);
@@ -535,6 +537,26 @@ void test::test_object_equality()
 	CPPUNIT_ASSERT_EQUAL(o5, o4);
 	o5 = o5;
 	CPPUNIT_ASSERT_EQUAL(o5, o4);
+}
+
+void test::test_object_iterators()
+{
+	Json::Object o;
+	o << Json::Member("foo", true);
+	o << Json::Member("bar", 5);
+	o << Json::Member("baz", "bla");
+
+	for (auto const& m: o) {
+		if (m.key() == "foo") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
+		} else if (m.key() == "bar") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
+		} else if (m.key() == "baz") {
+			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
+		} else {
+			CPPUNIT_ASSERT(false);
+		}
+	}
 }
 
 void test::test_vector()

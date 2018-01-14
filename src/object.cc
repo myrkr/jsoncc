@@ -64,4 +64,14 @@ Value Object::member(std::string const& key) const
 	return it != members_.end() ? it->value() : Value();
 }
 
+std::vector<Member>::const_iterator Object::begin() const
+{
+	return members_.begin();
+}
+
+std::vector<Member>::const_iterator Object::end() const
+{
+	return members_.end();
+}
+
 }

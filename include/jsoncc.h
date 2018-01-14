@@ -215,6 +215,9 @@ public:
 	std::vector<Member> members() const;
 	Value member(std::string const&) const;
 
+	std::vector<Member>::const_iterator begin() const;
+	std::vector<Member>::const_iterator end() const;
+
 private:
 	std::vector<Member> members_;
 };
