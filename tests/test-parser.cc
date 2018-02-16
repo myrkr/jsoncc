@@ -502,7 +502,7 @@ void test::test_parse_no_throw_ok()
 
 	char data[] = "{}";
 	Json::Error error;
-	CPPUNIT_ASSERT_EQUAL(Json::Value(),
+	CPPUNIT_ASSERT_EQUAL(Json::Value(Json::Object()),
 		parser.parse(data, sizeof(data) - 1, error));
 	CPPUNIT_ASSERT(!error);
 	CPPUNIT_ASSERT_EQUAL(Json::Error::OK, error.type);

@@ -25,7 +25,7 @@ Value Parser::parse(char const * data, size_t size)
 Value Parser::parse(char const * data, size_t size, Error & err)
 {
 	try {
-		parse(data, size);
+		return parse(data, size);
 	} catch (Error & e) {
 		err = e;
 	}
