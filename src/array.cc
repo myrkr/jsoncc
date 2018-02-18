@@ -56,6 +56,11 @@ Array & Array::operator<<(Value && element)
 	return *this;
 }
 
+size_t Array::size() const
+{
+	return elements_.size();
+}
+
 std::vector<Value> Array::elements() const
 {
 	return elements_;

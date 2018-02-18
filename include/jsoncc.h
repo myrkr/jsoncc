@@ -242,6 +242,7 @@ public:
 	Array & operator<<(Value const&);
 	Array & operator<<(Value &&);
 
+	size_t size() const;
 	std::vector<Value> elements() const;
 
 	std::vector<Value>::const_iterator begin() const;
