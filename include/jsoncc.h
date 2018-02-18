@@ -213,6 +213,7 @@ public:
 	Object & operator<<(Member const&);
 	Object & operator<<(Member &&);
 
+	size_t size() const;
 	std::vector<Member> members() const;
 	Value member(std::string const&) const;
 

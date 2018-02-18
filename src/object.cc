@@ -56,6 +56,11 @@ Object & Object::operator<<(Member && member)
 	return *this;
 }
 
+size_t Object::size() const
+{
+	return members_.size();
+}
+
 std::vector<Member> Object::members() const
 {
 	return members_;
