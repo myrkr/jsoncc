@@ -4,7 +4,7 @@
 jsoncc
 
 Simple json writer and parser for C++. This library is not optimised for speed
-but for correctness an ease of use.
+but for correctness and ease of use.
 
 BSD licensed, see LICENSE.
 
