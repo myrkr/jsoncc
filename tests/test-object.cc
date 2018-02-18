@@ -1,7 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <jsoncc.h>
 
-#include "equality.h"
+#include <jsoncc-cppunit.h>
 
 namespace unittests {
 namespace json {
@@ -162,14 +162,14 @@ void test::test_equality()
 	Json::Object o2(o1);
 	CPPUNIT_ASSERT_EQUAL(o1, o2);
 
-	CPPUNIT_ASSERT(!(o1 == Json::Object()));
+	CPPUNIT_ASSERT(!equal(o1, Json::Object()));
 
 	Json::Object o3;
 	o3 << Json::Member("number", 5);
 	o3 << Json::Member("bool", true);
 	o3 << Json::Member("string", "Foo");
 	o3 << Json::Member("array", Json::Array());
-	CPPUNIT_ASSERT(!(o1 == o3));
+	CPPUNIT_ASSERT(!equal(o1, o3));
 
 	// CAVEAT!
 	Json::Object o4;
@@ -178,7 +178,7 @@ void test::test_equality()
 	o3 << Json::Member("string", "Foo");
 	o3 << Json::Member("bool", true);
 	o3 << Json::Member("number", 5);
-	CPPUNIT_ASSERT(!(o1 == o4));
+	CPPUNIT_ASSERT(!equal(o1, o4));
 
 	Json::Object o5;
 	o5 = o4;
@@ -195,11 +195,11 @@ void test::test_iterators()
 	o << Json::Member("baz", "bla");
 
 	for (auto const& m: o) {
-		if (m.key() == "foo") {
+		if (m.key().value() == "foo") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
-		} else if (m.key() == "bar") {
+		} else if (m.key().value() == "bar") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
-		} else if (m.key() == "baz") {
+		} else if (m.key().value() == "baz") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
 		} else {
 			CPPUNIT_ASSERT(false);
@@ -216,11 +216,11 @@ void test::test_list_initialization()
 	};
 
 	for (auto const& m: o1) {
-		if (m.key() == "foo") {
+		if (m.key().value() == "foo") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
-		} else if (m.key() == "bar") {
+		} else if (m.key().value() == "bar") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
-		} else if (m.key() == "baz") {
+		} else if (m.key().value() == "baz") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
 		} else {
 			CPPUNIT_ASSERT(false);
@@ -237,11 +237,11 @@ void test::test_list_initialization()
 	};
 
 	for (auto const& m: o3) {
-		if (m.key() == "foo") {
+		if (m.key().value() == "foo") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
-		} else if (m.key() == "bar") {
+		} else if (m.key().value() == "bar") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
-		} else if (m.key() == "baz") {
+		} else if (m.key().value() == "baz") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
 		} else {
 			CPPUNIT_ASSERT(false);
@@ -261,11 +261,11 @@ void test::test_move()
 	CPPUNIT_ASSERT(o1.members().empty());
 
 	for (auto const& m: o2) {
-		if (m.key() == "foo") {
+		if (m.key().value() == "foo") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
-		} else if (m.key() == "bar") {
+		} else if (m.key().value() == "bar") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
-		} else if (m.key() == "baz") {
+		} else if (m.key().value() == "baz") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
 		} else {
 			CPPUNIT_ASSERT(false);
@@ -277,11 +277,11 @@ void test::test_move()
 	CPPUNIT_ASSERT(o2.members().empty());
 
 	for (auto const& m: o3) {
-		if (m.key() == "foo") {
+		if (m.key().value() == "foo") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_TRUE, m.value().tag());
-		} else if (m.key() == "bar") {
+		} else if (m.key().value() == "bar") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_NUMBER, m.value().tag());
-		} else if (m.key() == "baz") {
+		} else if (m.key().value() == "baz") {
 			CPPUNIT_ASSERT_EQUAL(Json::Value::TAG_STRING, m.value().tag());
 		} else {
 			CPPUNIT_ASSERT(false);

@@ -1,7 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <jsoncc.h>
 
-#include "equality.h"
+#include <jsoncc-cppunit.h>
 
 namespace unittests {
 namespace json {
@@ -98,7 +98,7 @@ void test::test_number()
 	CPPUNIT_ASSERT_EQUAL(Json::Number(int32_t(5)), Json::Number(int32_t(5)));
 	CPPUNIT_ASSERT_EQUAL(Json::Number(double(5.0)), Json::Number(double(5.0)));
 
-	CPPUNIT_ASSERT(!(Json::Number(0) == Json::Number()));
+	CPPUNIT_ASSERT(!equal(Json::Number(0), Json::Number()));
 
 	Json::Number n1;
 	n1 = n;
@@ -165,9 +165,9 @@ void test::test_number_conversions()
 	CPPUNIT_ASSERT_EQUAL(fp2, fp3);
 
 	// CAVEAT!
-	CPPUNIT_ASSERT(!(sn1 == un1));
-	CPPUNIT_ASSERT(!(sn1 == fp1));
-	CPPUNIT_ASSERT(!(un1 == fp1));
+	CPPUNIT_ASSERT(!equal(sn1, un1));
+	CPPUNIT_ASSERT(!equal(sn1, fp1));
+	CPPUNIT_ASSERT(!equal(un1, fp1));
 }
 
 void test::test_string()
@@ -207,8 +207,8 @@ void test::test_string()
 	CPPUNIT_ASSERT_EQUAL(Json::String("foo"), Json::String("foo"));
 	CPPUNIT_ASSERT_EQUAL(Json::String(""), Json::String(""));
 	CPPUNIT_ASSERT_EQUAL(Json::String(), Json::String());
-	CPPUNIT_ASSERT(!(Json::String("Foo") == Json::String("Bar")));
-	CPPUNIT_ASSERT(!(Json::String("Foo") == Json::String()));
+	CPPUNIT_ASSERT(!equal(Json::String("Foo"), Json::String("Bar")));
+	CPPUNIT_ASSERT(!equal(Json::String("Foo"), Json::String()));
 
 	Json::String s1;
 	s1 = s;

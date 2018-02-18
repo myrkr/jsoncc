@@ -310,6 +310,59 @@ std::ostream & operator<<(std::ostream &, Array const&);
 std::ostream & operator<<(std::ostream &, Object const&);
 std::ostream & operator<<(std::ostream &, Value const&);
 
+/*
+ * CAVEAT these are mainly for testing purposes,
+ * which is why no == overator overloads are
+ * provided.
+ *
+ * For application usage it's strongly suggested
+ * that comparison is done after unboxing.
+ *
+ * Please read comments below carefully before using
+ * these functions.
+ */
+bool equal(Json::Null const&, Json::Null const&);
+bool equal(Json::True const&, Json::True const&);
+bool equal(Json::False const&, Json::False const&);
+/*
+ * Must be of the same Number::Type to be equal.
+ * NOTE! This implementation makes a distinction
+ * between signed and unsigned integers.
+ *
+ * Number() is *not* equal to Number(0) or Number(0.0)
+ */
+bool equal(Json::Number const&, Json::Number const&);
+/*
+ * Strings are considered equal based on the rules
+ * for the std::string they where constructed from.
+ *
+ * NOTE! String() *is* equal to String("").
+ *
+ * While the parser below handels escape sequences
+ * and normalizes them, the Json::String constructors
+ * do not and store the string as is.
+ * Escaping does however occur on output for any character
+ * the rcf requires it for.
+ */
+bool equal(Json::String const&, Json::String const&);
+/*
+ * Elements must be in the same order to be equal.
+ * rfc8259 "An array is an ordered sequence of zero or more values."
+ */
+bool equal(Json::Array const&, Json::Array const&);
+/*
+ * Object A and B are considered equal when each key value
+ * pair (member) in object A has a corresponting key value
+ * pair in B.
+ * NOTE! This implementaion allows duplicate keys.
+ *
+ * rfc8259 "An object is an unordered collection of zero or more name/value
+ * pairs, ..." ... "The names within an object SHOULD be unique."
+ */
+bool equal(Json::Object const&, Json::Object const&);
+/* Values are compared after unboxing using the rules above */
+bool equal(Json::Value const&, Json::Value const&);
+
 struct Location {
 	size_t offs;
 	size_t character;

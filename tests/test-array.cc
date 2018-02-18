@@ -1,7 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <jsoncc.h>
 
-#include "equality.h"
+#include <jsoncc-cppunit.h>
 
 namespace unittests {
 namespace json {
@@ -142,11 +142,11 @@ void test::test_equality()
 	CPPUNIT_ASSERT_EQUAL(a1, a2);
 	Json::Array a3;
 	a3 << 1 << 2;
-	CPPUNIT_ASSERT(!(a3 == a1));
-	CPPUNIT_ASSERT(!(a3 == Json::Array()));
+	CPPUNIT_ASSERT(!equal(a3, a1));
+	CPPUNIT_ASSERT(!equal(a3, Json::Array()));
 	Json::Array a4;
 	a1 << 3 << 2 << 1;
-	CPPUNIT_ASSERT(!(a4 == a1));
+	CPPUNIT_ASSERT(!equal(a4, a1));
 	Json::Array a5;
 	a5 = a4;
 	CPPUNIT_ASSERT_EQUAL(a4, a5);

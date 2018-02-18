@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "equality.h"
+#include <jsoncc-cppunit.h>
 #include "error-assert.h"
 #include "error-io.h"
 #include "parser-impl.h"
