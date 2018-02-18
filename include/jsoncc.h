@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2015, 2016, 2017 Andreas Fett
+   Copyright (c) 2015 - 2018 Andreas Fett
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
@@ -305,7 +305,6 @@ std::ostream & operator<<(std::ostream &, False const&);
 std::ostream & operator<<(std::ostream &, Number const&);
 std::ostream & operator<<(std::ostream &, String const&);
 std::ostream & operator<<(std::ostream &, Array const&);
-std::ostream & operator<<(std::ostream &, Member const&);
 std::ostream & operator<<(std::ostream &, Object const&);
 std::ostream & operator<<(std::ostream &, Value const&);
 
