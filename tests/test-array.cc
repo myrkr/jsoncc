@@ -27,6 +27,7 @@ private:
 	void test_vector_nested();
 	void test_list();
 	void test_set();
+	void test_invalid_use_of_member();
 
 	CPPUNIT_TEST_SUITE(test);
 	CPPUNIT_TEST(test_empty);
@@ -42,6 +43,7 @@ private:
 	CPPUNIT_TEST(test_vector_nested);
 	CPPUNIT_TEST(test_list);
 	CPPUNIT_TEST(test_set);
+	CPPUNIT_TEST(test_invalid_use_of_member);
 	CPPUNIT_TEST_SUITE_END();
 };
 
@@ -330,6 +332,12 @@ void test::test_set()
 		"]"
 	);
 	CPPUNIT_ASSERT_EQUAL(expected, ss.str());
+}
+
+void test::test_invalid_use_of_member()
+{
+	Json::Array array;
+	array << Json::Member("foo", "bar");
 }
 
 }}}
