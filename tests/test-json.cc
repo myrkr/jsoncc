@@ -2,6 +2,7 @@
 #include <jsoncc.h>
 
 #include <jsoncc-cppunit.h>
+#include "clang-helpers.h"
 
 namespace unittests {
 namespace json {
@@ -103,7 +104,9 @@ void test::test_number()
 	Json::Number n1;
 	n1 = n;
 	CPPUNIT_ASSERT_EQUAL(n, n1);
+	DONT_WARN_ABOUT_SELFASSIGNMENT;
 	n1 = n1;
+	WARN_ABOUT_SELFASSIGNMENT;
 	CPPUNIT_ASSERT_EQUAL(n, n1);
 }
 
@@ -213,7 +216,9 @@ void test::test_string()
 	Json::String s1;
 	s1 = s;
 	CPPUNIT_ASSERT_EQUAL(s, s1);
+	DONT_WARN_ABOUT_SELFASSIGNMENT;
 	s1 = s1;
+	WARN_ABOUT_SELFASSIGNMENT;
 	CPPUNIT_ASSERT_EQUAL(s, s1);
 }
 

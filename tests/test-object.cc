@@ -2,6 +2,7 @@
 #include <jsoncc.h>
 
 #include <jsoncc-cppunit.h>
+#include "clang-helpers.h"
 
 namespace unittests {
 namespace json {
@@ -183,7 +184,10 @@ void test::test_equality()
 	Json::Object o5;
 	o5 = o4;
 	CPPUNIT_ASSERT_EQUAL(o5, o4);
+
+	DONT_WARN_ABOUT_SELFASSIGNMENT;
 	o5 = o5;
+	WARN_ABOUT_SELFASSIGNMENT;
 	CPPUNIT_ASSERT_EQUAL(o5, o4);
 }
 

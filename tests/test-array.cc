@@ -3,6 +3,8 @@
 
 #include <jsoncc-cppunit.h>
 
+#include "clang-helpers.h"
+
 namespace unittests {
 namespace json {
 namespace array {
@@ -150,7 +152,9 @@ void test::test_equality()
 	Json::Array a5;
 	a5 = a4;
 	CPPUNIT_ASSERT_EQUAL(a4, a5);
+	DONT_WARN_ABOUT_SELFASSIGNMENT;
 	a5 = a5;
+	WARN_ABOUT_SELFASSIGNMENT;
 	CPPUNIT_ASSERT_EQUAL(a4, a5);
 }
 
